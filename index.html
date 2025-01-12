@@ -239,10 +239,8 @@ async function filterPosts() {
   }
 }
 
-searchBar.addEventListener('keypress', (event) => {
-  if (event.key === 'Enter') {
-    filterPosts();
-  }
+searchBar.addEventListener('input', (event) => {
+  filterPosts();
 });
 
 categoryFilter.addEventListener('change', filterPosts);
