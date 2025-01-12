@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Untechnical Blog</title>
+  <title>Untechnical</title>
   <link rel="icon" href="profile.ico" type="image/x-icon">
   <style>
     body {
@@ -15,21 +15,23 @@
       color: #000;
     }
     header {
-      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      background-color: #000;
-      color: white;
+      background-color: white;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 10px 20px;
       z-index: 1000;
+      border: 1px solid #ddd
     }
-    header .logo {
-      font-size: 24px;
-      font-weight: bold;
+    header a {
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: 1.5em;
+      color: black;
+      text-decoration: none;
     }
     main {
       margin-top: 80px;
@@ -129,7 +131,6 @@
 
         4. "カメラの音" をオフにする
 
-        これでPixelのシャッター音の無音化は完了である｡
         あとはもともとある純正のカメラアプリを無効化するなどしてGCamを起動しやすいようにするといいかもしれない｡
     </p>
     <h3>デメリット</h3>
@@ -273,6 +274,7 @@
         キャリア版のXperiaはシャッター音が消せない｡
         qUnlock Toolを使ってBLUを許可して実行し､root化してシャッター音を消す方法もあるが､qUnlock Toolは有料でありさらに確実にBLUを許可できる保証もない｡
     </p>
+    <br>
     <h2>AQUOS</h2>
     <p>AQUOSは2024年以降に発売されたSIMフリー版でシャッター音が消せる｡
     </p>
@@ -291,6 +293,7 @@
       2023年以前のモデル､またはキャリア版ではシャッター音が消せない｡
       また､Xperiaと違いブートローダーアンロックもできない｡
     </p>
+    <br>
     <h2>motorola</h2>
     <p>motorolaはシャッター音が消せるが､日本のSIMを利用している状態ではシャッター音が鳴る｡
       ここではeSIMまたはデュアルSIMに対応している必要があるが､日本のSIMを利用していてもシャッター音が消えるようにする方法を述べる｡
@@ -342,6 +345,7 @@
 
       Galaxyと同じくこれはバグに近い挙動のため､今後アップデートでこの方法が塞がれる可能性がある｡
     </p>
+    <br>
     <h2>Nothing Phone</h2>
     <p>Nothing Phoneもmotorolaと同じく日本のSIMを利用していない状態でシャッター音が消せるが､日本のSIMを利用した状態では海外のSIMを認識させてもシャッター音が消せない｡
     </p>
@@ -350,6 +354,7 @@
 
       Nothing Phoneでシャッター音を消す場合､海外のSIMカードを挿してローミングで使うか､SIMカードを挿さずモバイルデータ通信を諦めるしかない｡
     </p>
+    <br>
     <h2>RedMagic</h2>
     <p>RedMagicのシャッター音を消す方法はこれまで紹介してきた方法の中で唯一デメリットがない｡
     </p>
@@ -368,6 +373,7 @@
       
       特殊な設定は不要で､かつ条件もない｡
     </p>
+    <br>
     <h2>シャッター音は何のために存在するのか</h2>
     <p>日本にはシャッター音は鳴らさなければならないという法律はない｡
       それにも関わらず､なぜ多くのメーカーが日本で販売する端末でシャッター音を強制するのか｡

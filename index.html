@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Untechnical Blog</title>
+  <title>Untechnical</title>
   <link rel="icon" href="profile.ico" type="image/x-icon">
   <style>
     body {
@@ -14,31 +14,35 @@
       background-color: #fff;
       color: #000;
     }
+
     header {
-      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      background-color: #000;
-      color: white;
+      background-color: white;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 10px 20px;
       z-index: 1000;
+      border: 1px solid #ddd;
     }
-    header .logo {
-      font-size: 24px;
-      font-weight: bold;
+
+    header a {
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: 1.5em;
+      color: black;
+      text-decoration: none;
     }
+
     main {
       margin-top: 80px;
-      text-align: center;
     }
+
     .hero {
       width: 100%;
       height: 80vh;
-      background-image: url('hero.jpg');
       background-size: cover;
       background-position: center;
       display: flex;
@@ -47,10 +51,40 @@
       color: white;
       text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
     }
+
     .hero h1 {
       font-size: 48px;
       margin: 0;
+      text-align: center;
     }
+
+    .search-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px;
+    }
+
+    .search-container input {
+      width: 330px;
+      padding: 10px 15px;
+      font-size: 18px;
+      border: 1px solid #ddd;
+      border-radius: 25px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      outline: none;
+      margin-bottom: 40px;
+    }
+
+    .search-container select {
+      width: 360px;
+      padding: 10px 15px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 25px;
+      outline: none;
+    }
+
     .posts {
       margin: 40px auto;
       max-width: 1200px;
@@ -58,33 +92,62 @@
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 20px;
       padding: 0 20px;
+      justify-items: center;
     }
+
     .post {
       border: 1px solid #ddd;
       border-radius: 8px;
       overflow: hidden;
       transition: transform 0.3s ease;
+      background-color: white;
+      width: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    .post:hover {
-      transform: translateY(-10px);
-    }
+
     .post img {
-      width: 100%;
-      height: 200px;
+      width: 360px;
+      height: 270px;
       object-fit: cover;
     }
-    .post h3 {
-      margin: 15px;
-      font-size: 18px;
+
+    .post a {
+      text-decoration: none;
     }
-    .post p {
-      margin: 0 15px 15px;
-      color: #666;
+
+    .post h3 {
+      margin: 5px 15px;
+      font-size: 18px;
+      color: black;
+      flex-grow: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .post .context {
+      margin: 10px 15px;
       font-size: 14px;
+      color: #555;
+    }
+
+    .background-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      opacity: 0.5;
     }
   </style>
 </head>
 <body>
+<video class="background-video" autoplay muted loop>
+  <source src="image.mov" type="video/mp4">
+</video>
 <header>
   <div class="logo">
     <a href="index.html">Untechnical</a>
@@ -92,16 +155,97 @@
 </header>
 <main>
   <div class="hero">
-    <h1>Discover the Untechnical World</h1>
+    <h1>高度情報社会の最先端を駆け抜ける</h1>
   </div>
-  <section class="posts">
-    <div class="post">
-      <a href ="1.html">
-      <img src="image.jpg" alt="Post 1">
-      <h3>iPhone･Androidスマホのシャッター音を消す方法</h3>
+  <div class="search-container">
+    <input type="text" id="searchBar" placeholder="検索">
+    <select id="categoryFilter">
+      <option value="">全てのカテゴリ</option>
+      <option value="Android">Android</option>
+      <option value="iOS">iOS</option>
+    </select>
+  </div>
+  <section class="posts" id="postSection">
+    <div class="post" data-category="Android, iOS" data-article="1.html">
+      <a href="1.html">
+        <img src="image1.jpg" alt="Post 1">
+        <h3>iPhone･Androidスマホのシャッター音を消す方法</h3>
       </a>
     </div>
   </section>
+  <div id="searchResults"></div>
 </main>
+<script>
+  const searchBar = document.getElementById('searchBar');
+const categoryFilter = document.getElementById('categoryFilter');
+const posts = document.querySelectorAll('.post');
+
+function stripHtmlTags(html) {
+  const cleanHtml = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+                        .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  const doc = new DOMParser().parseFromString(cleanHtml, 'text/html');
+  return doc.body.textContent || "";
+}
+
+async function fetchArticleContent(post) {
+  const articlePath = post.getAttribute('data-article');
+  const response = await fetch(articlePath);
+  const articleHtml = await response.text();
+  return stripHtmlTags(articleHtml);
+}
+
+async function filterPosts() {
+  const searchQuery = searchBar.value.toLowerCase().trim();
+  const selectedCategory = categoryFilter.value.toLowerCase();
+
+  if (searchQuery === "") {
+    posts.forEach(post => {
+      post.style.display = 'block'; 
+      post.querySelector('.context')?.remove(); 
+    });
+    return;
+  }
+
+  let resultsFound = false;
+
+  for (const post of posts) {
+    const categories = post.getAttribute('data-category').toLowerCase().split(', ');
+    const matchesCategory = selectedCategory ? categories.includes(selectedCategory) : true;
+
+    const articleContent = await fetchArticleContent(post);
+    const matchesSearch = articleContent.toLowerCase().includes(searchQuery);
+
+    if (matchesSearch && matchesCategory) {
+      resultsFound = true;
+      const snippetStart = articleContent.toLowerCase().indexOf(searchQuery);
+      const snippet = articleContent.substring(
+        Math.max(0, snippetStart - 100),
+        snippetStart + 100
+      );
+      const highlightedSnippet = snippet.replace(
+        new RegExp(searchQuery, 'gi'),
+        (match) => `<strong>${match}</strong>`
+      );
+
+      post.style.display = 'block';
+      post.querySelector('.context')?.remove();
+      const contextDiv = document.createElement('div');
+      contextDiv.classList.add('context');
+      contextDiv.innerHTML = `...${highlightedSnippet}...`;
+      post.appendChild(contextDiv);
+    } else {
+      post.style.display = 'none';
+    }
+  }
+}
+
+searchBar.addEventListener('keypress', (event) => {
+  if (event.key === 'Enter') {
+    filterPosts();
+  }
+});
+
+categoryFilter.addEventListener('change', filterPosts);
+</script>
 </body>
 </html>
