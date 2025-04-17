@@ -191,6 +191,20 @@
   line-height: 1.4;
 }
 
+pre code {
+  background-color: #1e1e1e;
+  color: #f8f8f2;
+  font-family: Consolas, Monaco, "Courier New", monospace;
+  font-size: 0.95em;
+  padding: 12px;
+  border-radius: 8px;
+  display: block;
+  overflow-x: auto;
+  white-space: pre-wrap; /* 長いコマンドが折り返されるように */
+  line-height: 1.5;
+}
+
+
     @media (min-width: 769px) {
       main {
         margin-left: 20vw;
@@ -317,19 +331,25 @@
         <a href="https://sp7pc.com/google/android/34263" target="_blank" class="link-preview">Mac</a>
       </div>
     </p>
-    <h3>2.Galaxyでadbデバッグを有効にする</h3>
-    <h3>3.PCとGalaxyをUSBケーブルで接続する</h3>
-    <h3>4.PCのターミナルでadbコマンドを実行する</h3>
-    <img src="galaxy4.png" class="image">
+    <h3>2.Galaxyで設定アプリを開く</h3>
+    <h3>3. "端末情報" を開く</h3>
+    <h3>4. "ソフトウェア情報" を開く</h3>
+    <h3>5. "ビルド番号" を7回タップし､パスワードを入力する</h3>
+    <h3>6. 設定アプリのはじめの画面に戻る</h3>
+    <h3>7. "開発者向けオプション"を開く</h3>
+    <h3>8. "adbデバッグ"をオンにする</h3>
+    <h3>9.PCとGalaxyをUSBケーブルで接続する</h3>
+    <h3>10.PCのターミナルでadbコマンドを実行する</h3>
+    <img src="galaxy10.png" class="image">
     <p>Windowsはコマンドプロンプト､Macはターミナルで
         
-        adb shell settings put system csc_pref_camera_forced_shuttersound_key 0
+      <pre><code>adb shell settings put system csc_pref_camera_forced_shuttersound_key 0</code></pre>
 
         を実行する｡
         これにより､シャッター音の動作が海外仕様となる｡
     </p>
     <h3>4.システム音の音量を0にする</h3>
-    <img src="galaxy5.jpg" class="image">
+    <img src="" class="image">
     <p>シャッター音の音量はシステム音の音量と同期される｡
       充電時や画面ロックの解除､タッチ操作の際に鳴るシステム音の音量を0にすることでシャッター音が消える｡
       システム音の音量はマナーモードや "通知をミュート" をONにすることでも0になる｡
@@ -355,40 +375,40 @@
     <p>XiaomiはSoCにDimensityを搭載したキャリア版とSIMフリー版で､方法は異なるがそれぞれシャッター音が消せる｡
     </p>
     <h2>Dimensity搭載のキャリア版の方法</h2>
-    <h3>1.開発者向けオプションを有効化する</h3>
+    <h3>1.設定アプリを開く</h3>
     <img src="xiaomi1.jpg" class="image">
-    <img src="xiaomi1_2.jpg" class="image">
-    <img src="xiaomi1_3.jpg" class="image">
-    <p>設定アプリを開き､ "デバイス情報" の "OSバージョン" を7回タップし､パスワードを入力する｡
-    </p>
-    <h3>2.電話アプリでコードを入力する</h3>
+    <h3>2. "デバイス情報" を開く</h3>
     <img src="xiaomi2.jpg" class="image">
+    <h3>3. "OSバージョン" を7回タップし､パスワードを入力する
+    <img src="xiaomi3.jpg" class="image">
+    <h3>4.電話アプリでコードを入力する</h3>
+    <img src="xiaomi4.jpg" class="image">
     <p>電話アプリを開き､
 
-        *#*#3646633#*#*
+        <pre><code>*#*#3646633#*#*</code></pre>
 
         を入力する｡
     </p>
-    <h3>3. "Hardware Testing" を表示する｡</h3>
-    <img src="xiaomi3.jpg" class="image">
-    <h3>4. "Audio" をタップする｡</h3>
-    <img src="xiaomi4.jpg" class="image">
-    <h3>5. "Volume" をタップする｡</h3>
+    <h3>5. "Hardware Testing" を表示する｡</h3>
     <img src="xiaomi5.jpg" class="image">
-    <h3>6. "Audio Playback" をタップする｡</h3>
+    <h3>6. "Audio" をタップする｡</h3>
     <img src="xiaomi6.jpg" class="image">
-    <h3>7. "System" を "Enforced_Audible" に変更する｡</h3>
+    <h3>7. "Volume" をタップする｡</h3>
     <img src="xiaomi7.jpg" class="image">
-    <h3>8 "BT A2DP" を "Speaker" に変更する｡</h3>
+    <h3>8. "Audio Playback" をタップする｡</h3>
     <img src="xiaomi8.jpg" class="image">
-    <h3>9. "Index15" の値を "255" から "0" にする｡</h3>
+    <h3>9. "System" を "Enforced_Audible" に変更する｡</h3>
     <img src="xiaomi9.jpg" class="image">
+    <h3>10 "BT A2DP" を "Speaker" に変更する｡</h3>
+    <img src="xiaomi10.jpg" class="image">
+    <h3>11. "Index15" の値を "255" から "0" にする｡</h3>
+    <img src="xiaomi11.jpg" class="image">
     <p>この値がシャッター音の音量になる｡
     </p>
-    <h3>10. "Set" をタップする｡</h3>
-    <img src="xiaomi10.jpg" class="image">
-    <h3>11. "Set succeeded" が表示されたら "OK" をタップする｡</h3>
-    <img src="xiaomi11.jpg" class="image">
+    <h3>12. "Set" をタップする｡</h3>
+    <img src="xiaomi12.jpg" class="image">
+    <h3>13. "Set succeeded" が表示されたら "OK" をタップする｡</h3>
+    <img src="xiaomi13.jpg" class="image">
     <h2>SIMフリー版の方法</h2>
     <h3>1.設定アプリを開く</h3>
     <img src="xiaomi1.jpg" class="image">
@@ -510,7 +530,7 @@
     <img src="motorola6.jpg" class="image">
     <h3>7. eSIMを追加する</h3>
     <img src="motorola7.jpg" class="image">
-    <p>端末に認識されたらeSIMは不要なため､バッテリー節約のために無効化することを推奨する｡
+    <p>端末に認識されたらバッテリー節約のためにeSIMを無効化することを推奨する｡
       ただし､無効化した状態で再起動するとシャッター音が再び鳴るようになる｡
     </p>
     <h3>8.カメラアプリを開く</h3>
@@ -522,14 +542,21 @@
     <p>海外のeSIM(Ubigi)が認識されているため､日本のSIMを利用していてもシャッター音の項目が現れる｡
     </p>
     <h2>デュアルSIM対応機種の方法</h2>
-    <h3>1.海外のSIMカードを購入する</h3>
-    <p>ECで海外のプリペイドSIMを購入するのが手っ取り早い｡</p>
-    <h3>2.海外のSIMカードを挿入する｡</h3>
-    <h3>3.カメラアプリを開く</h3>
+    <h3>1.海外のSIMカードを挿入する</h3>
+    <div class="reference">
+      <a href="https://www.amazon.co.jp/%E3%82%A2%E3%83%A1%E3%83%AA%E3%82%ABSIM-7%E6%97%A5%E9%96%93%E3%80%90%E4%BD%BF%E3%81%84%E6%94%BE%E9%A1%8C%E3%80%914G-LTE-%E9%AB%98%E9%80%9F%E3%83%87%E3%83%BC%E3%82%BF%E9%80%9A%E4%BF%A1-SIM%E3%82%AB%E3%83%BC%E3%83%89-T-Mobile/dp/B07RFQNF7J/ref=sr_1_8?dib=eyJ2IjoiMSJ9.Wf4is3lcFSZnPM0Sbx424b-ssatLKPKMk0xkJdjQn_Ua3FQk1et73nwZLqUDY5APWXw-bJ92TqoJkIx9qWzutF2r14n51jjz-m2LNLPv5izpBexcEGa7IrcugdmNa2lqrL5DYvwwdFA40fXQTUzTKYUhNLDf9Zu5LMCFd61eJEr4yWTn4MC_iZSWTdq3m0-uQjCuiDZvBjluaEAvRO70nkcpNuYIbboxEmg6iCJfN5UL8vRY_cUh9R4rmPKor4EW4XU9VoSu3JHVuL1joG-cEn8TOeJVXZDILyIicPxMyeU.lWsEoVY-bBhsnUhAIi7cPxFcwE12NixujPfG9v8JB8w&dib_tag=se&keywords=%E4%BA%BA%E6%B0%97%E3%81%AE%E6%B5%B7%E5%A4%96%2BSIM%E3%83%A9%E3%83%B3%E3%82%AD%E3%83%B3%E3%82%B0&qid=1744876192&sr=8-8&th=1" target="blank">
+        <img src="motorola1_2.jpg" class="image">
+      </a>Amazonより引用
+    </div>
+    <p>ECで海外のプリペイドSIMを購入するのが手っ取り早い｡
+      また､端末に認識されたらバッテリー節約のためにSIMを無効化することを推奨する｡
+      ただし､無効化した状態で再起動するとシャッター音が再び鳴るようになる｡
+    </p>
+    <h3>2.カメラアプリを開く</h3>
     <img src="motorola8.png" class="image">
-    <h3>4.設定画面を開く</h3>
+    <h3>3.設定画面を開く</h3>
     <img src="motorola9.png" class="image">
-    <h3>5. "シャッター音" をオフにする</h3>
+    <h3>4. "シャッター音" をオフにする</h3>
     <img src="motorola10.png" class="image">
     <p>海外のSIMカードが認識されているため､日本のSIMを利用していてもシャッター音の項目が現れる｡
     </p>
