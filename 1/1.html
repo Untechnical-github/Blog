@@ -10,19 +10,21 @@
       font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
-      color: black;
+      background-color: #fff;
+      color: #222;
       box-sizing: border-box;
       max-width: 100%;
     }
   
     header {
-      background-color: #ffffff;
+      background-color: #fff;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 20px 40px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
       z-index: 1000;
     }
   
@@ -30,12 +32,12 @@
       font-family: 'Roboto', sans-serif;
       font-weight: 700;
       font-size: 1.6em;
-      color: black;
+      color: #111;
       text-decoration: none;
       letter-spacing: 0.5px;
       transition: color 0.3s ease;
     }
-
+  
     header a:hover {
       color: #0073e6;
     }
@@ -54,165 +56,164 @@
       max-width: 100%;
       max-height: 75vh;
       height: auto;
-     object-fit: contain;
+      object-fit: contain;
     }
   
     h1 {
       text-align: center;
       font-size: 2.5em;
       font-weight: 700;
-      color: black;
+      color: #111;
       margin: 40px 0;
     }
-
+  
     nav {
       text-align: center;
       margin-top: 20px;
     }
-
+  
     nav a {
       text-decoration: none;
-      color: black;
+      color: #333;
       font-size: 1.1em;
       margin: 0 20px;
       letter-spacing: 0.5px;
       transition: color 0.3s ease;
     }
-
+  
     nav a:hover {
       color: #0073e6;
     }
-
+  
     nav ul {
       display: inline-block;
       padding: 0;
       margin: 0;
       list-style-type: none;
     }
-
+  
     nav ul li {
       display: inline-block;
       font-size: 1.2em;
       margin: 0 15px;
       padding: 10px 0;
     }
-
+  
     section h1 {
       text-align: center;
       font-size: 2.2em;
       margin-top: 60px;
       margin-bottom: 20px;
-      color: black;
+      color: #111;
     }
-
+  
     section h2 {
       text-align: center;
       font-size: 1.8em;
       margin-top: 40px;
       margin-bottom: 15px;
-      color: black;
+      color: #111;
     }
   
     section h3 {
       text-align: center;
       font-size: 1.5em;
       margin-top: 40px;
-      color: black;
+      color: #111;
     }
   
     section p {
       font-size: 1em;
       line-height: 1.7;
       white-space: pre-line;
-      color: black;
+      color: #333;
       text-align: justify;
     }
-
+  
     section .reference {
       text-align: center;
       font-size: 0.9em;
       color: #aaa;
       margin-bottom: 50px;
     }
-
+  
+    section .reference a {
+      color: inherit;
+      text-decoration: none;
+    }
+  
     section .image {
       display: block;
-      margin-left: auto;
-      margin-right: auto;
-      margin-top: 30px;
-      margin-bottom: 30px;
+      margin: 30px auto;
       width: auto;
       height: 400px;
     }
-
+  
     html {
       scroll-behavior: smooth;
     }
-
-  /* aタグの青文字＋下線を削除 */
-/* リンク全体をカードに見せる */
-.link-preview {
-  display: block;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #ffffff;
-  padding: 15px;
-  margin-bottom: 20px;
-  text-decoration: none;
-  color: inherit;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.link-preview:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  border-color: #0073e6;
-}
-
-/* 中に表示される要素たち */
-.link-preview img {
-  max-width: 100%;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  height: auto;
-  object-fit: cover;
-}
-
-.preview-title {
-  font-weight: bold;
-  font-size: 1.2em;
-  margin-bottom: 5px;
-  color: #222;
-}
-
-.preview-description {
-  font-size: 0.95em;
-  color: #555;
-  line-height: 1.4;
-}
-
-pre code {
-  background-color: #1e1e1e;
-  color: #f8f8f2;
-  font-family: Consolas, Monaco, "Courier New", monospace;
-  font-size: 0.95em;
-  padding: 12px;
-  border-radius: 8px;
-  display: block;
-  overflow-x: auto;
-  white-space: pre-wrap; /* 長いコマンドが折り返されるように */
-  line-height: 1.5;
-}
-
-
+  
+    .link-preview {
+      display: block;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background-color: #fafafa;
+      padding: 15px;
+      margin-bottom: 20px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+  
+    .link-preview:hover {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-color: #0073e6;
+    }
+  
+    .link-preview img {
+      max-width: 100%;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      height: auto;
+      object-fit: cover;
+    }
+  
+    .preview-title {
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-bottom: 5px;
+      color: #222;
+    }
+  
+    .preview-description {
+      font-size: 0.95em;
+      color: #555;
+      line-height: 1.4;
+    }
+  
+    pre code {
+      background-color: #f5f5f5;
+      color: #222;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.95em;
+      padding: 12px;
+      border-radius: 8px;
+      display: block;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      border: 1px solid #ddd;
+    }
+  
     @media (min-width: 769px) {
       main {
         margin-left: 20vw;
         margin-right: 20vw;
       }
     }
-
-</style>
+  </style>
+   
     
 </head>
 <body>
@@ -252,8 +253,9 @@ pre code {
     <h1>iPhone</h1>
     <div class="reference">
       <a href="https://www.apple.com/jp/shop/buy-iphone/iphone-16-pro" target="blank">
-        <img src="iphone.jpg" class="image">
-      </a>Appleより引用
+        <img src="iphone.png" class="image">
+        Appleより引用
+      </a>
     </div>
     <p>実はiPhoneでもシャッター音は無音化できる｡</p>
     <h2>方法</h2>
@@ -279,7 +281,8 @@ pre code {
     <div class="reference">
       <a href="https://store.google.com/jp/product/pixel_9_pro?hl=ja" target="blank">
         <img src="pixel.png" class="image">
-      </a>Googleより引用
+        Googleより引用
+      </a>
     </div>
     <p>Pixelの純正カメラアプリでのシャッター音無音化はroot化しない限り不可能である｡
         そこで､純正カメラアプリのMod "GCam" を使うという方法がある｡
@@ -316,7 +319,8 @@ pre code {
     <div class="reference">
       <a href="https://www.samsung.com/jp/smartphones/galaxy-s25-ultra/buy/" target="blank">
         <img src="galaxy.png" class="image">
-      </a>Samsungより引用
+        Samsungより引用
+      </a>
     </div>
     <p>Galaxyでは "SetEdit" というアプリを使ってシステム設定を変更するという方法があったが､Android 14で塞がれてしまった｡
         そこで､SetEditで適用していた変更をadbコマンドを使って実行する｡
@@ -370,7 +374,8 @@ pre code {
     <div class="reference">
       <a href="https://www.mi.com/jp/product/xiaomi-14-ultra/?skupanel=1" target="blank">
         <img src="xiaomi.png" class="image">
-      </a>Xiaomiより引用
+        Xiaomiより引用
+      </a>
     </div>
     <p>XiaomiはSoCにDimensityを搭載したキャリア版とSIMフリー版で､方法は異なるがそれぞれシャッター音が消せる｡
     </p>
@@ -435,7 +440,8 @@ pre code {
     <div class="reference">
       <a href="https://www.sony.jp/xperia/xperia/xperia1m6/" target="blank">
         <img src="xperia.png" class="image">
-      </a>SONYより引用
+        SONYより引用
+      </a>
     </div>
     <p>XperiaのSony Store直販モデルはシャッター音が消せる｡
       その方法はカメラアプリの設定を変更する方法とマナーモードまたはサイレントモードにする方法の2通りある｡
@@ -445,7 +451,8 @@ pre code {
     <div class="reference">
       <a href="https://pur.store.sony.jp/xperia/products/XQ-EC44/XQ-EC44_purchase/" target="blank">
         <img src="xperia1.jpg" class="image">
-      </a>SONYより引用
+        SONYより引用
+      </a>
     </div>
     <p>楽天モバイルやIIJmio､mineoなども含む通信事業者が販売するモデルはシャッター音が消せない｡
     </p>
@@ -475,8 +482,9 @@ pre code {
     <h1>AQUOS</h1>
     <div class="reference">
       <a href="https://cocorostore.jp.sharp/smartdevice/sh-m30/sh-m30-b.html" target="blank">
-        <img src="aquos.jpg" class="image">
-      </a>SHARPより引用
+        <img src="aquos.png" class="image">
+        SHARPより引用
+      </a>
     </div>
     <p>AQUOSはSIMフリー版でシャッター音が消せる｡
     </p>
@@ -485,7 +493,8 @@ pre code {
     <div class="reference">
       <a href="https://jp.sharp/k-tai/mvno/" target="blank">
         <img src="aquos1.jpg" class="image">
-      </a>SHARPより引用
+        SHARPより引用
+      </a>
     </div>
     <p>Xperiaと異なり､SHARP直販モデルだけでなく楽天モバイルやIIJmio､mineoなどの通信事業者が販売するモデルでもシャッター音が消せる｡
       もちろん､UQモバイルやY!mobileを含むキャリア版ではシャッター音が消せない｡
@@ -507,7 +516,8 @@ pre code {
     <div class="reference">
       <a href="https://store.motorola.co.jp/item/RAZR50ULTRA.html" target="blank">
         <img src="motorola.png" class="image">
-      </a>motorolaより引用
+        motorolaより引用
+      </a>
     </div>
     <p>motorolaはシャッター音が消せるが､日本のSIMを利用している状態ではシャッター音が鳴る｡
       ここではeSIMまたはデュアルSIMに対応している必要があるが､日本のSIMを利用していてもシャッター音が消えるようにする方法を述べる｡
@@ -546,7 +556,8 @@ pre code {
     <div class="reference">
       <a href="https://www.amazon.co.jp/%E3%82%A2%E3%83%A1%E3%83%AA%E3%82%ABSIM-7%E6%97%A5%E9%96%93%E3%80%90%E4%BD%BF%E3%81%84%E6%94%BE%E9%A1%8C%E3%80%914G-LTE-%E9%AB%98%E9%80%9F%E3%83%87%E3%83%BC%E3%82%BF%E9%80%9A%E4%BF%A1-SIM%E3%82%AB%E3%83%BC%E3%83%89-T-Mobile/dp/B07RFQNF7J/ref=sr_1_8?dib=eyJ2IjoiMSJ9.Wf4is3lcFSZnPM0Sbx424b-ssatLKPKMk0xkJdjQn_Ua3FQk1et73nwZLqUDY5APWXw-bJ92TqoJkIx9qWzutF2r14n51jjz-m2LNLPv5izpBexcEGa7IrcugdmNa2lqrL5DYvwwdFA40fXQTUzTKYUhNLDf9Zu5LMCFd61eJEr4yWTn4MC_iZSWTdq3m0-uQjCuiDZvBjluaEAvRO70nkcpNuYIbboxEmg6iCJfN5UL8vRY_cUh9R4rmPKor4EW4XU9VoSu3JHVuL1joG-cEn8TOeJVXZDILyIicPxMyeU.lWsEoVY-bBhsnUhAIi7cPxFcwE12NixujPfG9v8JB8w&dib_tag=se&keywords=%E4%BA%BA%E6%B0%97%E3%81%AE%E6%B5%B7%E5%A4%96%2BSIM%E3%83%A9%E3%83%B3%E3%82%AD%E3%83%B3%E3%82%B0&qid=1744876192&sr=8-8&th=1" target="blank">
         <img src="motorola1_2.jpg" class="image">
-      </a>Amazonより引用
+        Amazonより引用
+      </a>
     </div>
     <p>ECで海外のプリペイドSIMを購入するのが手っ取り早い｡
       また､端末に認識されたらバッテリー節約のためにSIMを無効化することを推奨する｡
@@ -576,7 +587,8 @@ pre code {
     <div class="reference">
       <a href="https://jp.nothing.tech/products/phone-2" target="blank">
         <img src="nothing.webp" class="image">
-      </a>Nothingより引用
+        Nothingより引用
+      </a>
     </div>
     <p>Nothing Phoneもmotorolaと同じく日本のSIMを利用していない状態でシャッター音が消せるが､日本のSIMを利用した状態では海外のSIMを認識させてもシャッター音が消せない｡
     </p>
@@ -596,7 +608,8 @@ pre code {
     <div class="reference">
       <a href="https://jp.redmagic.gg/pages/redmagic-10-pro" target="blank">
         <img src="redmagic.webp" class="image">
-      </a>RedMagicより引用
+        RedMagicより引用
+      </a>
     </div>
     <p>REDMAGICのシャッター音を消す方法はこれまで紹介してきた方法の中で唯一デメリットがない｡
     </p>
