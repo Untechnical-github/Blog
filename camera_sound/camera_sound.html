@@ -1,711 +1,705 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="機種ごとにシャッター音を完全に消す方法を解説">
-  <meta name="google-site-verification" content="0Lm3uRwedrKk66bbYr_2TmZNx986VFE1yXWuB2h1iAs" />
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="機種ごとにシャッター音を完全に消す方法を解説">
+    <meta name="google-site-verification" content="0Lm3uRwedrKk66bbYr_2TmZNx986VFE1yXWuB2h1iAs" />
 
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Untechnical">
-  <meta property="og:title" content="スマホのシャッター音を完全に消す方法">
-  <meta property="og:description" content="機種ごとにシャッター音を完全に消す方法を解説">
-  <meta property="og:url" content="https://untechnical.pages.dev/1/1.html">
-  <meta property="og:image" content="https://untechnical.pages.dev/1/1.jpg">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Untechnical">
+    <meta property="og:title" content="スマホのシャッター音を完全に消す方法">
+    <meta property="og:description" content="機種ごとにシャッター音を完全に消す方法を解説">
+    <meta property="og:url" content="https://untechnical.pages.dev/camera_sound/camera_sound.html>
+    <meta property="og:image" content="https://untechnical.pages.dev/camera_sound/camera_sound.jpg">
 
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="スマホのシャッター音を完全に消す方法">
-  <meta name="twitter:description" content="機種ごとにシャッター音を完全に消す方法を解説">
-  <meta name="twitter:image" content="https://untechnical.pages.dev/1/1.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="スマホのシャッター音を完全に消す方法">
+    <meta name="twitter:description" content="機種ごとにシャッター音を完全に消す方法を解説">
+    <meta name="twitter:image" content="https://untechnical.pages.dev/camera_sound/camera_sound.jpg>
 
-  <title>スマホのシャッター音を完全に消す方法</title>
-  <link rel="icon" href="profile.ico" type="image/x-icon">
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-      color: black;
-      box-sizing: border-box;
-      max-width: 100%;
-    }
-  
-    header {
-      background-color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 40px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      z-index: 1000;
-    }
-  
-    header a {
-      font-family: 'Roboto', sans-serif;
-      font-weight: 700;
-      font-size: 1.6em;
-      color: black;
-      text-decoration: none;
-      letter-spacing: 0.5px;
-      transition: color 0.3s ease;
-    }
-
-    header a:hover {
-      color: #0073e6;
-    }
-  
-    main {
-      margin-left: 10px;
-      margin-right: 10px;
-      padding: 20px;
-      max-width: 100%;
-    }
-  
-    img {
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-      max-width: 100%;
-      max-height: 75vh;
-      height: auto;
-     object-fit: contain;
-    }
-  
-    h1 {
-      text-align: center;
-      font-size: 2.5em;
-      font-weight: 700;
-      color: black;
-      margin: 40px 0;
-    }
-
-    nav {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: black;
-      font-size: 1.1em;
-      margin: 0 20px;
-      letter-spacing: 0.5px;
-      transition: color 0.3s ease;
-    }
-
-    nav a:hover {
-      color: #0073e6;
-    }
-
-    nav ul {
-      display: inline-block;
-      padding: 0;
-      margin: 0;
-      list-style-type: none;
-    }
-
-    nav ul li {
-      display: inline-block;
-      font-size: 1.2em;
-      margin: 0 15px;
-      padding: 10px 0;
-    }
-
-    section h2 {
-      text-align: center;
-      font-size: 2.2em;
-      margin-top: 60px;
-      margin-bottom: 20px;
-      color: black;
-    }
-
-    section h3 {
-      text-align: center;
-      font-size: 1.8em;
-      margin-top: 40px;
-      margin-bottom: 15px;
-      color: black;
-    }
-  
-    section h4 {
-      text-align: center;
-      font-size: 1.5em;
-      margin-top: 40px;
-      color: black;
-    }
-  
-    section p {
-      font-size: 1em;
-      line-height: 1.7;
-      white-space: pre-line;
-      color: black;
-      text-align: justify;
-    }
-
-    .reference {
-      text-align: center;
-      font-size: 0.9em;
-      color: #aaa;
-      margin-bottom: 50px;
-    }
-
-    .reference a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    section .image {
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-      margin-top: 30px;
-      margin-bottom: 30px;
-      width: auto;
-      height: 400px;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-  /* aタグの青文字＋下線を削除 */
-/* リンク全体をカードに見せる */
-.link-preview {
-  display: block;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #ffffff;
-  padding: 15px;
-  margin-bottom: 20px;
-  text-decoration: none;
-  color: inherit;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.link-preview:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  border-color: #0073e6;
-}
-
-/* 中に表示される要素たち */
-.link-preview img {
-  max-width: 100%;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  height: auto;
-  object-fit: cover;
-}
-
-.preview-title {
-  font-weight: bold;
-  font-size: 1.2em;
-  margin-bottom: 5px;
-  color: #222;
-}
-
-.preview-description {
-  font-size: 0.95em;
-  color: #555;
-  line-height: 1.4;
-}
-
-pre code {
-  background-color: #1e1e1e;
-  color: #f8f8f2;
-  font-family: Consolas, Monaco, "Courier New", monospace;
-  font-size: 0.95em;
-  padding: 12px;
-  border-radius: 8px;
-  display: block;
-  overflow-x: auto;
-  white-space: pre-wrap; /* 長いコマンドが折り返されるように */
-  line-height: 1.5;
-}
-
-
-    @media (min-width: 769px) {
-      main {
-        margin-left: 20vw;
-        margin-right: 20vw;
+    <title>スマホのシャッター音を完全に消す方法</title>
+    <link rel="icon" href="../profile.ico" type="image/x-icon">
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: black;
+        box-sizing: border-box;
+        max-width: 100%;
       }
-    }
-
-</style>
     
-</head>
-<body>
-<header>
-  <div class="logo">
-    <a href="../index.html">Untechnical</a>
-  </div>
-</header>
-<main>
-  <h1>スマホのシャッター音を完全に消す方法</h1>
-  <img src="camera_sound.jpg" alt="イメージ">
-  <section>
-    <h2>国内発売のスマホはシャッター音強制</h2>
-    <p>日本と韓国で発売されたスマホは大半の機種でシャッター音が強制的に鳴る｡
-        これはAndroidスマホだけでなくiPhoneでも同様で､マナーモードで無音になったり設定から無音化できる海外発売のスマホと違い､音量設定に関係なく強制的にシャッター音が鳴ってしまう｡
-        そのために海外版を買おうとしても家電量販店や携帯キャリアでの販売はなく､正規販売店で購入することはできない｡
-        また､海外版はFeliCa非搭載や技適未取得など､日本向けに最適化されていないことでのデメリットも発生する｡
-        サードパーティ製のアプリを使うという手段もあるが､それらのアプリはその機種に最適化されたものではなく､品質が悪かったり一部機能が使えなかったりする｡
-        しかし､一部機種では設定を変更したり条件付きでシャッター音の無音化が可能である｡
-        ここからは対象機種とその方法について解説する｡
-    </p>
-    <h2>対象機種</h2>
-    <nav>
-      <ul>
-      <li><a href="#iphone">iPhone</a></li>
-      <li><a href="#pixel">Google Pixel</a></li>
-      <li><a href="#galaxy">Galaxy</a></li>
-      <li><a href="#xiaomi">Xiaomi</a></li>
-      <li><a href="#xperia">Xperia</a></li>
-      <li><a href="#aquos">AQUOS</a></li>
-      <li><a href="#nothing">Nothing Phone</a></li>
-      <li><a href="#motorola">motorola</a></li>
-      <li><a href="#redmagic">REDMAGIC</a></li>
-      </ul>
-    </nav>
-    <section id="iphone">
-    <h2>iPhone</h2>
-    <div class="reference">
-      <a href="https://www.apple.com/jp/shop/buy-iphone/iphone-16-pro" target="blank">
-        <img src="iphone.png" class="image" alt="iPhone">
-        Appleより引用
-      </a>
-    </div>
-    <p>実はiPhoneでもシャッター音は無音化できる｡</p>
-    <h3>方法</h3>
-    <h4>1.海外版を買う</h4>
-    <img src="iphone1.jpg" class="image" alt="海外版">
-    <p>海外版では先程述べたデメリットがあるのではと思う人もいるだろうが､iPhoneに関しては例外である｡
-        まず､まめこmobileやイオシスなどのショップで香港版のiPhoneが未使用かつ保証付きで数多く販売されているため､他のスマホと比べて海外版が比較的入手しやすい｡
-        保証の面でもAppleはiPhoneをアクティベートした日から1年間は世界中のApple StoreまたはApple正規サービスプロバイダで保証が受けられる｡
-        さらにiPhoneは全世界のモデルでFeliCaが搭載され､カナダ版､グアム版､メキシコ版､サウジアラビア版などには技適もつく｡
-    </p>
-    <h4>2.消音モードまたはメディアの音量を0にする</h4>
-    <img src="iphone2.jpg" class="image" alt="消音モード">
-    <p>消音モードまたはメディアの音量が0のときはシャッター音が消える｡
-    </p>
-    <h3>デメリット</h3>
-    <h4>･国内版と比べて割高になる</h4>
-    <p>海外版を利用するデメリットはないものの､国内版と比べて割高になる｡
-        また､携帯会社での2年レンタルや特価のようなものももちろんない｡
-    </p>
-    </section>
-    <section id="pixel">
-    <h2>Google Pixel</h2>
-    <div class="reference">
-      <a href="https://store.google.com/jp/product/pixel_9_pro?hl=ja" target="blank">
-        <img src="pixel.png" class="image" alt="Pixel">
-        Googleより引用
-      </a>
-    </div>
-    <p>Pixelの純正カメラアプリでのシャッター音無音化はroot化しない限り不可能である｡
-        そこで､純正カメラアプリのMod "GCam" を使うという方法がある｡
-        Pixelのカメラアプリは非常に優秀で､ハードウェアが弱くてもソフトウェアの力できれいな写真が撮れる｡
-        そのため海外の開発者たちがそのアプリを他のスマホでも使えるように移植したアプリがGCamとなる｡
-        ここではこのGCamを使用してシャッター音を消す｡
-    </p>
-    <h3>方法</h3>
-    <h4>1.<a href="https://www.celsoazevedo.com/files/android/google-camera/" target ="blank">GCam Hub</a>で任意のapkをダウンロードしてインストールする｡</h4>
-    <img src="pixel1.jpg" class="image" alt="GCam Hub">
-    <p>中には正常に動作しないものもあるので､1つ1つ試してみる｡
-    </p>
-    <h4>2.アプリを起動する</h4>
-    <img src="pixel2.jpg" class="image" alt="カメラアプリ">
-    <h4>3.設定画面を開く</h4>
-    <img src="pixel3.jpg" class="image" alt="カメラ設定">
-    <h4>4. "カメラの音" をオフにする</h4>
-    <img src="pixel4.jpg" class="image" alt="シャッター音設定">
-    <p>あとはもともとある純正のカメラアプリを無効化するなどしてGCamを起動しやすいようにするといいかもしれない｡
-    </p>
-    <h4>デメリット</h4>
-    <h4>･電源ボタン2回押しでカメラ起動できない</h4>
-    <p>GCamは純正カメラアプリベースだがあくまでModアプリのため､電源ボタン2回押しでカメラ起動には対応しない｡
-    </p>
-    <h4>･アプリを手動で更新する必要がある</h4>
-    <p>apkでインストールしているため自動でアプリが更新されず､再びapkをダウンロードして手動で更新する必要がある｡
-    </p>
-    <h4>･開発者の違いに注意する必要がある</h4>
-    <p>開発者が違うアプリをインストールしようとするとインストールできなかったり､仕様が変わったりする｡
-    </p>
-    </section>
-    <section id="galaxy">
-    <h2>Galaxy</h2>
-    <div class="reference">
-      <a href="https://www.samsung.com/jp/smartphones/galaxy-s25-ultra/buy/" target="blank">
-        <img src="galaxy.png" class="image" alt="Galaxy">
-        Samsungより引用
-      </a>
-    </div>
-    <p>Galaxyでは "SetEdit" というアプリを使ってシステム設定を変更するという方法があったが､Android 14で塞がれてしまった｡
-        そこで､SetEditで適用していた変更をadbコマンドを使って実行する｡
-        adbコマンドはPCで実行する方法とスマホで実行する方法の2通りある｡
-        ここではPCを用いた方法を解説する｡
-    </p>
-    <h3>方法</h3>
-    <h4>1.PCにadbを導入する</h4>
-    <p>以下は導入方法である｡
-      <div id="links">
-        <a href="https://sp7pc.com/google/android/17843" target="_blank" class="link-preview"></a>
-        <a href="https://sp7pc.com/google/android/34263" target="_blank" class="link-preview"></a>
-      </div>
-    </p>
-    <h4>2.Galaxyで設定アプリを開く</h4>
-    <img src="galaxy2.jpg" class="image" alt="設定アプリ">
-    <h4>3. "端末情報" を開く</h4>
-    <img src="galaxy3.jpg" class="image" alt="端末情報">
-    <h4>4. "ソフトウェア情報" を開く</h4>
-    <img src="galaxy4.jpg" class="image" alt="ソフトウェア情報">
-    <h4>5. "ビルド番号" を7回タップし､パスワードを入力する</h4>
-    <img src="galaxy5.jpg" class="image" alt="ビルド番号">
-    <h4>6. 設定アプリのはじめの画面に戻る</h4>
-    <img src="galaxy2.jpg" class="image" alt="設定アプリ">
-    <h4>7. "開発者向けオプション"を開く</h4>
-    <img src="galaxy7.jpg" class="image" alt="開発者向けオプション">
-    <h4>8. "adbデバッグ"をオンにする</h4>
-    <img src="galaxy8.jpg" class="image" alt="adbデバッグ">
-    <h4>9.PCとGalaxyをUSBケーブルで接続する</h4>
-    <img src="galaxy9.jpg" class="image" alt="USBケーブル">
-    <h4>10.PCのターミナルでadbコマンドを実行する</h4>
-    <img src="galaxy10.png" class="image" alt="adbコマンド">
-    <p>Windowsはコマンドプロンプト､Macはターミナルで
-        
-      <pre><code>adb shell settings put system csc_pref_camera_forced_shuttersound_key 0</code></pre>
+      header {
+        background-color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 40px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+    
+      header a {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 700;
+        font-size: 1.6em;
+        color: black;
+        text-decoration: none;
+        letter-spacing: 0.5px;
+        transition: color 0.3s ease;
+      }
 
-        を実行する｡
-        これにより､シャッター音の動作が海外仕様となる｡
-    </p>
-    <h4>11.システム音の音量を0にする</h4>
-    <img src="galaxy11.jpg" class="image" alt="システム音設定">
-    <p>シャッター音の音量はシステム音の音量と同期される｡
-      充電時や画面ロックの解除､タッチ操作の際に鳴るシステム音の音量を0にすることでシャッター音が消える｡
-      システム音の音量はマナーモードや "通知をミュート" をONにすることでも0になる｡
-    </p>
-    <h3>デメリット</h3>
-    <h4>･アップデートごとにコマンドを実行する必要がある</h4>
-    <p>アップデート後は適用した変更が元に戻されるため､アップデート毎にコマンドを実行する必要がある｡
-    </p>
-    <h4>･システム音の音量を0にする必要がある</h4>
-    <p>あまりいないと思うが､普段からシステム音を鳴らしている人はカメラ起動時のみシステム音の音量を0にするオートメーションを作成するなど､工夫する必要がある｡
-    </p>
-    <h4>･今後アップデートによりこの方法が使えなくなる可能性がある</h4>
-    <p>これはバグに近い挙動のため､今後アップデートでこの方法が塞がれる可能性がある｡
-    </p> 
-    </section>
-    <section id="xiaomi">
-    <h2>Xiaomi</h2>
-    <div class="reference">
-      <a href="https://www.mi.com/jp/product/xiaomi-14-ultra/?skupanel=1" target="blank">
-        <img src="xiaomi.png" class="image" alt="Xiaomi">
-        Xiaomiより引用
-      </a>
-    </div>
-    <p>XiaomiはSoCにDimensityを搭載したキャリア版とSIMフリー版で､方法は異なるがそれぞれシャッター音が消せる｡
-    </p>
-    <h3>Dimensity搭載のキャリア版の方法</h3>
-    <h4>1.設定アプリを開く</h4>
-    <img src="xiaomi1.jpg" class="image" alt="設定アプリ">
-    <h4>2. "デバイス情報" を開く</h4>
-    <img src="xiaomi2.jpg" class="image" alt="デバイス情報">
-    <h4>3. "OSバージョン" を7回タップし､パスワードを入力する</h4>
-    <img src="xiaomi3.jpg" class="image" alt="OSバージョン"> 
-    <h4>4.電話アプリでコードを入力する</h4>
-    <img src="xiaomi4.jpg" class="image" alt="電話アプリ">
-    <p>電話アプリを開き､
+      header a:hover {
+        color: #0073e6;
+      }
+    
+      main {
+        margin-left: 10px;
+        margin-right: 10px;
+        padding: 20px;
+        max-width: 100%;
+      }
+    
+      img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 100%;
+        max-height: 75vh;
+        height: auto;
+      object-fit: contain;
+      }
+    
+      h1 {
+        text-align: center;
+        font-size: 2.5em;
+        font-weight: 700;
+        color: black;
+        margin: 40px 0;
+      }
 
-        <pre><code>*#*#3646633#*#*</code></pre>
+      nav {
+        text-align: center;
+        margin-top: 20px;
+      }
 
-        を入力する｡
-    </p>
-    <h4>5. "Hardware Testing" を表示する｡</h4>
-    <img src="xiaomi5.jpg" class="image" alt="Hardware Testing">
-    <h4>6. "Audio" をタップする｡</h4>
-    <img src="xiaomi6.jpg" class="image" alt="Audio">
-    <h4>7. "Volume" をタップする｡</h4>
-    <img src="xiaomi7.jpg" class="image" alt="Volume">
-    <h4>8. "Audio Playback" をタップする｡</h4>
-    <img src="xiaomi8.jpg" class="image" alt="Audio Playback">
-    <h4>9. "System" を "Enforced_Audible" に変更する｡</h4>
-    <img src="xiaomi9.jpg" class="image" alt="Enforced_Audible">
-    <h4>10 "BT A2DP" を "Speaker" に変更する｡</h4>
-    <img src="xiaomi10.jpg" class="image" alt="BT A2DP">
-    <h4>11. "Index15" の値を "255" から "0" にする｡</h4>
-    <img src="xiaomi11.jpg" class="image" alt="Index15">
-    <p>この値がシャッター音の音量になる｡
-    </p>
-    <h4>12. "Set" をタップする｡</h4>
-    <img src="xiaomi12.jpg" class="image" alt="Set">
-    <h4>13. "Set succeeded" が表示されたら "OK" をタップする｡</h4>
-    <img src="xiaomi13.jpg" class="image" alt="Set succeeded">
-    <h3>SIMフリー版の方法</h3>
-    <h4>1.設定アプリを開く</h4>
-    <img src="xiaomi1.jpg" class="image" alt="設定アプリ">
-    <h4>2. "追加設定" をタップする</h4>
-    <img src="xiaomi2_2.jpg" class="image" alt="追加設定">
-    <h4>3. "地域" を日本と韓国以外にする</h4>
-    <img src="xiaomi3_2.jpg" class="image" alt="地域">
-    <p>ここで地域を変更しても特に問題はない｡</p>
-    <h4>4.カメラアプリを起動する</h4>
-    <img src="xiaomi4_2.jpg" class="image" alt="カメラアプリ">
-    <h4>5.設定画面を開く</h4>
-    <img src="xiaomi5_2.jpg" class="image" alt="カメラ設定">
-    <h4>6. "シャッター音" をオフにする</h4>
-    <img src="xiaomi6_2.jpg" class="image" alt="シャッター音設定">
-    <P>地域が日本と韓国以外に設定されているとこの項目が現れる｡
-    </p>
-    <h3>デメリット</h3>
-    <h4>･キャリア版の方法はDimensity搭載端末のみ</h4>
-    <p>キャリア版の方法で電話アプリから開くEngineerModeはSoCにDimensityを搭載した端末用のモードのため､Redmi Note 13 Pro 5GのようなSoCにSnapdragonを搭載したキャリア専売のスマホはこの方法が使えず､シャッター音は消せない｡
-    </p>
-    </section>
-    <section id="xperia">
-    <h2>Xperia</h2>
-    <div class="reference">
-      <a href="https://www.sony.jp/xperia/xperia/xperia1m6/" target="blank">
-        <img src="xperia.png" class="image" alt="Xperia">
-        SONYより引用
-      </a>
-    </div>
-    <p>XperiaのSony Store直販モデルはシャッター音が消せる｡
-      その方法はカメラアプリの設定を変更する方法とマナーモードまたはサイレントモードにする方法の2通りある｡
-    </p>
-    <h3>カメラアプリの設定を変更する方法</h3>
-    <h4>1.XperiaのSony Store直販モデルを購入する</h4>
-    <div class="reference">
-      <a href="https://pur.store.sony.jp/xperia/products/XQ-EC44/XQ-EC44_purchase/" target="blank">
-        <img src="xperia1.jpg" class="image" alt="SIMフリー版">
-        SONYより引用
-      </a>
-    </div>
-    <p>楽天モバイルやIIJmio､mineoなども含む通信事業者が販売するモデルはシャッター音が消せない｡
-    </p>
-    <h4>2.カメラアプリを開く</h4>
-    <img src="xperia2.png" class="image" alt="カメラアプリ">
-    <p>Xperia 10シリーズや2024年以降のモデルのカメラアプリだけでなく､Xperia 1/5シリーズの2023年モデル以前のPhoto Proアプリも対象である｡
-    </p>
-    <h4>3.設定画面を開く</h4>
-    <img src="xperia3.png" class="image" alt="カメラ設定">
-    <h4>4. "カメラ操作音" を "OFF" にする</h4>
-    <img src="xperia4.png" class="image" alt="シャッター音設定">
-    <h3>マナーモードまたはサイレントモードにする方法</h3>
-    <h4>1.XperiaのSony Store直販モデルを購入する</h3>
-    <p>楽天モバイルやIIJmio､mineoなども含む通信事業者が販売するモデルはシャッター音が消せない｡
-    </p>
-    <h4>2.マナーモードまたはサイレントモードに設定する</h3>
-    <img src="xperia2_2.png" class="image" alt="マナーモード">
-    <p>着信音がオフの状態ではカメラアプリの設定に関わらずシャッター音が鳴らない｡
-    </p>
-    <h3>デメリット</h3>
-    <h4>･対応機種はSony Store直販モデルのみ</h3>
-    <p>通信事業者が販売するXperiaはシャッター音が消せない｡
-        qUnlock Toolを使ってBLUを許可して実行し､root化してシャッター音を消す方法もあるが､qUnlock Toolは有料でありさらに確実にBLUを許可できる保証もない｡
-    </p>
-    </section>
-    <section id="aquos">
-    <h2>AQUOS</h2>
-    <div class="reference">
-      <a href="https://cocorostore.jp.sharp/smartdevice/sh-m30/sh-m30-b.html" target="blank">
-        <img src="aquos.png" class="image" alt="AQUOS">
-        SHARPより引用
-      </a>
-    </div>
-    <p>AQUOSはSIMフリー版でシャッター音が消せる｡
-    </p>
-    <h3>方法</h3>
-    <h4>1.2024年以降発売のSIMフリー版のAQUOSを購入する</h4>
-    <div class="reference">
-      <a href="https://jp.sharp/k-tai/mvno/" target="blank">
-        <img src="aquos1.jpg" class="image" alt="SIMフリー版">
-        SHARPより引用
-      </a>
-    </div>
-    <p>Xperiaと異なり､SHARP直販モデルだけでなく楽天モバイルやIIJmio､mineoなどの通信事業者が販売するモデルでもシャッター音が消せる｡
-      もちろん､UQモバイルやY!mobileを含むキャリア版ではシャッター音が消せない｡
-    </p>
-    <h4>2.カメラアプリを開く</h4>
-    <img src="aquos2.png" class="image" alt="カメラアプリ">
-    <h4>3.設定画面を開く</h4>
-    <img src="aquos3.png" class="image" alt="カメラ設定">
-    <h4>4. "シャッター音" をオフにする</h4>
-    <img src="aquos4.png" class="image" alt="シャッター音設定">
-    <h3>デメリット</h3>
-    <h4>･対応機種は2024年以降発売のSIMフリー版のみ</h4>
-    <p>2023年以前のモデル､またはキャリア版ではシャッター音が消せない｡
-      また､Xperiaと違いブートローダーアンロックもできない｡
-    </p>
-    </section>
-    <section id="motorola">
-    <h2>motorola</h2>
-    <div class="reference">
-      <a href="https://store.motorola.co.jp/item/RAZR50ULTRA.html" target="blank">
-        <img src="motorola.png" class="image" alt="motorola">
-        motorolaより引用
-      </a>
-    </div>
-    <p>motorolaはシャッター音が消せるが､日本のSIMを利用している状態ではシャッター音が鳴る｡
-      ここではeSIMまたはデュアルSIMに対応している必要があるが､日本のSIMを利用していてもシャッター音が消えるようにする方法を述べる｡
-    </p>
-    <h3>eSIM対応機種の方法</h3>
-    <h4>1.<a href="https://play.google.com/store/apps/details?id=com.transatel.selfcare.ubigi&hl=en&gl=US" target="blank">Ubigi</a>のアプリをインストールし､起動する</h4>
-    <p>Ubigiとは海外で使えるeSIMを発行できるサービスである｡
-    </p>
-    <img src="motorola1.jpg" class="image" alt="Ubigi">
-    <h4>2.Ubigiアカウントを作成する</h4>
-    <img src="motorola2.jpg" class="image" alt="Ubigiアカウント">
-    <h4>3. "Ubigi eSIMをリンクさせる" をタップする</h4>
-    <img src="motorola3.jpg" class="image" alt="Ubigi eSIMをリンクさせる">
-    <h4>4. "スマートフォン" を選択する</h4>
-    <img src="motorola4.jpg" class="image" alt="スマートフォン">
-    <h4>5. "いいえ" を2回選択する</h4>
-    <img src="motorola5.jpg" class="image" alt="いいえ">
-    <img src="motorola5_2.jpg" class="image" alt="いいえ">
-    <h4>6. "フリーeSIMを今すぐインストールする" をタップする</h4>
-    <img src="motorola6.jpg" class="image" alt="フリーeSIMを今すぐインストールする">
-    <h4>7. eSIMを追加する</h4>
-    <img src="motorola7.jpg" class="image" alt="eSIM">
-    <p>端末に認識されたらバッテリー節約のためにeSIMを無効化することを推奨する｡
-      ただし､無効化した状態で再起動するとシャッター音が再び鳴るようになる｡
-    </p>
-    <h4>8.カメラアプリを開く</h4>
-    <img src="motorola8.png" class="image" alt="カメラアプリ">
-    <h4>9.設定画面を開く</h4>
-    <img src="motorola9.png" class="image" alt="カメラ設定">
-    <h4>10. "シャッター音" をオフにする</h4>
-    <img src="motorola10.png" class="image" alt="シャッター音設定">
-    <p>海外のeSIM(Ubigi)が認識されているため､日本のSIMを利用していてもシャッター音の項目が現れる｡
-    </p>
-    <h3>デュアルSIM対応機種の方法</h3>
-    <h4>1.海外のSIMカードを挿入する</h4>
-    <div class="reference">
-      <a href="https://www.amazon.co.jp/%E3%82%A2%E3%83%A1%E3%83%AA%E3%82%ABSIM-7%E6%97%A5%E9%96%93%E3%80%90%E4%BD%BF%E3%81%84%E6%94%BE%E9%A1%8C%E3%80%914G-LTE-%E9%AB%98%E9%80%9F%E3%83%87%E3%83%BC%E3%82%BF%E9%80%9A%E4%BF%A1-SIM%E3%82%AB%E3%83%BC%E3%83%89-T-Mobile/dp/B07RFQNF7J/ref=sr_1_8?dib=eyJ2IjoiMSJ9.Wf4is3lcFSZnPM0Sbx424b-ssatLKPKMk0xkJdjQn_Ua3FQk1et73nwZLqUDY5APWXw-bJ92TqoJkIx9qWzutF2r14n51jjz-m2LNLPv5izpBexcEGa7IrcugdmNa2lqrL5DYvwwdFA40fXQTUzTKYUhNLDf9Zu5LMCFd61eJEr4yWTn4MC_iZSWTdq3m0-uQjCuiDZvBjluaEAvRO70nkcpNuYIbboxEmg6iCJfN5UL8vRY_cUh9R4rmPKor4EW4XU9VoSu3JHVuL1joG-cEn8TOeJVXZDILyIicPxMyeU.lWsEoVY-bBhsnUhAIi7cPxFcwE12NixujPfG9v8JB8w&dib_tag=se&keywords=%E4%BA%BA%E6%B0%97%E3%81%AE%E6%B5%B7%E5%A4%96%2BSIM%E3%83%A9%E3%83%B3%E3%82%AD%E3%83%B3%E3%82%B0&qid=1744876192&sr=8-8&th=1" target="blank">
-        <img src="motorola1_2.jpg" class="image" alt="海外SIM">
-        Amazonより引用
-      </a>
-    </div>
-    <p>ECで海外のプリペイドSIMを購入するのが手っ取り早い｡
-      また､端末に認識されたらバッテリー節約のためにSIMを無効化することを推奨する｡
-      ただし､無効化した状態で再起動するとシャッター音が再び鳴るようになる｡
-    </p>
-    <h4>2.カメラアプリを開く</h4>
-    <img src="motorola8.png" class="image" alt="カメラアプリ">
-    <h4>3.設定画面を開く</h4>
-    <img src="motorola9.png" class="image" alt="カメラ設定">
-    <h4>4. "シャッター音" をオフにする</h4>
-    <img src="motorola10.png" class="image" alt="シャッター音設定">
-    <p>海外のSIMカードが認識されているため､日本のSIMを利用していてもシャッター音の項目が現れる｡
-    </p>
-    <h3>デメリット</h3>
-    <h4>･対応機種はeSIMまたはデュアルSIM対応モデルのみ</h4>
-    <p>motorola razr 5Gのソフトバンク版など､eSIMおよびデュアルSIMに非対応の機種でシャッター音を消す場合は日本のSIMを利用できない｡
-    </p>
-    <h4>･eSIMを無効化した状態で再起動するとシャッター音が鳴るようになる</h4>
-    <p>再起動のたびにeSIMを有効化してカメラアプリからシャッター音をオフにしてからeSIMを再び無効化するか､バッテリー持ちを犠牲にしてeSIMを常に有効にするしかない｡
-    </p>
-    <h4>･今後アップデートによりこの方法が使えなくなる可能性がある</h4>
-    <p>Galaxyと同じくこれはバグに近い挙動のため､今後アップデートでこの方法が塞がれる可能性がある｡
-    </p>
-    </section>
-    <section id="nothing">
-    <h2>Nothing Phone</h2>
-    <div class="reference">
-      <a href="https://jp.nothing.tech/products/phone-2" target="blank">
-        <img src="nothing.webp" class="image" alt="Nothing Phone">
-        Nothingより引用
-      </a>
-    </div>
-    <p>Nothing Phoneもmotorolaと同じく日本のSIMを利用していない状態でシャッター音が消せるが､日本のSIMを利用した状態では海外のSIMを認識させてもシャッター音が消せない｡
-    </p>
-    <h3>方法</h3>
-    <h4>1.日本のSIMを利用しない</h4>
-    <p>Nothing Phoneでシャッター音を消す場合､海外のSIMカードを挿してローミングで使うか､SIMカードを挿さずモバイルデータ通信を諦めるしかない｡
-    </p>
-    <h4>2.カメラアプリを開く</h4>
-    <img src="nothing2.png" class="image" alt="カメラアプリ">
-    <h4>3.設定画面を開く</h4>
-    <img src="nothing3.png" class="image" alt="カメラ設定">
-    <h4>4. "シャッター音" をオフにする</h4>
-    <img src="nothing4.png" class="image" alt="シャッター音設定">
-    <h3>デメリット</h3>
-    <h4>･日本のSIMカードが利用できない</h4>
-    <p>Nothing Phoneのシャッター音を消す場合､通信の制限が大きくなってしまうのでこの方法はおすすめしない｡
-    </section>
-    <section id="redmagic">
-    <h2>REDMAGIC</h2>
-    <div class="reference">
-      <a href="https://jp.redmagic.gg/pages/redmagic-10-pro" target="blank">
-        <img src="redmagic.webp" class="image" alt="REDMAGIC">
-        RedMagicより引用
-      </a>
-    </div>
-    <p>REDMAGICのシャッター音を消す方法はこれまで紹介してきた方法の中で唯一デメリットがない｡
-    </p>
-    <h3>カメラアプリの設定を変更する方法</h3>
-    <h4>1.カメラアプリを開く</h4>
-    <h4>2.設定画面を開く</h4>
-    <h4>3. "シャッター音" をオフにする</h4>
-    <h3>マナーモードまたはサイレントモードにする方法</h3>
-    <h4>1.マナーモードまたはサイレントモードに設定する</h4>
-    <p>Xperiaと同じく､マナーモードまたはサイレントモードでシャッター音が消える｡
-    </p>
-    <h3>デメリット</h3>
-    <h4>･なし</h4>
-    <p>特殊な設定は不要で､かつ条件もない｡
-    </p>
-    </section>
-    <h2>シャッター音は何のために存在するのか</h1>
-    <p>日本にはシャッター音は鳴らさなければならないという法律はない｡
-      それにも関わらず､なぜ多くのメーカーが日本で販売する端末でシャッター音を強制するのか｡
-      主な理由として､携帯キャリアによる自主規制がある｡
-      カメラ付きの携帯電話が発売され始めてから､盗撮防止という目的で携帯キャリアによるシャッター音の強制が行われてきた｡
-      これに準じてSIMフリー版でもシャッター音を強制しているメーカーが多い｡
-      しかし､シャッター音を鳴らしたところで盗撮の防止になるとは考えにくい｡
-      また､先述の通り日本と韓国以外ではシャッター音の強制は行われていない｡
-      よって､この自主規制は無用の長物である｡
-      最近はXiaomi公式がシャッター音無音化の存在を認識していたり､XperiaやAQUOSもSIMフリー版でシャッター音を消せるようになった｡
-      今後このような流れが日本のスマホ業界で広がっていくことを期待したい｡
-    </p>
-  </section>
-</main>
-<script>
-  async function fetchOGData(url, anchorElement) {
-    try {
-      const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
-      const { data, status } = await response.json();
+      nav a {
+        text-decoration: none;
+        color: black;
+        font-size: 1.1em;
+        margin: 0 20px;
+        letter-spacing: 0.5px;
+        transition: color 0.3s ease;
+      }
 
-      if (status === "success") {
-        if (data.title) {
-          const titleElem = document.createElement("div");
-          titleElem.textContent = data.title;
-          titleElem.style.fontWeight = "bold";
-          anchorElement.appendChild(titleElem);
-        }
+      nav a:hover {
+        color: #0073e6;
+      }
 
-        if (data.image?.url) {
-          const img = document.createElement("img");
-          img.src = data.image.url;
-          img.alt = "Preview";
-          img.width = 200;
-          anchorElement.appendChild(img);
-        }
+      nav ul {
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+      }
 
-        if (data.description) {
-          const descElem = document.createElement("div");
-          descElem.textContent = data.description;
-          anchorElement.appendChild(descElem);
+      nav ul li {
+        display: inline-block;
+        font-size: 1.2em;
+        margin: 0 15px;
+        padding: 10px 0;
+      }
+
+      section h2 {
+        text-align: center;
+        font-size: 2.2em;
+        margin-top: 60px;
+        margin-bottom: 20px;
+        color: black;
+      }
+
+      section h3 {
+        text-align: center;
+        font-size: 1.8em;
+        margin-top: 40px;
+        margin-bottom: 15px;
+        color: black;
+      }
+    
+      section h4 {
+        text-align: center;
+        font-size: 1.5em;
+        margin-top: 40px;
+        color: black;
+      }
+    
+      section p {
+        font-size: 1em;
+        line-height: 1.7;
+        white-space: pre-line;
+        color: black;
+        text-align: justify;
+      }
+
+      .reference {
+        text-align: center;
+        font-size: 0.9em;
+        color: #aaa;
+        margin-bottom: 50px;
+      }
+
+      .reference a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      section .image {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        width: auto;
+        height: 400px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      .link-preview {
+        display: block;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #ffffff;
+        padding: 15px;
+        margin-bottom: 20px;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+
+      .link-preview:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        border-color: #0073e6;
+      }
+
+      .link-preview img {
+        max-width: 100%;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        height: auto;
+        object-fit: cover;
+      }
+
+      .preview-title {
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-bottom: 5px;
+        color: #222;
+      }
+
+      .preview-description {
+        font-size: 0.95em;
+        color: #555;
+        line-height: 1.4;
+      }
+
+      pre code {
+        background-color: #1e1e1e;
+        color: #f8f8f2;
+        font-family: Consolas, Monaco, "Courier New", monospace;
+        font-size: 0.95em;
+        padding: 12px;
+        border-radius: 8px;
+        display: block;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+
+      @media (min-width: 769px) {
+        main {
+          margin-left: 20vw;
+          margin-right: 20vw;
         }
       }
-    } catch (error) {
-      console.error("OGP情報の取得に失敗:", error);
-    }
-  }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <a href="../index.html">Untechnical</a>
+      </div>
+    </header>
+    <main>
+      <h1>スマホのシャッター音を完全に消す方法</h1>
+      <img src="camera_sound.jpg" alt="イメージ">
+      <section>
+        <h2>国内発売のスマホはシャッター音強制</h2>
+        <p>日本と韓国で発売されたスマホは大半の機種でシャッター音が強制的に鳴る｡
+            これはAndroidスマホだけでなくiPhoneでも同様で､マナーモードで無音になったり設定から無音化できる海外発売のスマホと違い､音量設定に関係なく強制的にシャッター音が鳴ってしまう｡
+            そのために海外版を買おうとしても家電量販店や携帯キャリアでの販売はなく､正規販売店で購入することはできない｡
+            また､海外版はFeliCa非搭載や技適未取得など､日本向けに最適化されていないことでのデメリットも発生する｡
+            サードパーティ製のアプリを使うという手段もあるが､それらのアプリはその機種に最適化されたものではなく､品質が悪かったり一部機能が使えなかったりする｡
+            しかし､一部機種では設定を変更したり条件付きでシャッター音の無音化が可能である｡
+            ここからは対象機種とその方法について解説する｡
+        </p>
+        <h2>対象機種</h2>
+        <nav>
+          <ul>
+          <li><a href="#iphone">iPhone</a></li>
+          <li><a href="#pixel">Google Pixel</a></li>
+          <li><a href="#galaxy">Galaxy</a></li>
+          <li><a href="#xiaomi">Xiaomi</a></li>
+          <li><a href="#xperia">Xperia</a></li>
+          <li><a href="#aquos">AQUOS</a></li>
+          <li><a href="#nothing">Nothing Phone</a></li>
+          <li><a href="#motorola">motorola</a></li>
+          <li><a href="#redmagic">REDMAGIC</a></li>
+          </ul>
+        </nav>
+        <section id="iphone">
+        <h2>iPhone</h2>
+        <div class="reference">
+          <a href="https://www.apple.com/jp/shop/buy-iphone/iphone-16-pro" target="blank">
+            <img src="iphone.png" class="image" alt="iPhone">
+            Appleより引用
+          </a>
+        </div>
+        <p>実はiPhoneでもシャッター音は無音化できる｡</p>
+        <h3>方法</h3>
+        <h4>1.海外版を買う</h4>
+        <img src="iphone1.jpg" class="image" alt="海外版">
+        <p>海外版では先程述べたデメリットがあるのではと思う人もいるだろうが､iPhoneに関しては例外である｡
+            まず､まめこmobileやイオシスなどのショップで香港版のiPhoneが未使用かつ保証付きで数多く販売されているため､他のスマホと比べて海外版が比較的入手しやすい｡
+            保証の面でもAppleはiPhoneをアクティベートした日から1年間は世界中のApple StoreまたはApple正規サービスプロバイダで保証が受けられる｡
+            さらにiPhoneは全世界のモデルでFeliCaが搭載され､カナダ版､グアム版､メキシコ版､サウジアラビア版などには技適もつく｡
+        </p>
+        <h4>2.消音モードまたはメディアの音量を0にする</h4>
+        <img src="iphone2.jpg" class="image" alt="消音モード">
+        <p>消音モードまたはメディアの音量が0のときはシャッター音が消える｡
+        </p>
+        <h3>デメリット</h3>
+        <h4>･国内版と比べて割高になる</h4>
+        <p>海外版を利用するデメリットはないものの､国内版と比べて割高になる｡
+            また､携帯会社での2年レンタルや特価のようなものももちろんない｡
+        </p>
+        </section>
+        <section id="pixel">
+        <h2>Google Pixel</h2>
+        <div class="reference">
+          <a href="https://store.google.com/jp/product/pixel_9_pro?hl=ja" target="blank">
+            <img src="pixel.png" class="image" alt="Pixel">
+            Googleより引用
+          </a>
+        </div>
+        <p>Pixelの純正カメラアプリでのシャッター音無音化はroot化しない限り不可能である｡
+            そこで､純正カメラアプリのMod "GCam" を使うという方法がある｡
+            Pixelのカメラアプリは非常に優秀で､ハードウェアが弱くてもソフトウェアの力できれいな写真が撮れる｡
+            そのため海外の開発者たちがそのアプリを他のスマホでも使えるように移植したアプリがGCamとなる｡
+            ここではこのGCamを使用してシャッター音を消す｡
+        </p>
+        <h3>方法</h3>
+        <h4>1.<a href="https://www.celsoazevedo.com/files/android/google-camera/" target ="blank">GCam Hub</a>で任意のapkをダウンロードしてインストールする｡</h4>
+        <img src="pixel1.jpg" class="image" alt="GCam Hub">
+        <p>中には正常に動作しないものもあるので､1つ1つ試してみる｡
+        </p>
+        <h4>2.アプリを起動する</h4>
+        <img src="pixel2.jpg" class="image" alt="カメラアプリ">
+        <h4>3.設定画面を開く</h4>
+        <img src="pixel3.jpg" class="image" alt="カメラ設定">
+        <h4>4. "カメラの音" をオフにする</h4>
+        <img src="pixel4.jpg" class="image" alt="シャッター音設定">
+        <p>あとはもともとある純正のカメラアプリを無効化するなどしてGCamを起動しやすいようにするといいかもしれない｡
+        </p>
+        <h4>デメリット</h4>
+        <h4>･電源ボタン2回押しでカメラ起動できない</h4>
+        <p>GCamは純正カメラアプリベースだがあくまでModアプリのため､電源ボタン2回押しでカメラ起動には対応しない｡
+        </p>
+        <h4>･アプリを手動で更新する必要がある</h4>
+        <p>apkでインストールしているため自動でアプリが更新されず､再びapkをダウンロードして手動で更新する必要がある｡
+        </p>
+        <h4>･開発者の違いに注意する必要がある</h4>
+        <p>開発者が違うアプリをインストールしようとするとインストールできなかったり､仕様が変わったりする｡
+        </p>
+        </section>
+        <section id="galaxy">
+        <h2>Galaxy</h2>
+        <div class="reference">
+          <a href="https://www.samsung.com/jp/smartphones/galaxy-s25-ultra/buy/" target="blank">
+            <img src="galaxy.png" class="image" alt="Galaxy">
+            Samsungより引用
+          </a>
+        </div>
+        <p>Galaxyでは "SetEdit" というアプリを使ってシステム設定を変更するという方法があったが､Android 14で塞がれてしまった｡
+            そこで､SetEditで適用していた変更をadbコマンドを使って実行する｡
+            adbコマンドはPCで実行する方法とスマホで実行する方法の2通りある｡
+            ここではPCを用いた方法を解説する｡
+        </p>
+        <h3>方法</h3>
+        <h4>1.PCにadbを導入する</h4>
+        <p>以下は導入方法である｡
+          <div id="links">
+            <a href="https://sp7pc.com/google/android/17843" target="_blank" class="link-preview"></a>
+            <a href="https://sp7pc.com/google/android/34263" target="_blank" class="link-preview"></a>
+          </div>
+        </p>
+        <h4>2.Galaxyで設定アプリを開く</h4>
+        <img src="galaxy2.jpg" class="image" alt="設定アプリ">
+        <h4>3. "端末情報" を開く</h4>
+        <img src="galaxy3.jpg" class="image" alt="端末情報">
+        <h4>4. "ソフトウェア情報" を開く</h4>
+        <img src="galaxy4.jpg" class="image" alt="ソフトウェア情報">
+        <h4>5. "ビルド番号" を7回タップし､パスワードを入力する</h4>
+        <img src="galaxy5.jpg" class="image" alt="ビルド番号">
+        <h4>6. 設定アプリのはじめの画面に戻る</h4>
+        <img src="galaxy2.jpg" class="image" alt="設定アプリ">
+        <h4>7. "開発者向けオプション"を開く</h4>
+        <img src="galaxy7.jpg" class="image" alt="開発者向けオプション">
+        <h4>8. "adbデバッグ"をオンにする</h4>
+        <img src="galaxy8.jpg" class="image" alt="adbデバッグ">
+        <h4>9.PCとGalaxyをUSBケーブルで接続する</h4>
+        <img src="galaxy9.jpg" class="image" alt="USBケーブル">
+        <h4>10.PCのターミナルでadbコマンドを実行する</h4>
+        <img src="galaxy10.png" class="image" alt="adbコマンド">
+        <p>Windowsはコマンドプロンプト､Macはターミナルで
+            
+          <pre><code>adb shell settings put system csc_pref_camera_forced_shuttersound_key 0</code></pre>
 
-  document.querySelectorAll(".link-preview").forEach(async (anchor) => {
-    await fetchOGData(anchor.href, anchor);
-  });
-</script>
-</body>
+            を実行する｡
+            これにより､シャッター音の動作が海外仕様となる｡
+        </p>
+        <h4>11.システム音の音量を0にする</h4>
+        <img src="galaxy11.jpg" class="image" alt="システム音設定">
+        <p>シャッター音の音量はシステム音の音量と同期される｡
+          充電時や画面ロックの解除､タッチ操作の際に鳴るシステム音の音量を0にすることでシャッター音が消える｡
+          システム音の音量はマナーモードや "通知をミュート" をONにすることでも0になる｡
+        </p>
+        <h3>デメリット</h3>
+        <h4>･アップデートごとにコマンドを実行する必要がある</h4>
+        <p>アップデート後は適用した変更が元に戻されるため､アップデート毎にコマンドを実行する必要がある｡
+        </p>
+        <h4>･システム音の音量を0にする必要がある</h4>
+        <p>あまりいないと思うが､普段からシステム音を鳴らしている人はカメラ起動時のみシステム音の音量を0にするオートメーションを作成するなど､工夫する必要がある｡
+        </p>
+        <h4>･今後アップデートによりこの方法が使えなくなる可能性がある</h4>
+        <p>これはバグに近い挙動のため､今後アップデートでこの方法が塞がれる可能性がある｡
+        </p> 
+        </section>
+        <section id="xiaomi">
+        <h2>Xiaomi</h2>
+        <div class="reference">
+          <a href="https://www.mi.com/jp/product/xiaomi-14-ultra/?skupanel=1" target="blank">
+            <img src="xiaomi.png" class="image" alt="Xiaomi">
+            Xiaomiより引用
+          </a>
+        </div>
+        <p>XiaomiはSoCにDimensityを搭載したキャリア版とSIMフリー版で､方法は異なるがそれぞれシャッター音が消せる｡
+        </p>
+        <h3>Dimensity搭載のキャリア版の方法</h3>
+        <h4>1.設定アプリを開く</h4>
+        <img src="xiaomi1.jpg" class="image" alt="設定アプリ">
+        <h4>2. "デバイス情報" を開く</h4>
+        <img src="xiaomi2.jpg" class="image" alt="デバイス情報">
+        <h4>3. "OSバージョン" を7回タップし､パスワードを入力する</h4>
+        <img src="xiaomi3.jpg" class="image" alt="OSバージョン"> 
+        <h4>4.電話アプリでコードを入力する</h4>
+        <img src="xiaomi4.jpg" class="image" alt="電話アプリ">
+        <p>電話アプリを開き､
+
+            <pre><code>*#*#3646633#*#*</code></pre>
+
+            を入力する｡
+        </p>
+        <h4>5. "Hardware Testing" を表示する｡</h4>
+        <img src="xiaomi5.jpg" class="image" alt="Hardware Testing">
+        <h4>6. "Audio" をタップする｡</h4>
+        <img src="xiaomi6.jpg" class="image" alt="Audio">
+        <h4>7. "Volume" をタップする｡</h4>
+        <img src="xiaomi7.jpg" class="image" alt="Volume">
+        <h4>8. "Audio Playback" をタップする｡</h4>
+        <img src="xiaomi8.jpg" class="image" alt="Audio Playback">
+        <h4>9. "System" を "Enforced_Audible" に変更する｡</h4>
+        <img src="xiaomi9.jpg" class="image" alt="Enforced_Audible">
+        <h4>10 "BT A2DP" を "Speaker" に変更する｡</h4>
+        <img src="xiaomi10.jpg" class="image" alt="BT A2DP">
+        <h4>11. "Index15" の値を "255" から "0" にする｡</h4>
+        <img src="xiaomi11.jpg" class="image" alt="Index15">
+        <p>この値がシャッター音の音量になる｡
+        </p>
+        <h4>12. "Set" をタップする｡</h4>
+        <img src="xiaomi12.jpg" class="image" alt="Set">
+        <h4>13. "Set succeeded" が表示されたら "OK" をタップする｡</h4>
+        <img src="xiaomi13.jpg" class="image" alt="Set succeeded">
+        <h3>SIMフリー版の方法</h3>
+        <h4>1.設定アプリを開く</h4>
+        <img src="xiaomi1.jpg" class="image" alt="設定アプリ">
+        <h4>2. "追加設定" をタップする</h4>
+        <img src="xiaomi2_2.jpg" class="image" alt="追加設定">
+        <h4>3. "地域" を日本と韓国以外にする</h4>
+        <img src="xiaomi3_2.jpg" class="image" alt="地域">
+        <p>ここで地域を変更しても特に問題はない｡</p>
+        <h4>4.カメラアプリを起動する</h4>
+        <img src="xiaomi4_2.jpg" class="image" alt="カメラアプリ">
+        <h4>5.設定画面を開く</h4>
+        <img src="xiaomi5_2.jpg" class="image" alt="カメラ設定">
+        <h4>6. "シャッター音" をオフにする</h4>
+        <img src="xiaomi6_2.jpg" class="image" alt="シャッター音設定">
+        <P>地域が日本と韓国以外に設定されているとこの項目が現れる｡
+        </p>
+        <h3>デメリット</h3>
+        <h4>･キャリア版の方法はDimensity搭載端末のみ</h4>
+        <p>キャリア版の方法で電話アプリから開くEngineerModeはSoCにDimensityを搭載した端末用のモードのため､Redmi Note 13 Pro 5GのようなSoCにSnapdragonを搭載したキャリア専売のスマホはこの方法が使えず､シャッター音は消せない｡
+        </p>
+        </section>
+        <section id="xperia">
+        <h2>Xperia</h2>
+        <div class="reference">
+          <a href="https://www.sony.jp/xperia/xperia/xperia1m6/" target="blank">
+            <img src="xperia.png" class="image" alt="Xperia">
+            SONYより引用
+          </a>
+        </div>
+        <p>XperiaのSony Store直販モデルはシャッター音が消せる｡
+          その方法はカメラアプリの設定を変更する方法とマナーモードまたはサイレントモードにする方法の2通りある｡
+        </p>
+        <h3>カメラアプリの設定を変更する方法</h3>
+        <h4>1.XperiaのSony Store直販モデルを購入する</h4>
+        <div class="reference">
+          <a href="https://pur.store.sony.jp/xperia/products/XQ-EC44/XQ-EC44_purchase/" target="blank">
+            <img src="xperia1.jpg" class="image" alt="SIMフリー版">
+            SONYより引用
+          </a>
+        </div>
+        <p>楽天モバイルやIIJmio､mineoなども含む通信事業者が販売するモデルはシャッター音が消せない｡
+        </p>
+        <h4>2.カメラアプリを開く</h4>
+        <img src="xperia2.png" class="image" alt="カメラアプリ">
+        <p>Xperia 10シリーズや2024年以降のモデルのカメラアプリだけでなく､Xperia 1/5シリーズの2023年モデル以前のPhoto Proアプリも対象である｡
+        </p>
+        <h4>3.設定画面を開く</h4>
+        <img src="xperia3.png" class="image" alt="カメラ設定">
+        <h4>4. "カメラ操作音" を "OFF" にする</h4>
+        <img src="xperia4.png" class="image" alt="シャッター音設定">
+        <h3>マナーモードまたはサイレントモードにする方法</h3>
+        <h4>1.XperiaのSony Store直販モデルを購入する</h3>
+        <p>楽天モバイルやIIJmio､mineoなども含む通信事業者が販売するモデルはシャッター音が消せない｡
+        </p>
+        <h4>2.マナーモードまたはサイレントモードに設定する</h3>
+        <img src="xperia2_2.png" class="image" alt="マナーモード">
+        <p>着信音がオフの状態ではカメラアプリの設定に関わらずシャッター音が鳴らない｡
+        </p>
+        <h3>デメリット</h3>
+        <h4>･対応機種はSony Store直販モデルのみ</h3>
+        <p>通信事業者が販売するXperiaはシャッター音が消せない｡
+            qUnlock Toolを使ってBLUを許可して実行し､root化してシャッター音を消す方法もあるが､qUnlock Toolは有料でありさらに確実にBLUを許可できる保証もない｡
+        </p>
+        </section>
+        <section id="aquos">
+        <h2>AQUOS</h2>
+        <div class="reference">
+          <a href="https://cocorostore.jp.sharp/smartdevice/sh-m30/sh-m30-b.html" target="blank">
+            <img src="aquos.png" class="image" alt="AQUOS">
+            SHARPより引用
+          </a>
+        </div>
+        <p>AQUOSはSIMフリー版でシャッター音が消せる｡
+        </p>
+        <h3>方法</h3>
+        <h4>1.2024年以降発売のSIMフリー版のAQUOSを購入する</h4>
+        <div class="reference">
+          <a href="https://jp.sharp/k-tai/mvno/" target="blank">
+            <img src="aquos1.jpg" class="image" alt="SIMフリー版">
+            SHARPより引用
+          </a>
+        </div>
+        <p>Xperiaと異なり､SHARP直販モデルだけでなく楽天モバイルやIIJmio､mineoなどの通信事業者が販売するモデルでもシャッター音が消せる｡
+          もちろん､UQモバイルやY!mobileを含むキャリア版ではシャッター音が消せない｡
+        </p>
+        <h4>2.カメラアプリを開く</h4>
+        <img src="aquos2.png" class="image" alt="カメラアプリ">
+        <h4>3.設定画面を開く</h4>
+        <img src="aquos3.png" class="image" alt="カメラ設定">
+        <h4>4. "シャッター音" をオフにする</h4>
+        <img src="aquos4.png" class="image" alt="シャッター音設定">
+        <h3>デメリット</h3>
+        <h4>･対応機種は2024年以降発売のSIMフリー版のみ</h4>
+        <p>2023年以前のモデル､またはキャリア版ではシャッター音が消せない｡
+          また､Xperiaと違いブートローダーアンロックもできない｡
+        </p>
+        </section>
+        <section id="motorola">
+        <h2>motorola</h2>
+        <div class="reference">
+          <a href="https://store.motorola.co.jp/item/RAZR50ULTRA.html" target="blank">
+            <img src="motorola.png" class="image" alt="motorola">
+            motorolaより引用
+          </a>
+        </div>
+        <p>motorolaはシャッター音が消せるが､日本のSIMを利用している状態ではシャッター音が鳴る｡
+          ここではeSIMまたはデュアルSIMに対応している必要があるが､日本のSIMを利用していてもシャッター音が消えるようにする方法を述べる｡
+        </p>
+        <h3>eSIM対応機種の方法</h3>
+        <h4>1.<a href="https://play.google.com/store/apps/details?id=com.transatel.selfcare.ubigi&hl=en&gl=US" target="blank">Ubigi</a>のアプリをインストールし､起動する</h4>
+        <p>Ubigiとは海外で使えるeSIMを発行できるサービスである｡
+        </p>
+        <img src="motorola1.jpg" class="image" alt="Ubigi">
+        <h4>2.Ubigiアカウントを作成する</h4>
+        <img src="motorola2.jpg" class="image" alt="Ubigiアカウント">
+        <h4>3. "Ubigi eSIMをリンクさせる" をタップする</h4>
+        <img src="motorola3.jpg" class="image" alt="Ubigi eSIMをリンクさせる">
+        <h4>4. "スマートフォン" を選択する</h4>
+        <img src="motorola4.jpg" class="image" alt="スマートフォン">
+        <h4>5. "いいえ" を2回選択する</h4>
+        <img src="motorola5.jpg" class="image" alt="いいえ">
+        <img src="motorola5_2.jpg" class="image" alt="いいえ">
+        <h4>6. "フリーeSIMを今すぐインストールする" をタップする</h4>
+        <img src="motorola6.jpg" class="image" alt="フリーeSIMを今すぐインストールする">
+        <h4>7. eSIMを追加する</h4>
+        <img src="motorola7.jpg" class="image" alt="eSIM">
+        <p>端末に認識されたらバッテリー節約のためにeSIMを無効化することを推奨する｡
+          ただし､無効化した状態で再起動するとシャッター音が再び鳴るようになる｡
+        </p>
+        <h4>8.カメラアプリを開く</h4>
+        <img src="motorola8.png" class="image" alt="カメラアプリ">
+        <h4>9.設定画面を開く</h4>
+        <img src="motorola9.png" class="image" alt="カメラ設定">
+        <h4>10. "シャッター音" をオフにする</h4>
+        <img src="motorola10.png" class="image" alt="シャッター音設定">
+        <p>海外のeSIM(Ubigi)が認識されているため､日本のSIMを利用していてもシャッター音の項目が現れる｡
+        </p>
+        <h3>デュアルSIM対応機種の方法</h3>
+        <h4>1.海外のSIMカードを挿入する</h4>
+        <div class="reference">
+          <a href="https://www.amazon.co.jp/%E3%82%A2%E3%83%A1%E3%83%AA%E3%82%ABSIM-7%E6%97%A5%E9%96%93%E3%80%90%E4%BD%BF%E3%81%84%E6%94%BE%E9%A1%8C%E3%80%914G-LTE-%E9%AB%98%E9%80%9F%E3%83%87%E3%83%BC%E3%82%BF%E9%80%9A%E4%BF%A1-SIM%E3%82%AB%E3%83%BC%E3%83%89-T-Mobile/dp/B07RFQNF7J/ref=sr_1_8?dib=eyJ2IjoiMSJ9.Wf4is3lcFSZnPM0Sbx424b-ssatLKPKMk0xkJdjQn_Ua3FQk1et73nwZLqUDY5APWXw-bJ92TqoJkIx9qWzutF2r14n51jjz-m2LNLPv5izpBexcEGa7IrcugdmNa2lqrL5DYvwwdFA40fXQTUzTKYUhNLDf9Zu5LMCFd61eJEr4yWTn4MC_iZSWTdq3m0-uQjCuiDZvBjluaEAvRO70nkcpNuYIbboxEmg6iCJfN5UL8vRY_cUh9R4rmPKor4EW4XU9VoSu3JHVuL1joG-cEn8TOeJVXZDILyIicPxMyeU.lWsEoVY-bBhsnUhAIi7cPxFcwE12NixujPfG9v8JB8w&dib_tag=se&keywords=%E4%BA%BA%E6%B0%97%E3%81%AE%E6%B5%B7%E5%A4%96%2BSIM%E3%83%A9%E3%83%B3%E3%82%AD%E3%83%B3%E3%82%B0&qid=1744876192&sr=8-8&th=1" target="blank">
+            <img src="motorola1_2.jpg" class="image" alt="海外SIM">
+            Amazonより引用
+          </a>
+        </div>
+        <p>ECで海外のプリペイドSIMを購入するのが手っ取り早い｡
+          また､端末に認識されたらバッテリー節約のためにSIMを無効化することを推奨する｡
+          ただし､無効化した状態で再起動するとシャッター音が再び鳴るようになる｡
+        </p>
+        <h4>2.カメラアプリを開く</h4>
+        <img src="motorola8.png" class="image" alt="カメラアプリ">
+        <h4>3.設定画面を開く</h4>
+        <img src="motorola9.png" class="image" alt="カメラ設定">
+        <h4>4. "シャッター音" をオフにする</h4>
+        <img src="motorola10.png" class="image" alt="シャッター音設定">
+        <p>海外のSIMカードが認識されているため､日本のSIMを利用していてもシャッター音の項目が現れる｡
+        </p>
+        <h3>デメリット</h3>
+        <h4>･対応機種はeSIMまたはデュアルSIM対応モデルのみ</h4>
+        <p>motorola razr 5Gのソフトバンク版など､eSIMおよびデュアルSIMに非対応の機種でシャッター音を消す場合は日本のSIMを利用できない｡
+        </p>
+        <h4>･eSIMを無効化した状態で再起動するとシャッター音が鳴るようになる</h4>
+        <p>再起動のたびにeSIMを有効化してカメラアプリからシャッター音をオフにしてからeSIMを再び無効化するか､バッテリー持ちを犠牲にしてeSIMを常に有効にするしかない｡
+        </p>
+        <h4>･今後アップデートによりこの方法が使えなくなる可能性がある</h4>
+        <p>Galaxyと同じくこれはバグに近い挙動のため､今後アップデートでこの方法が塞がれる可能性がある｡
+        </p>
+        </section>
+        <section id="nothing">
+        <h2>Nothing Phone</h2>
+        <div class="reference">
+          <a href="https://jp.nothing.tech/products/phone-2" target="blank">
+            <img src="nothing.webp" class="image" alt="Nothing Phone">
+            Nothingより引用
+          </a>
+        </div>
+        <p>Nothing Phoneもmotorolaと同じく日本のSIMを利用していない状態でシャッター音が消せるが､日本のSIMを利用した状態では海外のSIMを認識させてもシャッター音が消せない｡
+        </p>
+        <h3>方法</h3>
+        <h4>1.日本のSIMを利用しない</h4>
+        <p>Nothing Phoneでシャッター音を消す場合､海外のSIMカードを挿してローミングで使うか､SIMカードを挿さずモバイルデータ通信を諦めるしかない｡
+        </p>
+        <h4>2.カメラアプリを開く</h4>
+        <img src="nothing2.png" class="image" alt="カメラアプリ">
+        <h4>3.設定画面を開く</h4>
+        <img src="nothing3.png" class="image" alt="カメラ設定">
+        <h4>4. "シャッター音" をオフにする</h4>
+        <img src="nothing4.png" class="image" alt="シャッター音設定">
+        <h3>デメリット</h3>
+        <h4>･日本のSIMカードが利用できない</h4>
+        <p>Nothing Phoneのシャッター音を消す場合､通信の制限が大きくなってしまうのでこの方法はおすすめしない｡
+        </section>
+        <section id="redmagic">
+        <h2>REDMAGIC</h2>
+        <div class="reference">
+          <a href="https://jp.redmagic.gg/pages/redmagic-10-pro" target="blank">
+            <img src="redmagic.webp" class="image" alt="REDMAGIC">
+            RedMagicより引用
+          </a>
+        </div>
+        <p>REDMAGICのシャッター音を消す方法はこれまで紹介してきた方法の中で唯一デメリットがない｡
+        </p>
+        <h3>カメラアプリの設定を変更する方法</h3>
+        <h4>1.カメラアプリを開く</h4>
+        <h4>2.設定画面を開く</h4>
+        <h4>3. "シャッター音" をオフにする</h4>
+        <h3>マナーモードまたはサイレントモードにする方法</h3>
+        <h4>1.マナーモードまたはサイレントモードに設定する</h4>
+        <p>Xperiaと同じく､マナーモードまたはサイレントモードでシャッター音が消える｡
+        </p>
+        <h3>デメリット</h3>
+        <h4>･なし</h4>
+        <p>特殊な設定は不要で､かつ条件もない｡
+        </p>
+        </section>
+        <h2>シャッター音は何のために存在するのか</h1>
+        <p>日本にはシャッター音は鳴らさなければならないという法律はない｡
+          それにも関わらず､なぜ多くのメーカーが日本で販売する端末でシャッター音を強制するのか｡
+          主な理由として､携帯キャリアによる自主規制がある｡
+          カメラ付きの携帯電話が発売され始めてから､盗撮防止という目的で携帯キャリアによるシャッター音の強制が行われてきた｡
+          これに準じてSIMフリー版でもシャッター音を強制しているメーカーが多い｡
+          しかし､シャッター音を鳴らしたところで盗撮の防止になるとは考えにくい｡
+          また､先述の通り日本と韓国以外ではシャッター音の強制は行われていない｡
+          よって､この自主規制は無用の長物である｡
+          最近はXiaomi公式がシャッター音無音化の存在を認識していたり､XperiaやAQUOSもSIMフリー版でシャッター音を消せるようになった｡
+          今後このような流れが日本のスマホ業界で広がっていくことを期待したい｡
+        </p>
+      </section>
+    </main>
+    <script>
+      async function fetchOGData(url, anchorElement) {
+        try {
+          const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
+          const { data, status } = await response.json();
+
+          if (status === "success") {
+            if (data.title) {
+              const titleElem = document.createElement("div");
+              titleElem.textContent = data.title;
+              titleElem.style.fontWeight = "bold";
+              anchorElement.appendChild(titleElem);
+            }
+
+            if (data.image?.url) {
+              const img = document.createElement("img");
+              img.src = data.image.url;
+              img.alt = "Preview";
+              img.width = 200;
+              anchorElement.appendChild(img);
+            }
+
+            if (data.description) {
+              const descElem = document.createElement("div");
+              descElem.textContent = data.description;
+              anchorElement.appendChild(descElem);
+            }
+          }
+        } catch (error) {
+          console.error("OGP情報の取得に失敗:", error);
+        }
+      }
+
+      document.querySelectorAll(".link-preview").forEach(async (anchor) => {
+        await fetchOGData(anchor.href, anchor);
+      });
+    </script>
+  </body>
 </html>
