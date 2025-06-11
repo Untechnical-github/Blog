@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Xiaoxin Pad Pro 2025をグローバルROMに書き換える方法を解説">
+    <meta name="google-site-verification" content="0Lm3uRwedrKk66bbYr_2TmZNx986VFE1yXWuB2h1iAs" />
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Untechnical">
+    <meta property="og:title" content="Xiaoxin Pad Pro 2025をグローバルROMに書き換える方法">
+    <meta property="og:description" content="Xiaoxin Pad Pro 2025をグローバルROMに書き換える方法を解説">
+    <meta property="og:url" content="https://untechnical.pages.dev/xiaoxin_pad_pro/xiaoxin_pad_pro.html>
+    <meta property="og:image" content="https://untechnical.pages.dev/xiaoxin_pad_pro/xiaoxin_pad_pro.jpg">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Xiaoxin Pad Pro 2025をグローバルROMに書き換える方法">
+    <meta name="twitter:description" content="Xiaoxin Pad Pro 2025をグローバルROMに書き換える方法を解説">
+    <meta name="twitter:image" content="https://untechnical.pages.dev/xiaoxin_pad_pro/xiaoxin_pad_pro.jpg>
+
+    <title>Xiaoxin Pad Pro 2025をグローバルROMに書き換える方法</title>
+    <link rel="icon" href="../profile.ico" type="image/x-icon">
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: black;
+        box-sizing: border-box;
+        max-width: 100%;
+      }
+    
+      header {
+        background-color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 40px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+    
+      header a {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 700;
+        font-size: 1.6em;
+        color: black;
+        text-decoration: none;
+        letter-spacing: 0.5px;
+        transition: color 0.3s ease;
+      }
+
+      header a:hover {
+        color: #0073e6;
+      }
+    
+      main {
+        margin-left: 10px;
+        margin-right: 10px;
+        padding: 20px;
+        max-width: 100%;
+      }
+    
+      img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 100%;
+        max-height: 75vh;
+        height: auto;
+      object-fit: contain;
+      }
+    
+      h1 {
+        text-align: center;
+        font-size: 2.5em;
+        font-weight: 700;
+        color: black;
+        margin: 40px 0;
+      }
+
+      nav {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: black;
+        font-size: 1.1em;
+        margin: 0 20px;
+        letter-spacing: 0.5px;
+        transition: color 0.3s ease;
+      }
+
+      nav a:hover {
+        color: #0073e6;
+      }
+
+      nav ul {
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+      }
+
+      nav ul li {
+        display: inline-block;
+        font-size: 1.2em;
+        margin: 0 15px;
+        padding: 10px 0;
+      }
+
+      section h2 {
+        text-align: center;
+        font-size: 2.2em;
+        margin-top: 60px;
+        margin-bottom: 20px;
+        color: black;
+      }
+
+      section h3 {
+        text-align: center;
+        font-size: 1.8em;
+        margin-top: 40px;
+        margin-bottom: 15px;
+        color: black;
+      }
+    
+      section h4 {
+        text-align: center;
+        font-size: 1.5em;
+        margin-top: 40px;
+        color: black;
+      }
+    
+      section p {
+        font-size: 1em;
+        line-height: 1.7;
+        white-space: pre-line;
+        color: black;
+        text-align: justify;
+      }
+
+      .reference {
+        text-align: center;
+        font-size: 0.9em;
+        color: #aaa;
+        margin-bottom: 50px;
+      }
+
+      .reference a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      section .image {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        width: auto;
+        height: 400px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      .link-preview {
+        display: block;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #ffffff;
+        padding: 15px;
+        margin-bottom: 20px;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+
+      .link-preview:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        border-color: #0073e6;
+      }
+
+      .link-preview img {
+        max-width: 100%;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        height: auto;
+        object-fit: cover;
+      }
+
+      .preview-title {
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-bottom: 5px;
+        color: #222;
+      }
+
+      .preview-description {
+        font-size: 0.95em;
+        color: #555;
+        line-height: 1.4;
+      }
+
+      pre code {
+        background-color: #1e1e1e;
+        color: #f8f8f2;
+        font-family: Consolas, Monaco, "Courier New", monospace;
+        font-size: 0.95em;
+        padding: 12px;
+        border-radius: 8px;
+        display: block;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+
+      @media (min-width: 769px) {
+        main {
+          margin-left: 20vw;
+          margin-right: 20vw;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <a href="../index.html">Untechnical</a>
+      </div>
+    </header>
+    <main>
+      <h1>Xiaoxin Pad Pro 2025をグローバルROMに書き換える方法</h1>
+      <img src="xiaoxin_pad_pro.jpg" alt="イメージ">
+      <section>
+      </section>
+    </main>
+    <script>
+      async function fetchOGData(url, anchorElement) {
+        try {
+          const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
+          const { data, status } = await response.json();
+
+          if (status === "success") {
+            if (data.title) {
+              const titleElem = document.createElement("div");
+              titleElem.textContent = data.title;
+              titleElem.style.fontWeight = "bold";
+              anchorElement.appendChild(titleElem);
+            }
+
+            if (data.image?.url) {
+              const img = document.createElement("img");
+              img.src = data.image.url;
+              img.alt = "Preview";
+              img.width = 200;
+              anchorElement.appendChild(img);
+            }
+
+            if (data.description) {
+              const descElem = document.createElement("div");
+              descElem.textContent = data.description;
+              anchorElement.appendChild(descElem);
+            }
+          }
+        } catch (error) {
+          console.error("OGP情報の取得に失敗:", error);
+        }
+      }
+
+      document.querySelectorAll(".link-preview").forEach(async (anchor) => {
+        await fetchOGData(anchor.href, anchor);
+      });
+    </script>
+  </body>
+</html>
