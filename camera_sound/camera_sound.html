@@ -142,7 +142,7 @@
       }
 
       .reference {
-        text-align: left;
+        text-align: center;
         font-size: 0.9em;
         color: #aaa;
         margin-bottom: 50px;
@@ -749,6 +749,12 @@
       </section>
     </main>
     <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (location.hash) {
+          history.replaceState(null, '', location.pathname + location.search);
+        }
+      });
+
       async function fetchOGData(url, anchorElement) {
         try {
           const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
