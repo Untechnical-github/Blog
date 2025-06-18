@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://untechnical.pages.dev/sitemap.xml
+Sitemap: https://untechnical.info/sitemap.xml
