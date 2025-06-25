@@ -14,8 +14,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Generate sitemap with npx
-        run: npx sitemap-generator-cli https://untechnical.info --filepath ./sitemap.xml
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate sitemap with lastmod
+        run: node generate-sitemap.js
 
       - name: Commit sitemap.xml
         run: |
