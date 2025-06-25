@@ -14,11 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install sitemap generator
-        run: npm install -g sitemap-generator-cli
-
-      - name: Generate sitemap
-        run: sitemap-generator-cli https://untechnical.info --filepath ./sitemap.xml
+      - name: Generate sitemap with npx
+        run: npx sitemap-generator-cli https://untechnical.info --filepath ./sitemap.xml
 
       - name: Commit sitemap.xml
         run: |
