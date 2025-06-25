@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -22,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Generate sitemap with lastmod
+      - name: Generate sitemap with lastmod (only updated files)
         run: node generate-sitemap.js
 
       - name: Commit sitemap.xml
