@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,7 +18,7 @@ jobs:
         run: npm install -g sitemap-generator-cli
 
       - name: Generate sitemap
-        run: sitemap-generator https://untechnical.info --filepath ./sitemap.xml
+        run: sitemap-generator-cli https://untechnical.info --filepath ./sitemap.xml
 
       - name: Commit sitemap.xml
         run: |
