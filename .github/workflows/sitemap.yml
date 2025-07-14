@@ -27,10 +27,11 @@ jobs:
       - name: Generate sitemap with lastmod (only updated files)
         run: node generate-sitemap.js
 
-      - name: Commit sitemap.xml
+      - name: Commit sitemap.xml and updated HTML files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add sitemap.xml
-          git commit -m "Auto-update sitemap.xml" || echo "No changes to commit"
+          git add '**/*.html'
+          git commit -m "Auto-update sitemap.xml and article lastmod" || echo "No changes to commit"
           git push
