@@ -364,7 +364,8 @@
             <h4>6.ROMのSP Flash Toolを起動する</h4>
             <p>
               ROMのルートディレクトリにあるSP Flash Toolを起動する。
-              "WindowsによってPCが保護されました" と表示されるが、 "詳細情報" から "実行" をクリックする。その後表示される警告も "OK" をクリックする。
+              "WindowsによってPCが保護されました" と表示されるが、 "詳細情報" から "実行" をクリックする。
+              その後表示される警告も "OK" をクリックする。
             </p>
             <img src="cn_global6-1.png" class="image" alt="spflashtool">
             <img src="cn_global6-2.png" class="image" alt="detail">
@@ -408,9 +409,72 @@
             <h3>デメリット</h3>
             <h4>･OTAによるアップデートができなくなる</h4>
             <p>
-              ROM焼き後にOTAによるアップデートをすると文鎮化する恐れがある。
+              グローバルROMを焼いたあとにOTAによるアップデートをすると文鎮化する恐れがある。
               よってグローバルROMを導入した場合はOTAによるアップデートではなく、これまでと同様の手順でSP Flash Toolで新しいバージョンのROMを上書きすることでアップデートをする必要がある。
               その際は "lk_a" , "lk_b" , "dtbo_a" , "dtbo_b"と一緒に "userdata" のチェックを外すことでデータを初期化せずにアップデートを実行できるが、OTAによるアップデートと比較すると大きな手間がかかる。
+            </p>
+            <h2>中国版のROMの焼き方</h2>
+            <p>
+              ここではグローバルROMがインストールされたXiaoxin Pad Pro 2025に中国版ROMを焼く方法を説明する。
+              グローバルROMを焼いたあとに元の中国版ROMに戻したくなった場合は以下の方法に従う。
+            </p>
+            <h3>方法</h3>
+            <h4>1.Windows PCにadbを導入する</h4>
+            <p>以下は導入方法である。
+              <div id="links">
+                <a href="https://sp7pc.com/google/android/34263" target="_blank" class="link-preview"></a>
+              </div>
+            </p>
+            <img src="xiaoxin_pad_pro.jpg" alt="cn">
+            <h4>2.Windows PCにMTKドライバーをインストールする</h4>
+            <p>以下のリンクからMTKドライバーをダウンロードし、インストールする。</p>
+            <a href="https://mtkdriver.com/" target="_blank" class="link-preview"></a>
+            <h4>3.Windows PCにXiaoxin Pad Pro 2025のROMをダウンロードする</h4>
+            <p>以下のリンクから導入したいバージョンのXiaoxin Pad Pro 2025のROMをダウンロードする。</p>
+            <a href="https://mirrors.lolinet.com/firmware/lenowow/2024/Idea_Tab_Pro_2024/TB375FC/" target="_blank" class="link-preview"></a>
+            <h4>4.ROMのSP Flash Toolを起動する</h4>
+            <p>
+              ROMのルートディレクトリにあるSP Flash Toolを起動する。
+            </p>
+            <img src="global_cn4.png" class="image" alt="spflashtool">
+            <h4>5.XMLファイルとda.authファイルを選択する</h4>
+            <p>
+              "Download-XML" の右の "choose" をクリックし、imageフォルダにある "flash.xml" を選択する。
+              次に "Authentication File" の右にある "choose" をクリックし、imageフォルダにある "da.auth" を選択する。
+            </p>
+            <img src="global_cn5-1.png" class="image" alt="spflashtool">
+            <img src="global_cn5-2.png" class="image" alt="download-xml">
+            <img src="global_cn5-3.png" class="image" alt="authenticationfile">
+            <h4>6. "lk_a" , "dtbo_a" のチェックを外す</h4>
+            <p>これらのチェックを外さないと、ROM焼き後に起動しなくなる可能性がある。</p>
+            <img src="global_cn6.png" class="image" alt="lka,dtboa">
+            <h4>7. "Auto Reboot" にチェックを入れる</h4>
+            <p>
+              必要があれば左上の "Auto Reboot" にチェックを入れる。
+              これによりROM焼き後に自動で再起動される。
+            </p>
+            <img src="global_cn7.png" class="image" alt="autoreboot">
+            <h4>8. "Download" をクリックする</h4>
+            <img src="global_cn8.png" class="image" alt="download">
+            <h4>9.Xiaoxin Pad Pro 2025をPreLoaderモードにする</h4>
+            <p>
+              Xiaoxin Pad Pro 2025の電源を切り、その後音量アップボタンを押しながらWindows PCにUSBケーブルで接続する。
+              ここでPreLoaderモードで正常に接続されると、ROM焼きが始まる。
+            </p>
+            <img src="cn_global11-1.jpg" class="image" alt="preloader">
+            <img src="cn_global11-2.png" class="image" alt="flash">
+            <h4>10.ブートループした場合、初期化をする</h4>
+            <p>
+              ROM焼き後に "Can't load Android system." などと表示されてブートループを起こす場合がある。
+              その際は音量ボタンでカーソルを "Factory data reset" に合わせて電源ボタンで選択し、初期化する必要がある。
+              下の写真はXiaoxin Pad Proの画面ではないが、ブートループを起こした際は最終的にこのような画面で選択を迫られる。
+            </p>
+            <img src="reset.jpg" class="image" alt="reset">
+            <h2>結局どちらのROMを選ぶべきなのか</h2>
+            <p>
+              このように標準搭載のGMSや完全な日本語設定、安定した動作を求めてグローバルROMを焼くことができるが、それにはOTAアップデートができなくなるという大きなデメリットが発生する。
+              もしOTAアップデートも含めて完全な動作を欲する場合、値段を気にしないならIdea Tab Proを購入することを推奨する。
+              これらの方法はグローバルROMを妥協して価格の安さを選び、Xiaoxin Pad Pro 2025を購入した人に対する救済措置のようなものである。
             </p>
           </section>
         </div>
