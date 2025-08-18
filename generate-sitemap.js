@@ -61,11 +61,11 @@ const getGitDate = (file) => {
 
     // 公開日・最終更新日が両方入っている想定
     html = html.replace(
-      /(<time datetime=")(\d{4}-\d{2}-\d{2})(">最終更新日：)([^<]+)(<\/time>)/,
-      (_, p1, _, p3, _, p5) => {
-        return `${p1}${lastmod}${p3}${lastmod}${p5}`;
-      }
-    );
+  /(<time datetime=")(\d{4}-\d{2}-\d{2})(">最終更新日：)([^<]+)(<\/time>)/,
+  (match, p1, p2, p3, p4, p5) => {
+    return `${p1}${lastmod}${p3}${lastmod}${p5}`;
+  }
+);
 
     await fs.writeFile(file, html, "utf-8");
     console.log(`✅ ${file} の最終更新日を ${lastmod} に更新`);
