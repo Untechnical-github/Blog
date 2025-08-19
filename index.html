@@ -310,6 +310,7 @@
       const categoryFilter = document.getElementById('categoryFilter');
       const posts = document.querySelectorAll('.post');
 
+      // HTMLタグ除去
       function stripHtmlTags(html) {
         const cleanHtml = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
                               .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
@@ -317,63 +318,64 @@
         return doc.body.textContent || "";
       }
 
+      // 記事本文をフェッチ
       async function fetchArticleContent(post) {
         const articlePath = post.getAttribute('data-article');
-        const response = await fetch(articlePath);
-        const articleHtml = await response.text();
-        return stripHtmlTags(articleHtml);
+        if (!articlePath) return "";
+        try {
+          const response = await fetch(articlePath);
+          if (!response.ok) return "";
+          const articleHtml = await response.text();
+          return stripHtmlTags(articleHtml);
+        } catch {
+          return "";
+        }
       }
 
       async function filterPosts() {
         const searchQuery = searchBar.value.toLowerCase().trim();
         const selectedCategory = categoryFilter.value.toLowerCase();
 
-        if (searchQuery === "") {
-          posts.forEach(post => {
-            post.style.display = 'block'; 
-            post.querySelector('.context')?.remove(); 
-          });
-          return;
-        }
-
-        let resultsFound = false;
-
         for (const post of posts) {
-          const categories = post.getAttribute('data-category').toLowerCase().split(', ');
+          const categories = post.getAttribute('data-category').toLowerCase().split(',').map(c => c.trim());
           const matchesCategory = selectedCategory ? categories.includes(selectedCategory) : true;
 
+          // 記事本文を取得して検索
           const articleContent = await fetchArticleContent(post);
-          const matchesSearch = articleContent.toLowerCase().includes(searchQuery);
+          const matchesSearch = searchQuery ? articleContent.toLowerCase().includes(searchQuery) : true;
 
           if (matchesSearch && matchesCategory) {
-            resultsFound = true;
-            const snippetStart = articleContent.toLowerCase().indexOf(searchQuery);
-            const snippet = articleContent.substring(
-              Math.max(0, snippetStart - 100),
-              snippetStart + 100
-            );
-            const highlightedSnippet = snippet.replace(
-              new RegExp(searchQuery, 'gi'),
-              (match) => `<strong>${match}</strong>`
-            );
-
             post.style.display = 'block';
+
+            // ハイライト付きスニペット表示
             post.querySelector('.context')?.remove();
-            const contextDiv = document.createElement('div');
-            contextDiv.classList.add('context');
-            contextDiv.innerHTML = `...${highlightedSnippet}...`;
-            post.appendChild(contextDiv);
+            if (searchQuery) {
+              const snippetStart = articleContent.toLowerCase().indexOf(searchQuery);
+              const snippet = articleContent.substring(
+                Math.max(0, snippetStart - 100),
+                snippetStart + 100
+              );
+              const highlightedSnippet = snippet.replace(
+                new RegExp(searchQuery, 'gi'),
+                (match) => `<strong>${match}</strong>`
+              );
+
+              const contextDiv = document.createElement('div');
+              contextDiv.classList.add('context');
+              contextDiv.innerHTML = `...${highlightedSnippet}...`;
+              post.appendChild(contextDiv);
+            }
           } else {
             post.style.display = 'none';
           }
         }
       }
 
-      searchBar.addEventListener('input', (event) => {
-        filterPosts();
-      });
-
+      searchBar.addEventListener('input', filterPosts);
       categoryFilter.addEventListener('change', filterPosts);
+
+      // 初期表示（カテゴリだけ反映）
+      filterPosts();
     </script>
   </body>
 </html>
