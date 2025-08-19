@@ -308,74 +308,49 @@
     <script>
       const searchBar = document.getElementById('searchBar');
       const categoryFilter = document.getElementById('categoryFilter');
-      const posts = document.querySelectorAll('.post');
+      const postSection = document.getElementById('postSection');
 
-      // HTMLタグ除去
-      function stripHtmlTags(html) {
-        const cleanHtml = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-                              .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
-        const doc = new DOMParser().parseFromString(cleanHtml, 'text/html');
-        return doc.body.textContent || "";
+      let articles = [];
+      let worker = new Worker("searchWorker.js");
+
+      worker.onmessage = function(e) {
+        const results = e.data;
+        postSection.innerHTML = "";
+        if (!results.length) { postSection.innerHTML = "<p>該当する記事がありません。</p>"; return; }
+        results.forEach(article => {
+          const div = document.createElement("div");
+          div.classList.add("post");
+          div.innerHTML = `<a href="${article.path}"><h3>${article.title}</h3></a><div class="context">${article.snippet||""}</div>`;
+          postSection.appendChild(div);
+        });
+      };
+
+      async function loadArticles() {
+        const response = await fetch("articles.json");
+        articles = await response.json();
+        renderPosts(articles);
       }
 
-      // 記事本文をフェッチ
-      async function fetchArticleContent(post) {
-        const articlePath = post.getAttribute('data-article');
-        if (!articlePath) return "";
-        try {
-          const response = await fetch(articlePath);
-          if (!response.ok) return "";
-          const articleHtml = await response.text();
-          return stripHtmlTags(articleHtml);
-        } catch {
-          return "";
-        }
+      function renderPosts(list) {
+        postSection.innerHTML = "";
+        list.forEach(article => {
+          const div = document.createElement("div");
+          div.classList.add("post");
+          div.innerHTML = `<a href="${article.path}"><h3>${article.title}</h3></a><div class="context"></div>`;
+          postSection.appendChild(div);
+        });
       }
 
-      async function filterPosts() {
-        const searchQuery = searchBar.value.toLowerCase().trim();
-        const selectedCategory = categoryFilter.value.toLowerCase();
-
-        for (const post of posts) {
-          const categories = post.getAttribute('data-category').toLowerCase().split(',').map(c => c.trim());
-          const matchesCategory = selectedCategory ? categories.includes(selectedCategory) : true;
-
-          // 記事本文を取得して検索
-          const articleContent = await fetchArticleContent(post);
-          const matchesSearch = searchQuery ? articleContent.toLowerCase().includes(searchQuery) : true;
-
-          if (matchesSearch && matchesCategory) {
-            post.style.display = 'block';
-
-            // ハイライト付きスニペット表示
-            post.querySelector('.context')?.remove();
-            if (searchQuery) {
-              const snippetStart = articleContent.toLowerCase().indexOf(searchQuery);
-              const snippet = articleContent.substring(
-                Math.max(0, snippetStart - 100),
-                snippetStart + 100
-              );
-              const highlightedSnippet = snippet.replace(
-                new RegExp(searchQuery, 'gi'),
-                (match) => `<strong>${match}</strong>`
-              );
-
-              const contextDiv = document.createElement('div');
-              contextDiv.classList.add('context');
-              contextDiv.innerHTML = `...${highlightedSnippet}...`;
-              post.appendChild(contextDiv);
-            }
-          } else {
-            post.style.display = 'none';
-          }
-        }
+      function sendSearch() {
+        const query = searchBar.value.trim();
+        const category = categoryFilter.value;
+        worker.postMessage({ articles, query, category });
       }
 
-      searchBar.addEventListener('input', filterPosts);
-      categoryFilter.addEventListener('change', filterPosts);
+      searchBar.addEventListener("input", sendSearch);
+      categoryFilter.addEventListener("change", sendSearch);
 
-      // 初期表示（カテゴリだけ反映）
-      filterPosts();
+      loadArticles();
     </script>
   </body>
 </html>

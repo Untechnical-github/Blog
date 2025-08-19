@@ -1,4 +1,4 @@
-name: Generate Sitemap
+name: Auto Update Sitemap & Articles JSON
 
 on:
   push:
@@ -24,14 +24,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Generate sitemap with lastmod (only updated files)
+      - name: Generate sitemap with lastmod (updated files only)
         run: node generate-sitemap.js
 
-      - name: Commit sitemap.xml and updated HTML files
+      - name: Generate articles.json (updated files only)
+        run: node generate-articles-json.js
+
+      - name: Commit updates
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sitemap.xml
-          git add '**/*.html'
-          git commit -m "Auto-update sitemap.xml and article lastmod" || echo "No changes to commit"
+          git add sitemap.xml articles.json '**/*.html'
+          git commit -m "Auto-update sitemap.xml, articles.json, lastmod" || echo "No changes"
           git push
