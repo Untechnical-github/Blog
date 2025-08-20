@@ -30,9 +30,9 @@ const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
       document.querySelector("h1")?.textContent?.trim() ||
       "";
 
-    // カテゴリ（例: <div class="post" data-category="Android,iOS">）
-    const dataCategory = document.querySelector(".post")?.getAttribute("data-category") || "";
-    const categories = dataCategory.split(",").map(c => c.trim()).filter(Boolean);
+    // カテゴリ（metaタグ専用）
+    const metaCategory = document.querySelector("meta[name='category']")?.getAttribute("content") || "";
+    const categories = metaCategory.split(",").map(c => c.trim()).filter(Boolean);
 
     // 本文（全文）
     let content =
