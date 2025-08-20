@@ -317,11 +317,11 @@
           worker.postMessage({ type: "load", payload: data });
         });
 
+      // HTMLのIDに合わせる
       const searchInput = document.getElementById("searchBar");
       const categorySelect = document.getElementById("categoryFilter");
       const resultsDiv = document.getElementById("searchResults");
 
-      // 検索・カテゴリ変更時に実行
       function performSearch() {
         const keyword = searchInput.value.trim().toLowerCase();
         const category = categorySelect.value;
@@ -331,7 +331,6 @@
       searchInput.addEventListener("input", performSearch);
       categorySelect.addEventListener("change", performSearch);
 
-      // Worker からの結果受信
       worker.onmessage = function (e) {
         const results = e.data;
         if (results.length === 0) {
