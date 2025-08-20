@@ -8,12 +8,12 @@ self.onmessage = function (e) {
   }
 
   if (type === "search") {
-    const { keyword, category } = payload;
-    const lowerKeyword = keyword.toLowerCase();
+    const keyword = (payload.keyword || "").toLowerCase();
+    const category = payload.category || "";
 
     const results = articles.filter(article => {
-      const titleMatch = article.title.toLowerCase().includes(lowerKeyword);
-      const contentMatch = article.content.toLowerCase().includes(lowerKeyword);
+      const titleMatch = article.title.toLowerCase().includes(keyword);
+      const contentMatch = article.content.toLowerCase().includes(keyword);
       const categoryMatch = category === "" || article.category.includes(category);
       return (titleMatch || contentMatch) && categoryMatch;
     });

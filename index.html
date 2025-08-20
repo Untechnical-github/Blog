@@ -309,10 +309,6 @@
       const worker = new Worker("search-worker.js");
       let articles = [];
 
-      const searchInput = document.getElementById("searchBar");
-      const categorySelect = document.getElementById("categoryFilter");
-      const resultsDiv = document.getElementById("searchResults");
-
       // JSON を読み込んで Worker に送信
       fetch("articles.json")
         .then(res => res.json())
@@ -321,27 +317,37 @@
           worker.postMessage({ type: "load", payload: data });
         });
 
-      function performSearch() {
-        const keyword = searchInput.value.trim();
-        const category = categorySelect.value;
+      const searchInput = document.getElementById("searchBar");
+      const categorySelect = document.getElementById("categoryFilter");
+      const resultsDiv = document.getElementById("searchResults");
 
+      // 検索・カテゴリ変更時に実行
+      function performSearch() {
+        const keyword = searchInput.value.trim().toLowerCase();
+        const category = categorySelect.value;
         worker.postMessage({ type: "search", payload: { keyword, category } });
       }
 
       searchInput.addEventListener("input", performSearch);
       categorySelect.addEventListener("change", performSearch);
 
+      // Worker からの結果受信
       worker.onmessage = function (e) {
         const results = e.data;
-        resultsDiv.innerHTML = results.length === 0
-          ? "<p>該当する記事はありません</p>"
-          : results.map(article => `
+        if (results.length === 0) {
+          resultsDiv.innerHTML = "<p>該当する記事はありません。</p>";
+          return;
+        }
+
+        resultsDiv.innerHTML = results
+          .map(article => `
             <div class="search-result">
               <h3><a href="${article.path}">${article.title}</a></h3>
               ${article.image ? `<img src="${article.image}" alt="${article.title}" style="max-width:150px;">` : ""}
               <p>${article.content.slice(0, 120)}...</p>
             </div>
-          `).join("");
+          `)
+          .join("");
       };
     </script>
   </body>
