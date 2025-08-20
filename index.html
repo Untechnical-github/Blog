@@ -255,20 +255,7 @@
           <option value="iOS">iOS</option>
         </select>
       </div>
-      <section class="posts" id="postSection">
-        <div class="post">
-          <a href="camera_sound/camera_sound.html">
-            <img src="camera_sound/camera_sound.jpg" alt="Post 1">
-            <h3>スマホのシャッター音を消す方法</h3>
-          </a>
-        </div>
-        <div class="post">
-          <a href="xiaoxin_pad_pro/xiaoxin_pad_pro.html">
-            <img src="xiaoxin_pad_pro/xiaoxin_pad_pro.jpg" alt="Post 2">
-            <h3>Xiaoxin Pad Pro 2025をグローバル化する方法</h3>
-          </a>
-        </div>
-      </section>
+      <section class="posts" id="postSection"></section>
       <div id="searchResults"></div>
       <section id="about">
         <div class="box-section">
@@ -307,46 +294,59 @@
     </main>
     <script>
       const worker = new Worker("search-worker.js");
-      let articles = [];
+      const searchInput = document.getElementById("searchBar");
+      const categorySelect = document.getElementById("categoryFilter");
+      const postSection = document.getElementById("postSection"); // 対象をpostSectionに変更
+      let allArticles = []; // 全記事を保持する変数
 
-      // JSON を読み込んで Worker に送信
+      // 記事を表示するための関数
+      function displayArticles(articles) {
+        if (articles.length === 0) {
+          postSection.innerHTML = "<p>該当する記事はありません。</p>";
+          return;
+        }
+
+        // mapを使って各記事のHTMLを生成し、joinで一つの文字列にする
+        postSection.innerHTML = articles.map(article => `
+          <div class="post">
+            <a href="${article.path}">
+              <img src="${article.image}" alt="${article.title}">
+              <h3>${article.title}</h3>
+              <p class="context">${article.content.slice(0, 80)}...</p>
+            </a>
+          </div>
+        `).join("");
+      }
+
+      // JSONを読み込み、初期表示を行い、Workerにデータを送信
       fetch("articles.json")
         .then(res => res.json())
         .then(data => {
-          articles = data;
+          allArticles = data;
+          displayArticles(allArticles); // ★最初に全記事を表示
           worker.postMessage({ type: "load", payload: data });
         });
-
-      // HTMLのIDに合わせる
-      const searchInput = document.getElementById("searchBar");
-      const categorySelect = document.getElementById("categoryFilter");
-      const resultsDiv = document.getElementById("searchResults");
 
       function performSearch() {
         const keyword = searchInput.value.trim().toLowerCase();
         const category = categorySelect.value;
-        worker.postMessage({ type: "search", payload: { keyword, category } });
+
+        // 検索欄が空でカテゴリが「全て」の場合は全記事を再表示
+        if (keyword === "" && category === "") {
+          displayArticles(allArticles);
+        } else {
+          // Workerに検索を依頼
+          worker.postMessage({ type: "search", payload: { keyword, category } });
+        }
       }
 
       searchInput.addEventListener("input", performSearch);
       categorySelect.addEventListener("change", performSearch);
 
+      // Workerからの検索結果を受け取る
       worker.onmessage = function (e) {
         const results = e.data;
-        if (results.length === 0) {
-          resultsDiv.innerHTML = "<p>該当する記事はありません。</p>";
-          return;
-        }
-
-        resultsDiv.innerHTML = results
-          .map(article => `
-            <div class="search-result">
-              <h3><a href="${article.path}">${article.title}</a></h3>
-              ${article.image ? `<img src="${article.image}" alt="${article.title}" style="max-width:150px;">` : ""}
-              <p>${article.content.slice(0, 120)}...</p>
-            </div>
-          `)
-          .join("");
+        displayArticles(results); // ★受け取った結果で表示を更新
       };
     </script>
   </body>
