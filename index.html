@@ -309,6 +309,10 @@
       const worker = new Worker("search-worker.js");
       let articles = [];
 
+      const searchInput = document.getElementById("searchBar");
+      const categorySelect = document.getElementById("categoryFilter");
+      const resultsDiv = document.getElementById("searchResults");
+
       // JSON を読み込んで Worker に送信
       fetch("articles.json")
         .then(res => res.json())
@@ -317,29 +321,27 @@
           worker.postMessage({ type: "load", payload: data });
         });
 
-      const searchInput = document.getElementById("searchInput");
-      const resultsDiv = document.getElementById("results");
-
-      searchInput.addEventListener("input", () => {
+      function performSearch() {
         const keyword = searchInput.value.trim();
-        if (keyword.length === 0) {
-          resultsDiv.innerHTML = "";
-          return;
-        }
-        worker.postMessage({ type: "search", payload: keyword });
-      });
+        const category = categorySelect.value;
+
+        worker.postMessage({ type: "search", payload: { keyword, category } });
+      }
+
+      searchInput.addEventListener("input", performSearch);
+      categorySelect.addEventListener("change", performSearch);
 
       worker.onmessage = function (e) {
         const results = e.data;
-        resultsDiv.innerHTML = results
-          .map(article => `
+        resultsDiv.innerHTML = results.length === 0
+          ? "<p>該当する記事はありません</p>"
+          : results.map(article => `
             <div class="search-result">
               <h3><a href="${article.path}">${article.title}</a></h3>
               ${article.image ? `<img src="${article.image}" alt="${article.title}" style="max-width:150px;">` : ""}
               <p>${article.content.slice(0, 120)}...</p>
             </div>
-          `)
-          .join("");
+          `).join("");
       };
     </script>
   </body>

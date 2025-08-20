@@ -8,15 +8,16 @@ self.onmessage = function (e) {
   }
 
   if (type === "search") {
-    const keyword = payload.toLowerCase();
+    const { keyword, category } = payload;
+    const lowerKeyword = keyword.toLowerCase();
+
     const results = articles.filter(article => {
-      const titleMatch = article.title?.toLowerCase().includes(keyword);
-      const contentMatch = article.content?.toLowerCase().includes(keyword);
-      const categoryMatch = Array.isArray(article.category)
-        ? article.category.some(cat => cat.toLowerCase().includes(keyword))
-        : false;
-      return titleMatch || contentMatch || categoryMatch;
+      const titleMatch = article.title.toLowerCase().includes(lowerKeyword);
+      const contentMatch = article.content.toLowerCase().includes(lowerKeyword);
+      const categoryMatch = category === "" || article.category.includes(category);
+      return (titleMatch || contentMatch) && categoryMatch;
     });
+
     self.postMessage(results);
   }
 };
