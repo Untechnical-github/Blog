@@ -3,6 +3,8 @@ const { execSync } = require("child_process");
 const { JSDOM } = require("jsdom");
 
 const JSON_FILE = "articles.json";
+// ★ 1. ウェブサイトのベースURLを定義（ご自身のサイトに合わせて変更してください）
+const BASE_URL = "https://untechnical.info/";
 
 // Git で変更された HTML を取得（index.html, policy.html は除外）
 const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
@@ -43,9 +45,16 @@ const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
     // 改行・余計な空白を整理（全文保持）
     content = content.replace(/\s+/g, " ").trim();
 
-    // 記事の最初の画像（相対パスのまま保存）
-    const image =
+    // ★ 2. 画像パスを絶対パスに変換するロジックに変更
+    const relativeImagePath =
       document.querySelector("main img, article img, body img")?.getAttribute("src") || "";
+    
+    let image = "";
+    if (relativeImagePath) {
+      // HTMLファイルの絶対URLを基準に、画像の相対パスを解決する
+      const fileUrl = new URL(file, BASE_URL).href;
+      image = new URL(relativeImagePath, fileUrl).href;
+    }
 
     articleMap.set(file, { title, category: categories, path: file, content, image });
   }

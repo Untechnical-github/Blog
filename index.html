@@ -297,29 +297,63 @@
       const searchInput = document.getElementById("searchBar");
       const categorySelect = document.getElementById("categoryFilter");
       const postSection = document.getElementById("postSection");
-      let allArticles = []; // すべての記事をここに保存します
+      let allArticles = [];
 
       /**
-       * 指定された記事リストを画面に表示する関数
+       * 記事リストを画面に表示する関数（ハイライト機能付き）
        * @param {Array} articles 表示する記事の配列
+       * @param {string} keyword 検索キーワード
        */
-      function displayArticles(articles) {
-        // 表示する記事がない場合
+      function displayArticles(articles, keyword) {
         if (!articles || articles.length === 0) {
           postSection.innerHTML = "<p>該当する記事はありません。</p>";
           return;
         }
 
-        // 記事の配列からHTMLを生成
-        postSection.innerHTML = articles.map(article => `
-          <div class="post">
-            <a href="${article.path}">
-              <img src="${article.image}" alt="${article.title}">
-              <h3>${article.title}</h3>
-              <p class="context">${article.content.slice(0, 80)}...</p>
-            </a>
-          </div>
-        `).join("");
+        postSection.innerHTML = articles.map(article => {
+          let contextHTML = '';
+
+          // ★ここからが新しいロジック★
+          // キーワードが入力されている場合のみ、ハイライト処理を行う
+          if (keyword && keyword.length > 0) {
+            const lowerContent = article.content.toLowerCase();
+            const index = lowerContent.indexOf(keyword);
+
+            // 本文にキーワードが見つかった場合
+            if (index !== -1) {
+              // キーワードの前後30文字を切り出す
+              const startIndex = Math.max(0, index - 30);
+              const endIndex = Math.min(article.content.length, index + keyword.length + 30);
+              let snippet = article.content.substring(startIndex, endIndex);
+
+              // 切り出した部分が文の途中なら「...」を付ける
+              if (startIndex > 0) snippet = '...' + snippet;
+              if (endIndex < article.content.length) snippet = snippet + '...';
+              
+              // キーワードを<strong>タグで囲んで太字にする（大文字・小文字を区別しない）
+              const regex = new RegExp(keyword, 'gi');
+              contextHTML = snippet.replace(regex, '<strong>$&</strong>');
+
+            } else {
+              // 本文にキーワードがなく、タイトルのみにヒットした場合の表示
+              contextHTML = article.content.slice(0, 80) + '...';
+            }
+          } else {
+            // ★ここまでが新しいロジック★
+            // 検索していない場合は、通常通り文章の先頭を表示
+            contextHTML = article.content.slice(0, 80) + '...';
+          }
+
+          return `
+            <div class="post">
+              <a href="${article.path}">
+                <img src="${article.image}" alt="${article.title}">
+                <h3>${article.title}</h3>
+                <p class="context">${contextHTML}</p>
+              </a>
+            </div>
+          `;
+        }).join("");
       }
 
       // 最初に記事データを読み込む
@@ -327,36 +361,32 @@
         .then(res => res.json())
         .then(data => {
           allArticles = data;
-          displayArticles(allArticles); // ★初期状態で全記事を表示
-          worker.postMessage({ type: "load", payload: data }); // Workerにも記事データを渡す
+          // 初期表示時はキーワードなし
+          displayArticles(allArticles, "");
+          worker.postMessage({ type: "load", payload: data });
         });
 
-      /**
-       * 検索を実行する関数
-       */
       function performSearch() {
         const keyword = searchInput.value.trim().toLowerCase();
         const category = categorySelect.value;
 
-        // ★キーワードが空で、カテゴリが「全て」の場合、Workerを使わずに全記事を表示
         if (keyword === "" && category === "") {
-          displayArticles(allArticles);
+          // 検索していない場合はキーワードなし
+          displayArticles(allArticles, "");
         } else {
-          // それ以外の場合はWorkerに検索を依頼
           worker.postMessage({ type: "search", payload: { keyword, category } });
         }
       }
 
-      // ★文字が入力されるたびに検索を実行
       searchInput.addEventListener("input", performSearch);
-      
-      // カテゴリが変更されたときも検索を実行
       categorySelect.addEventListener("change", performSearch);
 
-      // Workerから検索結果を受け取って表示を更新
+      // Workerから結果を受け取る
       worker.onmessage = function (e) {
         const results = e.data;
-        displayArticles(results);
+        const keyword = searchInput.value.trim().toLowerCase();
+        // 表示関数に、現在のキーワードも渡す
+        displayArticles(results, keyword);
       };
     </script>
   </body>
