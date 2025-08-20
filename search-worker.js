@@ -1,7 +1,5 @@
-// search-worker.js
 let articles = [];
 
-// 記事データを受け取る
 self.onmessage = function (e) {
   const { type, payload } = e.data;
 
@@ -11,11 +9,14 @@ self.onmessage = function (e) {
 
   if (type === "search") {
     const keyword = payload.toLowerCase();
-    const results = articles.filter(article =>
-      article.title.toLowerCase().includes(keyword) ||
-      article.content.toLowerCase().includes(keyword) ||
-      article.category.some(cat => cat.toLowerCase().includes(keyword))
-    );
+    const results = articles.filter(article => {
+      const titleMatch = article.title?.toLowerCase().includes(keyword);
+      const contentMatch = article.content?.toLowerCase().includes(keyword);
+      const categoryMatch = Array.isArray(article.category)
+        ? article.category.some(cat => cat.toLowerCase().includes(keyword))
+        : false;
+      return titleMatch || contentMatch || categoryMatch;
+    });
     self.postMessage(results);
   }
 };
