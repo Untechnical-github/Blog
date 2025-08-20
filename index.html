@@ -256,13 +256,13 @@
         </select>
       </div>
       <section class="posts" id="postSection">
-        <div class="post" data-category="Android, iOS" data-article="1.html">
+        <div class="post">
           <a href="camera_sound/camera_sound.html">
             <img src="camera_sound/camera_sound.jpg" alt="Post 1">
             <h3>スマホのシャッター音を消す方法</h3>
           </a>
         </div>
-        <div class="post" data-category="Android" data-article="1.html">
+        <div class="post">
           <a href="xiaoxin_pad_pro/xiaoxin_pad_pro.html">
             <img src="xiaoxin_pad_pro/xiaoxin_pad_pro.jpg" alt="Post 2">
             <h3>Xiaoxin Pad Pro 2025をグローバル化する方法</h3>
@@ -306,51 +306,34 @@
       </section>
     </main>
     <script>
-      const searchBar = document.getElementById('searchBar');
-      const categoryFilter = document.getElementById('categoryFilter');
-      const postSection = document.getElementById('postSection');
+      const worker = new Worker("searchWorker.js");
 
-      let articles = [];
-      let worker = new Worker("searchWorker.js");
+      const searchInput = document.getElementById("searchInput");
+      const categoryFilter = document.getElementById("categoryFilter");
+      const resultsDiv = document.getElementById("results");
 
-      worker.onmessage = function(e) {
+      function runSearch() {
+        worker.postMessage({
+          query: searchInput.value,
+          category: categoryFilter.value
+        });
+      }
+
+      searchInput.addEventListener("input", runSearch);
+      categoryFilter.addEventListener("change", runSearch);
+
+      worker.onmessage = (e) => {
         const results = e.data;
-        postSection.innerHTML = "";
-        if (!results.length) { postSection.innerHTML = "<p>該当する記事がありません。</p>"; return; }
-        results.forEach(article => {
-          const div = document.createElement("div");
-          div.classList.add("post");
-          div.innerHTML = `<a href="${article.path}"><h3>${article.title}</h3></a><div class="context">${article.snippet||""}</div>`;
-          postSection.appendChild(div);
-        });
+
+        resultsDiv.innerHTML = results.map(article => `
+          <div class="article-card">
+            ${article.image ? `<img src="${article.image}" alt="${article.title}" class="thumb">` : ""}
+            <h3><a href="${article.path}">${article.title}</a></h3>
+            <p class="categories">${article.category.join(", ")}</p>
+            <p class="excerpt">${article.content.slice(0, 120)}...</p>
+          </div>
+        `).join("");
       };
-
-      async function loadArticles() {
-        const response = await fetch("articles.json");
-        articles = await response.json();
-        renderPosts(articles);
-      }
-
-      function renderPosts(list) {
-        postSection.innerHTML = "";
-        list.forEach(article => {
-          const div = document.createElement("div");
-          div.classList.add("post");
-          div.innerHTML = `<a href="${article.path}"><h3>${article.title}</h3></a><div class="context"></div>`;
-          postSection.appendChild(div);
-        });
-      }
-
-      function sendSearch() {
-        const query = searchBar.value.trim();
-        const category = categoryFilter.value;
-        worker.postMessage({ articles, query, category });
-      }
-
-      searchBar.addEventListener("input", sendSearch);
-      categoryFilter.addEventListener("change", sendSearch);
-
-      loadArticles();
     </script>
   </body>
 </html>

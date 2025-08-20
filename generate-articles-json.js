@@ -4,8 +4,8 @@ const { JSDOM } = require("jsdom");
 
 const JSON_FILE = "articles.json";
 
-// 全 HTML を取得（index.html は除外）
-const htmlFiles = glob.sync("**/*.html", { ignore: "index.html" });
+// 全 HTML を取得（index.html と policy.html は除外）
+const htmlFiles = glob.sync("**/*.html", { ignore: ["index.html", "policy.html"] });
 
 (async () => {
   let articleMap = new Map();
@@ -22,16 +22,22 @@ const htmlFiles = glob.sync("**/*.html", { ignore: "index.html" });
     const document = dom.window.document;
 
     // タイトル
-    const title = document.querySelector("title")?.textContent?.trim() || document.querySelector("h1")?.textContent?.trim() || "";
+    const title = document.querySelector("title")?.textContent?.trim()
+                || document.querySelector("h1")?.textContent?.trim()
+                || "";
 
-    // カテゴリ：<meta name="category" content="Android, iOS"> などでもOK
-    let dataCategory = document.querySelector(".post")?.getAttribute("data-category") || "";
-    const categories = dataCategory.split(",").map(c => c.trim()).filter(Boolean);
+    // カテゴリー（metaタグから取得）
+    const metaCategory = document.querySelector('meta[name="category"]')?.getAttribute("content") || "";
+    const categories = metaCategory.split(",").map(c => c.trim()).filter(Boolean);
 
-    // 本文全文
-    const mainContent = document.querySelector("main")?.textContent?.trim() || "";
+    // 記事本文のみ（.post-contentクラス）
+    const content = document.querySelector(".post-content")?.textContent?.trim() || "";
 
-    articleMap.set(file, { title, category: categories, path: file, content: mainContent });
+    // 代表画像（.post-imageクラス）
+    const image = document.querySelector(".post-image")?.getAttribute("src") || "";
+
+    // JSON にセット
+    articleMap.set(file, { title, category: categories, path: file, content, image });
   }
 
   const articles = Array.from(articleMap.values());
