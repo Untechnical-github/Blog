@@ -296,17 +296,21 @@
       const worker = new Worker("search-worker.js");
       const searchInput = document.getElementById("searchBar");
       const categorySelect = document.getElementById("categoryFilter");
-      const postSection = document.getElementById("postSection"); // 対象をpostSectionに変更
-      let allArticles = []; // 全記事を保持する変数
+      const postSection = document.getElementById("postSection");
+      let allArticles = []; // すべての記事をここに保存します
 
-      // 記事を表示するための関数
+      /**
+       * 指定された記事リストを画面に表示する関数
+       * @param {Array} articles 表示する記事の配列
+       */
       function displayArticles(articles) {
-        if (articles.length === 0) {
+        // 表示する記事がない場合
+        if (!articles || articles.length === 0) {
           postSection.innerHTML = "<p>該当する記事はありません。</p>";
           return;
         }
 
-        // mapを使って各記事のHTMLを生成し、joinで一つの文字列にする
+        // 記事の配列からHTMLを生成
         postSection.innerHTML = articles.map(article => `
           <div class="post">
             <a href="${article.path}">
@@ -318,35 +322,41 @@
         `).join("");
       }
 
-      // JSONを読み込み、初期表示を行い、Workerにデータを送信
+      // 最初に記事データを読み込む
       fetch("articles.json")
         .then(res => res.json())
         .then(data => {
           allArticles = data;
-          displayArticles(allArticles); // ★最初に全記事を表示
-          worker.postMessage({ type: "load", payload: data });
+          displayArticles(allArticles); // ★初期状態で全記事を表示
+          worker.postMessage({ type: "load", payload: data }); // Workerにも記事データを渡す
         });
 
+      /**
+       * 検索を実行する関数
+       */
       function performSearch() {
         const keyword = searchInput.value.trim().toLowerCase();
         const category = categorySelect.value;
 
-        // 検索欄が空でカテゴリが「全て」の場合は全記事を再表示
+        // ★キーワードが空で、カテゴリが「全て」の場合、Workerを使わずに全記事を表示
         if (keyword === "" && category === "") {
           displayArticles(allArticles);
         } else {
-          // Workerに検索を依頼
+          // それ以外の場合はWorkerに検索を依頼
           worker.postMessage({ type: "search", payload: { keyword, category } });
         }
       }
 
+      // ★文字が入力されるたびに検索を実行
       searchInput.addEventListener("input", performSearch);
+      
+      // カテゴリが変更されたときも検索を実行
       categorySelect.addEventListener("change", performSearch);
 
-      // Workerからの検索結果を受け取る
+      // Workerから検索結果を受け取って表示を更新
       worker.onmessage = function (e) {
         const results = e.data;
-        displayArticles(results); // ★受け取った結果で表示を更新
+        displayArticles(results);
       };
     </script>
   </body>
