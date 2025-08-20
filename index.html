@@ -306,33 +306,40 @@
       </section>
     </main>
     <script>
-      const worker = new Worker("searchWorker.js");
+      const worker = new Worker("search-worker.js");
+      let articles = [];
+
+      // JSON を読み込んで Worker に送信
+      fetch("articles.json")
+        .then(res => res.json())
+        .then(data => {
+          articles = data;
+          worker.postMessage({ type: "load", payload: data });
+        });
 
       const searchInput = document.getElementById("searchInput");
-      const categoryFilter = document.getElementById("categoryFilter");
       const resultsDiv = document.getElementById("results");
 
-      function runSearch() {
-        worker.postMessage({
-          query: searchInput.value,
-          category: categoryFilter.value
-        });
-      }
+      searchInput.addEventListener("input", () => {
+        const keyword = searchInput.value.trim();
+        if (keyword.length === 0) {
+          resultsDiv.innerHTML = "";
+          return;
+        }
+        worker.postMessage({ type: "search", payload: keyword });
+      });
 
-      searchInput.addEventListener("input", runSearch);
-      categoryFilter.addEventListener("change", runSearch);
-
-      worker.onmessage = (e) => {
+      worker.onmessage = function (e) {
         const results = e.data;
-
-        resultsDiv.innerHTML = results.map(article => `
-          <div class="article-card">
-            ${article.image ? `<img src="${article.image}" alt="${article.title}" class="thumb">` : ""}
-            <h3><a href="${article.path}">${article.title}</a></h3>
-            <p class="categories">${article.category.join(", ")}</p>
-            <p class="excerpt">${article.content.slice(0, 120)}...</p>
-          </div>
-        `).join("");
+        resultsDiv.innerHTML = results
+          .map(article => `
+            <div class="search-result">
+              <h3><a href="${article.path}">${article.title}</a></h3>
+              ${article.image ? `<img src="${article.image}" alt="${article.title}" style="max-width:150px;">` : ""}
+              <p>${article.content.slice(0, 120)}...</p>
+            </div>
+          `)
+          .join("");
       };
     </script>
   </body>
