@@ -48,7 +48,11 @@ const getGitDate = (file) => {
   for (const file of changedFiles) {
     const relativeUrl = "/" + file.replace(/index\.html$/, "").replace(/\.html$/, "");
     const fullUrl = `${BASE_URL}${relativeUrl}`;
-    const lastmod = getGitDate(file).split("T")[0]; // ISO 日付だけ
+    const lastmod = getGitDate(file).split("T")[0]; // YYYY-MM-DD 形式
+
+    // ★ 1. 日本語の日付形式を作成
+    const [year, month, day] = lastmod.split('-');
+    const japaneseDate = `${year}年${parseInt(month, 10)}月${parseInt(day, 10)}日`;
 
     // sitemap.xml を更新
     urlMap.set(fullUrl, {
@@ -61,14 +65,19 @@ const getGitDate = (file) => {
 
     // 公開日・最終更新日が両方入っている想定
     html = html.replace(
-  /(<time datetime=")(\d{4}-\d{2}-\d{2})(">最終更新日：)([^<]+)(<\/time>)/,
-  (match, p1, p2, p3, p4, p5) => {
-    return `${p1}${lastmod}${p3}${lastmod}${p5}`;
-  }
-);
+      // 正規表現: (<time datetime=")(古い日付)(">最終更新日：)(古い表示)(</time>)
+      /(<time datetime=")(\d{4}-\d{2}-\d{2})(">最終更新日：)([^<]+)(<\/time>)/,
+      // ★ 2. datetime属性と表示テキストを別々に更新
+      (match, p1, p2, p3, p4, p5) => {
+        // p1: <time datetime="
+        // p3: ">最終更新日：
+        // p5: </time>
+        return `${p1}${lastmod}${p3}${japaneseDate}${p5}`;
+      }
+    );
 
     await fs.writeFile(file, html, "utf-8");
-    console.log(`✅ ${file} の最終更新日を ${lastmod} に更新`);
+    console.log(`✅ ${file} の最終更新日を ${japaneseDate} に更新`);
   }
 
   // sitemap.xml を書き出し
