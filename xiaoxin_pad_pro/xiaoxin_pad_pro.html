@@ -306,6 +306,48 @@
         background-color: #005bb5;
       }
 
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        padding-top: 60px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.8);
+      }
+
+      .modal-content {
+        display: block;
+        margin: auto;
+        max-width: 90%;
+        max-height: 80vh;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      }
+
+      .close {
+        position: absolute;
+        top: 20px;
+        right: 35px;
+        color: #fff;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .close:hover {
+        color: #bbb;
+      }
+
+      .zoomable {
+        cursor: zoom-in;
+        transition: transform 0.2s;
+      }
+
       @media (min-width: 769px) {
         main {
           margin-left: 20vw;
@@ -328,7 +370,7 @@
             <time datetime="2025-06-19">公開日：2025年08月18日</time><br>
             <time datetime="2025-08-24">最終更新日：2025年8月24日</time>
           </div>
-          <img src="xiaoxin_pad_pro.jpg" alt="イメージ">
+          <img src="xiaoxin_pad_pro.jpg" alt="イメージ" class="zoomable">
           <h2>Xiaoxin Pad Pro 2025は中国版ZUIを搭載</h2>
           <p>
             Xiaoxin Pad Pro 2025はLenovoが販売しているミドルハイクラスのAndroidタブレットだ。
@@ -348,7 +390,7 @@
           </nav>
           <section id="cn_to_global">
             <h2>グローバル版のROMの焼き方</h2>
-            <img src="global.jpg" class="image2" alt="global">
+            <img src="global.jpg" class="image2 zoomable" alt="global">
             <p>ここでは中国版ROMがインストールされたXiaoxin Pad Pro 2025にグローバルROMを焼く方法を説明する。</p>
             <h3>方法</h3>
             <h4>1.Windows PCにadbを導入する</h4>
@@ -370,61 +412,54 @@
             <p>ダウンロードしたscatterファイルのファイル名を</p>
             <pre><code>MT6897_Android_scatter.xml</code></pre>
             <p>と変更し、ダウンロードしたROMを展開してimageフォルダに移動する。</p>
-            <img src="cn_global5-1.png" class="image2" alt="unzip">
-            <img src="cn_global5-2.png" class="image2" alt="cut">
-            <img src="cn_global5-3.png" class="image2" alt="paste">
+            <img src="cn_global5-1.png" class="image2 zoomable" alt="unzip">
+            <img src="cn_global5-2.png" class="image2 zoomable" alt="cut">
+            <img src="cn_global5-3.png" class="image2 zoomable" alt="paste">
             <h4>6.ROMのSP Flash Toolを起動する</h4>
             <p>
               ROMのルートディレクトリにあるSP Flash Toolを起動する。
               "WindowsによってPCが保護されました" と表示されるが、 "詳細情報" から "実行" をクリックする。
               その後表示される警告も "OK" をクリックする。
             </p>
-            <img src="cn_global6-1.png" class="image2" alt="spflashtool">
-            <img src="cn_global6-2.png" class="image2" alt="detail">
-            <img src="cn_global6-3.png" class="image2" alt="run">
-            <img src="cn_global6-4.png" class="image2" alt="caution1">
-            <img src="cn_global6-5.png" class="image2" alt="caution2">
+            <img src="cn_global6-1.png" class="image2 zoomable" alt="spflashtool">
+            <img src="cn_global6-2.png" class="image2 zoomable" alt="detail">
+            <img src="cn_global6-3.png" class="image2 zoomable" alt="run">
+            <img src="cn_global6-4.png" class="image2 zoomable" alt="caution1">
+            <img src="cn_global6-5.png" class="image2 zoomable" alt="caution2">
             <h4>7.XMLファイルとda.authファイルを選択する</h4>
             <p>
               "Download-XML" の右の "choose" をクリックし、 "image\download_agent" にある "flash.xml" を選択する。
               次に "Authentication File" の右にある "choose" をクリックし、imageフォルダにある "da.auth" を選択する。
             </p>
-            <img src="cn_global7-1.png" class="image2" alt="spflashtool">
-            <img src="cn_global7-2.png" class="image2" alt="download-xml">
-            <img src="cn_global7-3.png" class="image2" alt="authenticationfile">
+            <img src="cn_global7-1.png" class="image2 zoomable" alt="spflashtool">
+            <img src="cn_global7-2.png" class="image2 zoomable" alt="download-xml">
+            <img src="cn_global7-3.png" class="image2 zoomable" alt="authenticationfile">
             <h4>8. "lk_a" , "lk_b" , "dtbo_a" , "dtbo_b" のチェックを外す</h4>
             <p>これらのチェックを外さないと、ROM焼き後に起動しなくなる可能性がある。</p>
-            <img src="cn_global8-1.png" class="image2" alt="lka,dtboa">
-            <img src="cn_global8-2.png" class="image2" alt="lkb,dtbob">
+            <img src="cn_global8-1.png" class="image2 zoomable" alt="lka,dtboa">
+            <img src="cn_global8-2.png" class="image2 zoomable" alt="lkb,dtbob">
             <h4>9. "Auto Reboot" にチェックを入れる</h4>
             <p>
               必要があれば左上の "Auto Reboot" にチェックを入れる。
               これによりROM焼き後に自動で再起動される。
             </p>
-            <img src="cn_global9.png" class="image2" alt="autoreboot">
+            <img src="cn_global9.png" class="image2 zoomable" alt="autoreboot">
             <h4>10. "Download" をクリックする</h4>
-            <img src="cn_global10.png" class="image2" alt="download">
+            <img src="cn_global10.png" class="image2 zoomable" alt="download">
             <h4>11.Xiaoxin Pad Pro 2025をPreLoaderモードにする</h4>
             <p>
               Xiaoxin Pad Pro 2025の電源を切り、その後音量アップボタンを押しながらWindows PCにUSBケーブルで接続する。
               ここでPreLoaderモードで正常に接続されると、ROM焼きが始まる。
             </p>
-            <img src="cn_global11-1.jpg" class="image2" alt="preloader">
-            <img src="cn_global11-2.png" class="image2" alt="flash">
+            <img src="cn_global11-1.jpg" class="image2 zoomable" alt="preloader">
+            <img src="cn_global11-2.png" class="image2 zoomable" alt="flash">
             <h4>12.ブートループした場合、初期化をする</h4>
             <p>
               ROM焼き後に "Can't load Android system." などと表示されてブートループを起こす場合がある。
               その際は音量ボタンでカーソルを "Factory data reset" に合わせて電源ボタンで選択し、初期化する必要がある。
               下の写真はXiaoxin Pad Proの画面ではないが、ブートループを起こした際は最終的にこのような画面で選択を迫られる。
             </p>
-            <img src="reset.jpg" class="image2" alt="reset">
-            <h3>デメリット</h3>
-            <h4>･OTAによるアップデートができなくなる</h4>
-            <p>
-              グローバルROMを焼いたあとにOTAによるアップデートをすると文鎮化する恐れがある。
-              よってグローバルROMを導入した場合はOTAによるアップデートではなく、これまでと同様の手順でSP Flash Toolで新しいバージョンのROMを上書きすることでアップデートをする必要がある。
-              その際は "lk_a" , "lk_b" , "dtbo_a" , "dtbo_b"と一緒に "userdata" のチェックを外すことでデータを初期化せずにアップデートを実行できるが、OTAによるアップデートと比較すると大きな手間がかかる。
-            </p>
+            <img src="reset.jpg" class="image2 zoomable" alt="reset">
           </section>
           <section id="global_to_cn">
             <h2>中国版のROMの焼き方</h2>
@@ -439,7 +474,7 @@
                 <a href="https://sp7pc.com/google/android/34263" target="_blank" class="link-preview"></a>
               </div>
             </p>
-            <img src="cn.jpg" alt="cn">
+            <img src="cn.jpg" alt="cn" class="zoomable">
             <h4>2.Windows PCにMTKドライバーをインストールする</h4>
             <p>以下のリンクからMTKドライバーをダウンロードし、インストールする。</p>
             <a href="https://mtkdriver.com/" target="_blank" class="link-preview"></a>
@@ -450,40 +485,40 @@
             <p>
               ROMのルートディレクトリにあるSP Flash Toolを起動する。
             </p>
-            <img src="global_cn4.png" class="image2" alt="spflashtool">
+            <img src="global_cn4.png" class="image2 zoomable" alt="spflashtool">
             <h4>5.XMLファイルとda.authファイルを選択する</h4>
             <p>
               "Download-XML" の右の "choose" をクリックし、imageフォルダにある "flash.xml" を選択する。
               次に "Authentication File" の右にある "choose" をクリックし、imageフォルダにある "da.auth" を選択する。
             </p>
-            <img src="global_cn5-1.png" class="image2" alt="spflashtool">
-            <img src="global_cn5-2.png" class="image2" alt="download-xml">
-            <img src="global_cn5-3.png" class="image2" alt="authenticationfile">
+            <img src="global_cn5-1.png" class="image2 zoomable" alt="spflashtool">
+            <img src="global_cn5-2.png" class="image2 zoomable" alt="download-xml">
+            <img src="global_cn5-3.png" class="image2 zoomable" alt="authenticationfile">
             <h4>6. "lk_a" , "dtbo_a" のチェックを外す</h4>
             <p>これらのチェックを外さないと、ROM焼き後に起動しなくなる可能性がある。</p>
-            <img src="global_cn6.png" class="image2" alt="lka,dtboa">
+            <img src="global_cn6.png" class="image2 zoomable" alt="lka,dtboa">
             <h4>7. "Auto Reboot" にチェックを入れる</h4>
             <p>
               必要があれば左上の "Auto Reboot" にチェックを入れる。
               これによりROM焼き後に自動で再起動される。
             </p>
-            <img src="global_cn7.png" class="image2" alt="autoreboot">
+            <img src="global_cn7.png" class="image2 zoomable" alt="autoreboot">
             <h4>8. "Download" をクリックする</h4>
-            <img src="global_cn8.png" class="image2" alt="download">
+            <img src="global_cn8.png" class="image2 zoomable" alt="download">
             <h4>9.Xiaoxin Pad Pro 2025をPreLoaderモードにする</h4>
             <p>
               Xiaoxin Pad Pro 2025の電源を切り、その後音量アップボタンを押しながらWindows PCにUSBケーブルで接続する。
               ここでPreLoaderモードで正常に接続されると、ROM焼きが始まる。
             </p>
-            <img src="cn_global11-1.jpg" class="image2" alt="preloader">
-            <img src="cn_global11-2.png" class="image2" alt="flash">
+            <img src="cn_global11-1.jpg" class="image2 zoomable" alt="preloader">
+            <img src="cn_global11-2.png" class="image2 zoomable" alt="flash">
             <h4>10.ブートループした場合、初期化をする</h4>
             <p>
               ROM焼き後に "Can't load Android system." などと表示されてブートループを起こす場合がある。
               その際は音量ボタンでカーソルを "Factory data reset" に合わせて電源ボタンで選択し、初期化する必要がある。
               下の写真はXiaoxin Pad Proの画面ではないが、ブートループを起こした際は最終的にこのような画面で選択を迫られる。
             </p>
-            <img src="reset.jpg" class="image2" alt="reset">
+            <img src="reset.jpg" class="image2 zoomable" alt="reset">
             <h2>結局どちらのROMを選ぶべきなのか</h2>
             <p>
               このように標準搭載のGMSや完全な日本語設定、安定した動作を求めてグローバルROMを焼くことができるが、それにはOTAアップデートができなくなるという大きなデメリットが発生する。
@@ -492,7 +527,7 @@
             </p>
           </section>
         </div>
-      </section> 
+      </section>
       <section id="about">
         <div class="box-section2">
           <div class="profile-container">
@@ -527,6 +562,10 @@
           <a href="../policy.html" class="mail-button">プライバシーポリシー</a>
         </div-->
       </section>
+      <div id="imgModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+      </div>
     </main>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
@@ -569,6 +608,25 @@
 
       document.querySelectorAll(".link-preview").forEach(async (anchor) => {
         await fetchOGData(anchor.href, anchor);
+      });
+
+      document.querySelectorAll(".zoomable").forEach(img => {
+        img.addEventListener("click", () => {
+          const modal = document.getElementById("imgModal");
+          const modalImg = document.getElementById("modalImage");
+          modal.style.display = "block";
+          modalImg.src = img.src;
+        });
+      });
+
+      document.querySelector(".close").addEventListener("click", () => {
+        document.getElementById("imgModal").style.display = "none";
+      });
+
+      document.getElementById("imgModal").addEventListener("click", (e) => {
+        if (e.target.id === "imgModal") {
+          document.getElementById("imgModal").style.display = "none";
+        }
       });
     </script>
   </body>
