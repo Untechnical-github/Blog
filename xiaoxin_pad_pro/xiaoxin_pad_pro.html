@@ -575,6 +575,7 @@
         if (location.hash) {
           history.replaceState(null, '', location.pathname + location.search);
         }
+
         let currentScale = 1;
         let startDistance = 0;
         const modal = document.getElementById("imgModal");
@@ -592,78 +593,82 @@
 
         const closeModal = () => {
           modal.style.display = "none";
-          document.body.style.overflow = ""; 
+          document.body.style.overflow = "";
         };
 
-        document.querySelector(".close").addEventListener("click", closeModal);
-        modal.addEventListener("click", e => {
-          if (e.target.id === "imgModal") closeModal();
-        });
-
-        modalImg.addEventListener("touchstart", e => {
-          if (e.touches.length === 2) {
-            startDistance = Math.hypot(
-              e.touches[0].pageX - e.touches[1].pageX,
-              e.touches[0].pageY - e.touches[1].pageY
-            );
-          }
-        }, { passive: false });
-
-        modalImg.addEventListener("touchmove", e => {
-          if (e.touches.length === 2) {
-            e.preventDefault();
-            const newDistance = Math.hypot(
-              e.touches[0].pageX - e.touches[1].pageX,
-              e.touches[0].pageY - e.touches[1].pageY
-            );
-            const scaleChange = newDistance / startDistance;
-            currentScale = Math.min(Math.max(currentScale * scaleChange, 1), 5);
-            modalImg.style.transform = `scale(${currentScale})`;
-            startDistance = newDistance;
-          }
-        }, { passive: false });
-
-        modalImg.addEventListener("touchend", e => {
-          if (e.touches.length < 2) startDistance = 0;
-        });
-      });
-
-      async function fetchOGData(url, anchorElement) {
-        try {
-          const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
-          const { data, status } = await response.json();
-
-          if (status === "success") {
-            if (data.title) {
-              const titleElem = document.createElement("div");
-              titleElem.textContent = data.title;
-              titleElem.style.fontWeight = "bold";
-              anchorElement.appendChild(titleElem);
-            }
-
-            if (data.image?.url) {
-              const img = document.createElement("img");
-              img.src = data.image.url;
-              img.alt = "Preview";
-              img.width = 200;
-              anchorElement.appendChild(img);
-            }
-
-            if (data.description) {
-              const descElem = document.createElement("div");
-              descElem.textContent = data.description;
-              anchorElement.appendChild(descElem);
-            }
-          }
-        } catch (error) {
-          console.error("OGP情報の取得に失敗:", error);
+        const closeBtn = document.querySelector(".close");
+        if (closeBtn) closeBtn.addEventListener("click", closeModal);
+        if (modal) {
+          modal.addEventListener("click", e => {
+            if (e.target.id === "imgModal") closeModal();
+          });
         }
-      }
 
-      document.querySelectorAll(".link-preview").forEach(async (anchor) => {
-        await fetchOGData(anchor.href, anchor);
+        if (modalImg) {
+          modalImg.addEventListener("touchstart", e => {
+            if (e.touches.length === 2) {
+              startDistance = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+              );
+            }
+          }, { passive: false });
+
+          modalImg.addEventListener("touchmove", e => {
+            if (e.touches.length === 2) {
+              e.preventDefault();
+              const newDistance = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+              );
+              const scaleChange = newDistance / startDistance;
+              currentScale = Math.min(Math.max(currentScale * scaleChange, 1), 5);
+              modalImg.style.transform = `scale(${currentScale})`;
+              startDistance = newDistance;
+            }
+          }, { passive: false });
+
+          modalImg.addEventListener("touchend", e => {
+            if (e.touches.length < 2) startDistance = 0;
+          });
+        }
+
+        async function fetchOGData(url, anchorElement) {
+          try {
+            const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
+            const { data, status } = await response.json();
+
+            if (status === "success") {
+              if (data.title) {
+                const titleElem = document.createElement("div");
+                titleElem.textContent = data.title;
+                titleElem.style.fontWeight = "bold";
+                anchorElement.appendChild(titleElem);
+              }
+
+              if (data.image?.url) {
+                const img = document.createElement("img");
+                img.src = data.image.url;
+                img.alt = "Preview";
+                img.width = 200;
+                anchorElement.appendChild(img);
+              }
+
+              if (data.description) {
+                const descElem = document.createElement("div");
+                descElem.textContent = data.description;
+                anchorElement.appendChild(descElem);
+              }
+            }
+          } catch (error) {
+            console.error("OGP情報の取得に失敗:", error);
+          }
+        }
+
+        document.querySelectorAll(".link-preview").forEach(async (anchor) => {
+          await fetchOGData(anchor.href, anchor);
+        });
       });
-
     </script>
   </body>
 </html>
