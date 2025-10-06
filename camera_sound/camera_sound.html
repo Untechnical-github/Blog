@@ -831,11 +831,11 @@
 
         let currentScale = 1;
         let startDistance = 0;
-        let lastX = 0;
-        let lastY = 0;
         let posX = 0;
         let posY = 0;
-
+        let lastX = 0;
+        let lastY = 0;
+        const dragSensitivity = 1.5;
         const modal = document.getElementById("imgModal");
         const modalImg = document.getElementById("modalImage");
 
@@ -846,7 +846,7 @@
             currentScale = 1;
             posX = 0;
             posY = 0;
-            modalImg.style.transform = `translate(0px, 0px) scale(1)`;
+            modalImg.style.transform = `translate(0px,0px) scale(1)`;
             document.body.style.overflow = "hidden";
           });
         });
@@ -855,7 +855,6 @@
           modal.style.display = "none";
           document.body.style.overflow = "";
         };
-
         document.querySelector(".close").addEventListener("click", closeModal);
         modal.addEventListener("click", e => {
           if (e.target.id === "imgModal") closeModal();
@@ -863,13 +862,11 @@
 
         modalImg.addEventListener("touchstart", e => {
           if (e.touches.length === 2) {
-
             startDistance = Math.hypot(
               e.touches[0].pageX - e.touches[1].pageX,
               e.touches[0].pageY - e.touches[1].pageY
             );
           } else if (e.touches.length === 1 && currentScale > 1) {
- 
             lastX = e.touches[0].pageX - posX;
             lastY = e.touches[0].pageY - posY;
           }
@@ -877,7 +874,6 @@
 
         modalImg.addEventListener("touchmove", e => {
           if (e.touches.length === 2) {
-
             e.preventDefault();
             const newDistance = Math.hypot(
               e.touches[0].pageX - e.touches[1].pageX,
@@ -888,23 +884,56 @@
             modalImg.style.transform = `translate(${posX}px, ${posY}px) scale(${currentScale})`;
             startDistance = newDistance;
           } else if (e.touches.length === 1 && currentScale > 1) {
-
             e.preventDefault();
-            posX = e.touches[0].pageX - lastX;
-            posY = e.touches[0].pageY - lastY;
+            posX = (e.touches[0].pageX - lastX) * dragSensitivity;
+            posY = (e.touches[0].pageY - lastY) * dragSensitivity;
             modalImg.style.transform = `translate(${posX}px, ${posY}px) scale(${currentScale})`;
           }
         }, { passive: false });
 
         modalImg.addEventListener("touchend", e => {
           if (e.touches.length < 2) startDistance = 0;
-
           if (currentScale === 1) {
             posX = 0;
             posY = 0;
-            modalImg.style.transform = `translate(0px, 0px) scale(1)`;
+            modalImg.style.transform = `translate(0px,0px) scale(1)`;
           }
         });
+
+        let isDragging = false;
+
+        modalImg.addEventListener("mousedown", e => {
+          if (currentScale > 1) {
+            isDragging = true;
+            lastX = e.pageX - posX;
+            lastY = e.pageY - posY;
+            e.preventDefault();
+          }
+        });
+
+        window.addEventListener("mousemove", e => {
+          if (isDragging) {
+            posX = (e.pageX - lastX) * dragSensitivity;
+            posY = (e.pageY - lastY) * dragSensitivity;
+            modalImg.style.transform = `translate(${posX}px, ${posY}px) scale(${currentScale})`;
+          }
+        });
+
+        window.addEventListener("mouseup", () => {
+          isDragging = false;
+        });
+
+        modalImg.addEventListener("wheel", e => {
+          e.preventDefault();
+          const scaleAmount = -e.deltaY * 0.001;
+          currentScale = Math.min(Math.max(currentScale + scaleAmount, 1), 5);
+          modalImg.style.transform = `translate(${posX}px, ${posY}px) scale(${currentScale})`;
+          if (currentScale === 1) {
+            posX = 0;
+            posY = 0;
+            modalImg.style.transform = `translate(0px,0px) scale(1)`;
+          }
+        }, { passive: false });
       });
     </script>
   </body>
