@@ -822,8 +822,21 @@
       let startDistance = 0;
       let isDragging = false;
 
+      let animationFrameId = null; 
+
       const modal = document.getElementById("imgModal");
       const modalImg = document.getElementById("modalImage");
+
+      const applyTransform = () => {
+        modalImg.style.transform = `translate(${posX}px, ${posY}px) scale(${currentScale})`;
+        animationFrameId = null;
+      };
+
+      const requestUpdate = () => {
+        if (!animationFrameId) {
+          animationFrameId = requestAnimationFrame(applyTransform);
+        }
+      };
 
       document.querySelectorAll(".zoomable").forEach(img => {
         img.addEventListener("click", () => {
@@ -872,24 +885,24 @@
           const offsetY = midY - rect.top;
           posX -= offsetX * (newScale / currentScale - 1);
           posY -= offsetY * (newScale / currentScale - 1);
- 
-
           currentScale = newScale;
           startDistance = newDistance;
-
+          requestUpdate();
         } else if (e.touches.length === 1 && isDragging) {
+
           posX = e.touches[0].pageX - lastX;
           posY = e.touches[0].pageY - lastY;
+
+          requestUpdate();
         }
-        modalImg.style.transform = `translate(${posX}px, ${posY}px) scale(${currentScale})`;
+
       }, { passive: false });
 
       modalImg.addEventListener("touchend", e => {
         if (e.touches.length < 2) isDragging = false;
         if (currentScale === 1) { 
-          posX = 0; 
-          posY = 0; 
-          modalImg.style.transform = `translate(0px, 0px) scale(1)`; 
+          posX = 0; posY = 0; 
+          requestUpdate();
         }
       });
 
@@ -901,11 +914,14 @@
           e.preventDefault();
         }
       });
+
       window.addEventListener("mousemove", e => {
         if (isDragging) {
+
           posX = e.pageX - lastX;
           posY = e.pageY - lastY;
-          modalImg.style.transform = `translate(${posX}px, ${posY}px) scale(${currentScale})`;
+
+          requestUpdate();
         }
       });
       window.addEventListener("mouseup", () => { isDragging = false; });
@@ -914,22 +930,17 @@
         e.preventDefault();
         const scaleAmount = -e.deltaY * 0.0015;
         const newScale = Math.min(Math.max(currentScale + scaleAmount, 1), 5);
-
         const rect = modalImg.getBoundingClientRect();
         const offsetX = e.clientX - rect.left;
         const offsetY = e.clientY - rect.top;
-
         posX -= offsetX * (newScale / currentScale - 1);
         posY -= offsetY * (newScale / currentScale - 1);
-
         currentScale = newScale;
-        modalImg.style.transform = `translate(${posX}px, ${posY}px) scale(${currentScale})`;
 
         if (currentScale === 1) { 
-          posX = 0; 
-          posY = 0; 
-          modalImg.style.transform = `translate(0px, 0px) scale(1)`; 
+          posX = 0; posY = 0; 
         }
+        requestUpdate();
       }, { passive: false });
 
       async function fetchOGData(url, anchorElement) {
