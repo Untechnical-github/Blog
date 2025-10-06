@@ -610,11 +610,11 @@
               e.touches[0].pageX - e.touches[1].pageX,
               e.touches[0].pageY - e.touches[1].pageY
             );
-            const newScale = Math.min(Math.max(currentScale * newDistance / startDistance, 1),5);
+            const newScale = Math.min(Math.max(currentScale * newDistance / startDistance, 1), 5);
 
             const rect = modalImg.getBoundingClientRect();
-            const centerX = rect.width/2;
-            const centerY = rect.height/2;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
 
             posX -= centerX * (newScale/currentScale - 1);
             posY -= centerY * (newScale/currentScale - 1);
@@ -630,7 +630,7 @@
 
         modalImg.addEventListener("touchend", e => {
           if(e.touches.length === 0) isDragging = false;
-          if(currentScale===1){ posX=0; posY=0; modalImg.style.transform=`translate(0px,0px) scale(1)`;}
+          if(currentScale === 1){ posX=0; posY=0; modalImg.style.transform=`translate(0px,0px) scale(1)`;}
         });
 
         modalImg.addEventListener("mousedown", e => {
