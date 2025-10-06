@@ -578,7 +578,7 @@
             currentScale = 1;
             posX = 0; posY = 0;
             modalImg.style.transform = `translate(0px,0px) scale(1)`;
-            modalImg.style.transformOrigin = "0 0";
+            modalImg.style.transformOrigin = "50% 50%";
             document.body.style.overflow = "hidden";
           });
         });
@@ -596,11 +596,10 @@
               e.touches[0].pageX - e.touches[1].pageX,
               e.touches[0].pageY - e.touches[1].pageY
             );
-            lastX = (e.touches[0].pageX + e.touches[1].pageX)/2 - posX;
-            lastY = (e.touches[0].pageY + e.touches[1].pageY)/2 - posY;
           } else if(e.touches.length === 1 && currentScale > 1){
             lastX = e.touches[0].pageX - posX;
             lastY = e.touches[0].pageY - posY;
+            isDragging = true;
           }
         }, {passive:false});
 
@@ -613,15 +612,16 @@
             );
             const newScale = Math.min(Math.max(currentScale * newDistance / startDistance, 1),5);
 
-            const centerX = (e.touches[0].pageX + e.touches[1].pageX)/2;
-            const centerY = (e.touches[0].pageY + e.touches[1].pageY)/2;
+            const rect = modalImg.getBoundingClientRect();
+            const centerX = rect.width/2;
+            const centerY = rect.height/2;
 
-            posX -= (centerX - posX) * (newScale / currentScale - 1);
-            posY -= (centerY - posY) * (newScale / currentScale - 1);
+            posX -= centerX * (newScale/currentScale - 1);
+            posY -= centerY * (newScale/currentScale - 1);
 
             currentScale = newScale;
             startDistance = newDistance;
-          } else if(e.touches.length === 1 && currentScale > 1){
+          } else if(e.touches.length === 1 && isDragging){
             posX = e.touches[0].pageX - lastX;
             posY = e.touches[0].pageY - lastY;
           }
@@ -629,6 +629,7 @@
         }, {passive:false});
 
         modalImg.addEventListener("touchend", e => {
+          if(e.touches.length === 0) isDragging = false;
           if(currentScale===1){ posX=0; posY=0; modalImg.style.transform=`translate(0px,0px) scale(1)`;}
         });
 
