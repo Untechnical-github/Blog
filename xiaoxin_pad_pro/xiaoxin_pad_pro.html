@@ -581,6 +581,7 @@
             posX = 0;
             posY = 0;
             modalImg.style.transform = `translate(0px,0px) scale(1)`;
+            modalImg.style.transformOrigin = "50% 50%";
             document.body.style.overflow = "hidden";
           });
         });
@@ -600,9 +601,8 @@
               e.touches[0].pageX - e.touches[1].pageX,
               e.touches[0].pageY - e.touches[1].pageY
             );
-
-            lastX = (e.touches[0].pageX + e.touches[1].pageX) / 2 - posX;
-            lastY = (e.touches[0].pageY + e.touches[1].pageY) / 2 - posY;
+            lastX = (e.touches[0].pageX + e.touches[1].pageX) / 2;
+            lastY = (e.touches[0].pageY + e.touches[1].pageY) / 2;
           } else if (e.touches.length === 1 && currentScale > 1) {
             lastX = e.touches[0].pageX - posX;
             lastY = e.touches[0].pageY - posY;
@@ -622,8 +622,10 @@
             const centerX = (e.touches[0].pageX + e.touches[1].pageX) / 2;
             const centerY = (e.touches[0].pageY + e.touches[1].pageY) / 2;
 
-            posX = centerX - (centerX - posX) * (newScale / currentScale);
-            posY = centerY - (centerY - posY) * (newScale / currentScale);
+            const rect = modalImg.getBoundingClientRect();
+            const originX = ((centerX - rect.left - posX) / currentScale) * 100;
+            const originY = ((centerY - rect.top - posY) / currentScale) * 100;
+            modalImg.style.transformOrigin = `${originX}% ${originY}%`;
 
             currentScale = newScale;
             startDistance = newDistance;
@@ -638,6 +640,7 @@
           if (currentScale === 1) {
             posX = 0; posY = 0;
             modalImg.style.transform = `translate(0px,0px) scale(1)`;
+            modalImg.style.transformOrigin = "50% 50%";
           }
         });
 
@@ -671,6 +674,10 @@
           const offsetX = e.clientX - rect.left;
           const offsetY = e.clientY - rect.top;
 
+          const originX = (offsetX / currentScale) * 100;
+          const originY = (offsetY / currentScale) * 100;
+          modalImg.style.transformOrigin = `${originX}px ${originY}px`;
+
           posX -= (offsetX - posX) / currentScale * (newScale - currentScale);
           posY -= (offsetY - posY) / currentScale * (newScale - currentScale);
 
@@ -680,6 +687,7 @@
           if (currentScale === 1) {
             posX = 0; posY = 0;
             modalImg.style.transform = `translate(0px,0px) scale(1)`;
+            modalImg.style.transformOrigin = "50% 50%";
           }
         }, { passive: false });
 
