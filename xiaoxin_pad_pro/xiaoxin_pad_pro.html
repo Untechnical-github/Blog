@@ -310,22 +310,24 @@
         display: none;
         position: fixed;
         z-index: 2000;
-        padding-top: 60px;
         left: 0;
         top: 0;
         width: 100%;
         height: 100%;
-        overflow: auto;
         background-color: rgba(0,0,0,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
       }
 
       .modal-content {
-        display: block;
-        margin: auto;
         max-width: 90%;
-        max-height: 80vh;
+        max-height: 80%;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        touch-action: none;
+        transition: transform 0.2s;
       }
 
       .close {
@@ -336,7 +338,7 @@
         font-size: 40px;
         font-weight: bold;
         cursor: pointer;
-        transition: 0.3s;
+        z-index: 2100;
       }
 
       .close:hover {
@@ -380,6 +382,7 @@
             adbコマンドで不完全ではあるものの日本語設定を適用したり、標準アプリをインストールしたり、apkからGoogleサービスを利用することもできるが、グローバル版のようには動作しない。
             実はこの機種のグローバル版としてIdea Tab Proが日本でも展開されているが、定価が54,780円とXiaoxin Pad Pro 2025よりも割高になる。
             そこで、Xiaoxin Pad Pro 2025にIdea Tab ProのROMを焼くことで、Xiaoxin Pad Pro 2025をグローバル化するという方法がある。
+            ここではその方法を解説する。
           </p>
           <h2>目次</h2>
           <nav>
@@ -572,6 +575,57 @@
         if (location.hash) {
           history.replaceState(null, '', location.pathname + location.search);
         }
+        let currentScale = 1;
+        let startDistance = 0;
+        const modal = document.getElementById("imgModal");
+        const modalImg = document.getElementById("modalImage");
+
+        document.querySelectorAll(".zoomable").forEach(img => {
+          img.addEventListener("click", () => {
+            modal.style.display = "flex";
+            modalImg.src = img.src;
+            currentScale = 1;
+            modalImg.style.transform = `scale(${currentScale})`;
+            document.body.style.overflow = "hidden";
+          });
+        });
+
+        const closeModal = () => {
+          modal.style.display = "none";
+          document.body.style.overflow = ""; 
+        };
+
+        document.querySelector(".close").addEventListener("click", closeModal);
+        modal.addEventListener("click", e => {
+          if (e.target.id === "imgModal") closeModal();
+        });
+
+        modalImg.addEventListener("touchstart", e => {
+          if (e.touches.length === 2) {
+            startDistance = Math.hypot(
+              e.touches[0].pageX - e.touches[1].pageX,
+              e.touches[0].pageY - e.touches[1].pageY
+            );
+          }
+        }, { passive: false });
+
+        modalImg.addEventListener("touchmove", e => {
+          if (e.touches.length === 2) {
+            e.preventDefault();
+            const newDistance = Math.hypot(
+              e.touches[0].pageX - e.touches[1].pageX,
+              e.touches[0].pageY - e.touches[1].pageY
+            );
+            const scaleChange = newDistance / startDistance;
+            currentScale = Math.min(Math.max(currentScale * scaleChange, 1), 5);
+            modalImg.style.transform = `scale(${currentScale})`;
+            startDistance = newDistance;
+          }
+        }, { passive: false });
+
+        modalImg.addEventListener("touchend", e => {
+          if (e.touches.length < 2) startDistance = 0;
+        });
       });
 
       async function fetchOGData(url, anchorElement) {
@@ -610,24 +664,6 @@
         await fetchOGData(anchor.href, anchor);
       });
 
-      document.querySelectorAll(".zoomable").forEach(img => {
-        img.addEventListener("click", () => {
-          const modal = document.getElementById("imgModal");
-          const modalImg = document.getElementById("modalImage");
-          modal.style.display = "block";
-          modalImg.src = img.src;
-        });
-      });
-
-      document.querySelector(".close").addEventListener("click", () => {
-        document.getElementById("imgModal").style.display = "none";
-      });
-
-      document.getElementById("imgModal").addEventListener("click", (e) => {
-        if (e.target.id === "imgModal") {
-          document.getElementById("imgModal").style.display = "none";
-        }
-      });
     </script>
   </body>
 </html>
