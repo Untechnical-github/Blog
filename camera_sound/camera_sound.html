@@ -816,230 +816,32 @@
     </main>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-      // === DOM要素の取得 ===
+
       const modal = document.getElementById("imgModal");
       const modalImg = document.getElementById("modalImage");
-      const closeBtn = document.querySelector(".close");
 
-      // === 状態管理変数 ===
-      let state = {
-          scale: 1,
-          posX: 0,
-          posY: 0,
-      };
-
-      // ドラッグ操作用の変数
-      let drag = {
-          isDragging: false,
-          lastX: 0,
-          lastY: 0,
-      };
-      
-      // ピンチ操作用の変数
-      let pinch = {
-          isPinching: false,
-          lastDistance: 0,
-          lastMidpoint: { x: 0, y: 0 },
-      };
-
-      let animationFrameId = null;
-
-      // === コア機能 ===
-
-      /**
-       * 現在のstateに基づいて画像のtransformを適用し、制約をかける
-       */
-      const applyTransform = () => {
-          // 画像が画面外に出ないように位置を制限する
-          applyConstraints();
-
-          // transformを適用
-          modalImg.style.transform = `translate(${state.posX}px, ${state.posY}px) scale(${state.scale})`;
-          animationFrameId = null;
-      };
-
-      /**
-       * 描画の更新を要求する
-       */
-      const requestUpdate = () => {
-          if (!animationFrameId) {
-              animationFrameId = requestAnimationFrame(applyTransform);
-          }
-      };
-      
-      /**
-       * 画像が画面の境界を越えないように位置を調整する
-       */
-      const applyConstraints = () => {
-          const modalRect = modal.getBoundingClientRect();
-          const imgWidth = modalImg.naturalWidth * state.scale;
-          const imgHeight = modalImg.naturalHeight * state.scale;
-
-          // X軸の最大移動可能距離（はみ出た部分の半分）
-          const maxPosX = Math.max(0, (imgWidth - modalRect.width) / 2);
-          // Y軸の最大移動可能距離
-          const maxPosY = Math.max(0, (imgHeight - modalRect.height) / 2);
-
-          // stateの位置を制限内に収める
-          state.posX = Math.max(-maxPosX, Math.min(maxPosX, state.posX));
-          state.posY = Math.max(-maxPosY, Math.min(maxPosY, state.posY));
-      };
-      
-      /**
-       * すべての状態をリセットする
-       */
-      const resetState = () => {
-          state.scale = 1;
-          state.posX = 0;
-          state.posY = 0;
-          drag.isDragging = false;
-          pinch.isPinching = false;
-      };
-      
-
-      // === イベントリスナー ===
-
-      // --- モーダル開閉 ---
       document.querySelectorAll(".zoomable").forEach(img => {
-          img.addEventListener("click", () => {
-              modal.style.display = "flex";
-              modalImg.src = img.src;
-              resetState();
-              applyTransform(); // 初期位置を適用
-              document.body.style.overflow = "hidden";
-          });
+        img.addEventListener("click", () => {
+
+          modalImg.src = img.src;
+
+          modal.style.display = "flex";
+
+          document.body.style.overflow = "hidden";
+        });
       });
 
       const closeModal = () => {
-          modal.style.display = "none";
-          document.body.style.overflow = "";
+        modal.style.display = "none";
+        document.body.style.overflow = "";
       };
-      closeBtn.addEventListener("click", closeModal);
+
+      document.querySelector(".close").addEventListener("click", closeModal);
+
       modal.addEventListener("click", e => {
-          if (e.target.id === "imgModal") closeModal();
-      });
-
-      // --- マウス操作 ---
-      modalImg.addEventListener("mousedown", e => {
-          e.preventDefault();
-          drag.isDragging = true;
-          drag.lastX = e.clientX;
-          drag.lastY = e.clientY;
-      });
-
-      window.addEventListener("mousemove", e => {
-          if (!drag.isDragging) return;
-          e.preventDefault();
-          const deltaX = e.clientX - drag.lastX;
-          const deltaY = e.clientY - drag.lastY;
-          state.posX += deltaX;
-          state.posY += deltaY;
-          drag.lastX = e.clientX;
-          drag.lastY = e.clientY;
-          requestUpdate();
-      });
-
-      window.addEventListener("mouseup", () => {
-          drag.isDragging = false;
-      });
-
-      modalImg.addEventListener("wheel", e => {
-          e.preventDefault();
-          const scaleAmount = -e.deltaY * 0.0015;
-          const newScale = Math.max(1, Math.min(state.scale + scaleAmount, 8));
-          const scaleRatio = newScale / state.scale;
-
-          const rect = modalImg.getBoundingClientRect();
-          const mouseX = e.clientX - rect.left;
-          const mouseY = e.clientY - rect.top;
-
-          // マウス位置を基準に拡大するための位置補正
-          state.posX -= (mouseX - state.posX) * (scaleRatio - 1);
-          state.posY -= (mouseY - state.posY) * (scaleRatio - 1);
-          state.scale = newScale;
-          
-          requestUpdate();
-      }, { passive: false });
-
-
-      // --- タッチ操作 ---
-      modalImg.addEventListener("touchstart", e => {
-          e.preventDefault();
-          if (e.touches.length === 1) {
-              // ドラッグ開始
-              drag.isDragging = true;
-              drag.lastX = e.touches[0].clientX;
-              drag.lastY = e.touches[0].clientY;
-          } else if (e.touches.length === 2) {
-              // ピンチ開始
-              drag.isDragging = false; // ピンチ中はドラッグを無効化
-              pinch.isPinching = true;
-              pinch.lastDistance = Math.hypot(
-                  e.touches[0].pageX - e.touches[1].pageX,
-                  e.touches[0].pageY - e.touches[1].pageY
-              );
-              pinch.lastMidpoint = {
-                  x: (e.touches[0].pageX + e.touches[1].pageX) / 2,
-                  y: (e.touches[0].pageY + e.touches[1].pageY) / 2
-              };
-          }
-      }, { passive: false });
-
-      modalImg.addEventListener("touchmove", e => {
-          e.preventDefault();
-          if (pinch.isPinching && e.touches.length === 2) {
-
-              const newDistance = Math.hypot(
-                  e.touches[0].pageX - e.touches[1].pageX,
-                  e.touches[0].pageY - e.touches[1].pageY
-              );
-              const newMidpoint = {
-                  x: (e.touches[0].pageX + e.touches[1].pageX) / 2,
-                  y: (e.touches[0].pageY + e.touches[1].pageY) / 2
-              };
-
-              const deltaX = newMidpoint.x - pinch.lastMidpoint.x;
-              const deltaY = newMidpoint.y - pinch.lastMidpoint.y;
-              state.posX += deltaX;
-              state.posY += deltaY;
-
-              const scaleRatio = newDistance / pinch.lastDistance;
-              const newScale = Math.max(1, Math.min(state.scale * scaleRatio, 8));
-              
-              const rect = modalImg.getBoundingClientRect();
-              const midpointX = newMidpoint.x - rect.left;
-              const midpointY = newMidpoint.y - rect.top;
-
-              state.posX -= (midpointX - state.posX) * ((newScale / state.scale) - 1);
-              state.posY -= (midpointY - state.posY) * ((newScale / state.scale) - 1);
-              state.scale = newScale;
-
-              pinch.lastDistance = newDistance;
-              pinch.lastMidpoint = newMidpoint;
-
-          } else if (drag.isDragging && e.touches.length === 1) {
-
-              const deltaX = e.touches[0].clientX - drag.lastX;
-              const deltaY = e.touches[0].clientY - drag.lastY;
-              state.posX += deltaX;
-              state.posY += deltaY;
-              drag.lastX = e.touches[0].clientX;
-              drag.lastY = e.touches[0].clientY;
-          }
-          requestUpdate();
-
-      }, { passive: false });
-
-      modalImg.addEventListener("touchend", e => {
-          if (e.touches.length === 0) {
-              drag.isDragging = false;
-              pinch.isPinching = false;
-          } else if (e.touches.length === 1) {
-              drag.isDragging = true;
-              pinch.isPinching = false;
-              drag.lastX = e.touches[0].clientX;
-              drag.lastY = e.touches[0].clientY;
-          }
+        if (e.target.id === "imgModal") {
+          closeModal();
+        }
       });
 
       async function fetchOGData(url, anchorElement) {
