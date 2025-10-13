@@ -118,12 +118,6 @@
 
       section h3 {
         text-align: left;
-        font-size: 1.8em;
-        color: black;
-      }
-    
-      section h4 {
-        text-align: left;
         font-size: 1.5em;
         color: black;
       }
@@ -253,7 +247,7 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
       }
 
-      .box-section2 h3{
+      .box-section2 h2{
         text-align: center;
       }
 
@@ -385,26 +379,26 @@
             <h2>グローバル版のROMの焼き方</h2>
             <img src="global.jpg" class="image2 zoomable" alt="global">
             <p>ここでは中国版ROMがインストールされたXiaoxin Pad Pro 2025にグローバルROMを焼く方法を説明する。</p>
-            <h4>1.Windows PCにadbを導入する</h4>
+            <h3>1.Windows PCにadbを導入する</h3>
             <p>以下は導入方法である。</p>
             <a href="https://sp7pc.com/google/android/34263" target="_blank" class="link-preview"></a>
-            <h4>2.Windows PCにMTKドライバーをインストールする</h4>
+            <h3>2.Windows PCにMTKドライバーをインストールする</h3>
             <p>以下のリンクからMTKドライバーをダウンロードし、インストールする。</p>
             <a href="https://mtkdriver.com/" target="_blank" class="link-preview"></a>
-            <h4>3.Windows PCにscatterファイルをダウンロードする</h4>
+            <h3>3.Windows PCにscatterファイルをダウンロードする</h3>
             <p>以下のリンクからXiaoxin Pad Proのストレージ容量に合ったscatterファイルをダウンロードする。</p>
             <a href="https://drive.google.com/drive/folders/1KTX6kK6DxcjoVzZnwMo21wIbEWccd1dm" target="_blank" class="link-preview"></a>
-            <h4>4.Windows PCにIdea Tab ProのROMをダウンロードする</h4>
+            <h3>4.Windows PCにIdea Tab ProのROMをダウンロードする</h3>
             <p>以下のリンクから導入したいバージョンのIdea Tab ProのROMをダウンロードする。</p>
             <a href="https://mirrors.lolinet.com/firmware/lenowow/2024/Idea_Tab_Pro_2024/TB373FU/" target="_blank" class="link-preview"></a>
-            <h4>5.scatterファイルの名前を変更し、ROMのimageフォルダに移動する</h4>
+            <h3>5.scatterファイルの名前を変更し、ROMのimageフォルダに移動する</h3>
             <p>ダウンロードしたscatterファイルのファイル名を</p>
             <pre><code>MT6897_Android_scatter.xml</code></pre>
             <p>と変更し、ダウンロードしたROMを展開してimageフォルダに移動する。</p>
             <img src="cn_global5-1.png" class="image2 zoomable" alt="unzip">
             <img src="cn_global5-2.png" class="image2 zoomable" alt="cut">
             <img src="cn_global5-3.png" class="image2 zoomable" alt="paste">
-            <h4>6.ROMのSP Flash Toolを起動する</h4>
+            <h3>6.ROMのSP Flash Toolを起動する</h3>
             <p>
               ROMのルートディレクトリにあるSP Flash Toolを起動する。
               "WindowsによってPCが保護されました" と表示されるが、 "詳細情報" から "実行" をクリックする。
@@ -415,7 +409,7 @@
             <img src="cn_global6-3.png" class="image2 zoomable" alt="run">
             <img src="cn_global6-4.png" class="image2 zoomable" alt="caution1">
             <img src="cn_global6-5.png" class="image2 zoomable" alt="caution2">
-            <h4>7.XMLファイルとda.authファイルを選択する</h4>
+            <h3>7.XMLファイルとda.authファイルを選択する</h3>
             <p>
               "Download-XML" の右の "choose" をクリックし、 "image\download_agent" にある "flash.xml" を選択する。
               次に "Authentication File" の右にある "choose" をクリックし、imageフォルダにある "da.auth" を選択する。
@@ -423,26 +417,26 @@
             <img src="cn_global7-1.png" class="image2 zoomable" alt="spflashtool">
             <img src="cn_global7-2.png" class="image2 zoomable" alt="download-xml">
             <img src="cn_global7-3.png" class="image2 zoomable" alt="authenticationfile">
-            <h4>8. "lk_a" , "lk_b" , "dtbo_a" , "dtbo_b" のチェックを外す</h4>
+            <h3>8. "lk_a" , "lk_b" , "dtbo_a" , "dtbo_b" のチェックを外す</h3>
             <p>これらのチェックを外さないと、ROM焼き後に起動しなくなる可能性がある。</p>
             <img src="cn_global8-1.png" class="image2 zoomable" alt="lka,dtboa">
             <img src="cn_global8-2.png" class="image2 zoomable" alt="lkb,dtbob">
-            <h4>9. "Auto Reboot" にチェックを入れる</h4>
+            <h3>9. "Auto Reboot" にチェックを入れる</h3>
             <p>
               必要があれば左上の "Auto Reboot" にチェックを入れる。
               これによりROM焼き後に自動で再起動される。
             </p>
             <img src="cn_global9.png" class="image2 zoomable" alt="autoreboot">
-            <h4>10. "Download" をクリックする</h4>
+            <h3>10. "Download" をクリックする</h3>
             <img src="cn_global10.png" class="image2 zoomable" alt="download">
-            <h4>11.Xiaoxin Pad Pro 2025をPreLoaderモードにする</h4>
+            <h3>11.Xiaoxin Pad Pro 2025をPreLoaderモードにする</h3>
             <p>
               Xiaoxin Pad Pro 2025の電源を切り、その後音量アップボタンを押しながらWindows PCにUSBケーブルで接続する。
               ここでPreLoaderモードで正常に接続されると、ROM焼きが始まる。
             </p>
             <img src="cn_global11-1.jpg" class="image2 zoomable" alt="preloader">
             <img src="cn_global11-2.png" class="image2 zoomable" alt="flash">
-            <h4>12.ブートループした場合、初期化をする</h4>
+            <h3>12.ブートループした場合、初期化をする</h3>
             <p>
               ROM焼き後に "Can't load Android system." などと表示されてブートループを起こす場合がある。
               その際は音量ボタンでカーソルを "Factory data reset" に合わせて電源ボタンで選択し、初期化する必要がある。
@@ -456,22 +450,21 @@
               ここではグローバルROMがインストールされたXiaoxin Pad Pro 2025に中国版ROMを焼く方法を説明する。
               グローバルROMを焼いたあとに元の中国版ROMに戻したくなった場合は以下の方法に従う。
             </p>
-            <h3>方法</h3>
-            <h4>1.Windows PCにadbを導入する</h4>
+            <h3>1.Windows PCにadbを導入する</h3>
             <p>以下は導入方法である。
             <a href="https://sp7pc.com/google/android/34263" target="_blank" class="link-preview"></a>
             </p>
             <img src="cn.jpg" alt="cn" class="zoomable">
-            <h4>2.Windows PCにMTKドライバーをインストールする</h4>
+            <h3>2.Windows PCにMTKドライバーをインストールする</h3>
             <p>以下のリンクからMTKドライバーをダウンロードし、インストールする。</p>
             <a href="https://mtkdriver.com/" target="_blank" class="link-preview"></a>
-            <h4>3.Windows PCにXiaoxin Pad Pro 2025のROMをダウンロードする</h4>
+            <h3>3.Windows PCにXiaoxin Pad Pro 2025のROMをダウンロードする</h3>
             <p>以下のリンクから導入したいバージョンのXiaoxin Pad Pro 2025のROMをダウンロードする。</p>
             <a href="https://mirrors.lolinet.com/firmware/lenowow/2024/Idea_Tab_Pro_2024/TB375FC/" target="_blank" class="link-preview"></a>
-            <h4>4.ROMのSP Flash Toolを起動する</h4>
+            <h3>4.ROMのSP Flash Toolを起動する</h3>
             <p>ROMのルートディレクトリにあるSP Flash Toolを起動する。</p>
             <img src="global_cn4.png" class="image2 zoomable" alt="spflashtool">
-            <h4>5.XMLファイルとda.authファイルを選択する</h4>
+            <h3>5.XMLファイルとda.authファイルを選択する</h3>
             <p>
               "Download-XML" の右の "choose" をクリックし、imageフォルダにある "flash.xml" を選択する。
               次に "Authentication File" の右にある "choose" をクリックし、imageフォルダにある "da.auth" を選択する。
@@ -479,25 +472,25 @@
             <img src="global_cn5-1.png" class="image2 zoomable" alt="spflashtool">
             <img src="global_cn5-2.png" class="image2 zoomable" alt="download-xml">
             <img src="global_cn5-3.png" class="image2 zoomable" alt="authenticationfile">
-            <h4>6. "lk_a" , "dtbo_a" のチェックを外す</h4>
+            <h3>6. "lk_a" , "dtbo_a" のチェックを外す</h3>
             <p>これらのチェックを外さないと、ROM焼き後に起動しなくなる可能性がある。</p>
             <img src="global_cn6.png" class="image2 zoomable" alt="lka,dtboa">
-            <h4>7. "Auto Reboot" にチェックを入れる</h4>
+            <h3>7. "Auto Reboot" にチェックを入れる</h3>
             <p>
               必要があれば左上の "Auto Reboot" にチェックを入れる。
               これによりROM焼き後に自動で再起動される。
             </p>
             <img src="global_cn7.png" class="image2 zoomable" alt="autoreboot">
-            <h4>8. "Download" をクリックする</h4>
+            <h3>8. "Download" をクリックする</h3>
             <img src="global_cn8.png" class="image2 zoomable" alt="download">
-            <h4>9.Xiaoxin Pad Pro 2025をPreLoaderモードにする</h4>
+            <h3>9.Xiaoxin Pad Pro 2025をPreLoaderモードにする</h3>
             <p>
               Xiaoxin Pad Pro 2025の電源を切り、その後音量アップボタンを押しながらWindows PCにUSBケーブルで接続する。
               ここでPreLoaderモードで正常に接続されると、ROM焼きが始まる。
             </p>
             <img src="cn_global11-1.jpg" class="image2 zoomable" alt="preloader">
             <img src="cn_global11-2.png" class="image2 zoomable" alt="flash">
-            <h4>10.ブートループした場合、初期化をする</h4>
+            <h3>10.ブートループした場合、初期化をする</h3>
             <p>
               ROM焼き後に "Can't load Android system." などと表示されてブートループを起こす場合がある。
               その際は音量ボタンでカーソルを "Factory data reset" に合わせて電源ボタンで選択し、初期化する必要がある。
@@ -516,7 +509,7 @@
       <section id="about">
         <div class="box-section2">
           <div class="profile-container">
-            <h3>プロフィール</h3>
+            <h2>プロフィール</h2>
             <img src="../profile.png" alt="プロフィール画像" class="profile-image">
             <div class="profile-text">
               <p>スマホを中心とするガジェットによるライフハックを提供します。</p>
@@ -536,14 +529,14 @@
         </div>
         <div class="box-section2">
           <div class="contact-form">
-            <h3>問い合わせフォーム</h3>
+            <h2>問い合わせフォーム</h2>
             <p>ご連絡は以下のメールアドレスまたはXのDMからお願いいたします。</p>
             <a href="mailto:untechnical@untechnical.info" class="mail-button">メール︰untechnical@untechnical.info</a>
             <a href="https://x.com/Untechnical_" class="mail-button">X︰Untechnical_</a>
           </div>
         </div>
         <!--div class="box-section2">
-          <h3>プライバシーポリシー</h3>
+          <h2>プライバシーポリシー</h2>
           <a href="../policy.html" class="mail-button">プライバシーポリシー</a>
         </div-->
       </section>
