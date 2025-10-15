@@ -52,7 +52,7 @@ const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
     articleMap.set(file, { title, category: categories, path: file, content, image });
   }
 
-  const articles = Array.from(articleMap.values());
+  const articles = Array.from(articleMap.values()).reverse();
   await fs.writeFile(JSON_FILE, JSON.stringify(articles, null, 2), "utf-8");
-  console.log(`✅ articles.json updated (${articles.length} articles)`);
+  console.log(`✅ articles.json updated (${articles.length} articles, newest first)`);
 })();
