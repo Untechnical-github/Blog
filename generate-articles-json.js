@@ -24,6 +24,8 @@ const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
     const dom = new JSDOM(html);
     const document = dom.window.document;
 
+    document.querySelectorAll("br").forEach(br => br.remove());
+
     const title =
       document.querySelector("title")?.textContent?.trim() ||
       document.querySelector("h1")?.textContent?.trim() ||
