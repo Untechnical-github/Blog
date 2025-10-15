@@ -7,7 +7,6 @@ const { XMLParser, XMLBuilder } = require("fast-xml-parser");
 const BASE_URL = "https://untechnical.info";
 const SITEMAP_FILE = "sitemap.xml";
 
-// Gitで変更されたHTMLファイルを取得
 const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
   .toString()
   .split("\n")
@@ -21,14 +20,24 @@ const getGitDate = (file) => {
   }
 };
 
-(async () => {
-  let sitemap = {
-    urlset: {
-      url: []
-    }
-  };
+const extractBodyContent = (html) => {
+  const match = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  return match ? match[1].trim() : "";
+};
 
-  // 既存の sitemap.xml を読み込み
+const hasVisibleChange = (oldHtml, newHtml) => {
+  const oldBody = extractBodyContent(oldHtml)
+    .replace(/\s+/g, " ")
+    .replace(/<!--.*?-->/g, "");
+  const newBody = extractBodyContent(newHtml)
+    .replace(/\s+/g, " ")
+    .replace(/<!--.*?-->/g, "");
+  return oldBody !== newBody;
+};
+
+(async () => {
+  let sitemap = { urlset: { url: [] } };
+
   try {
     const xml = await fs.readFile(SITEMAP_FILE, "utf-8");
     const parser = new XMLParser({ ignoreAttributes: false });
@@ -37,50 +46,51 @@ const getGitDate = (file) => {
     console.log("⚠️ 既存 sitemap.xml が見つかりません。新規作成します。");
   }
 
-  // 既存の URL を Map に入れる
   const urlMap = new Map();
   const existingUrls = sitemap.urlset?.url || [];
   const urls = Array.isArray(existingUrls) ? existingUrls : [existingUrls];
-  urls.forEach(entry => {
-    urlMap.set(entry.loc, entry);
-  });
+  urls.forEach(entry => urlMap.set(entry.loc, entry));
 
   for (const file of changedFiles) {
     const relativeUrl = "/" + file.replace(/index\.html$/, "").replace(/\.html$/, "");
     const fullUrl = `${BASE_URL}${relativeUrl}`;
-    const lastmod = getGitDate(file).split("T")[0]; // YYYY-MM-DD 形式
+    const lastmod = getGitDate(file).split("T")[0];
 
-    // ★ 1. 日本語の日付形式を作成
-    const [year, month, day] = lastmod.split('-');
-    const japaneseDate = `${year}年${parseInt(month, 10)}月${parseInt(day, 10)}日`;
+    let oldHtml;
+    try {
+      oldHtml = execSync(`git show HEAD^:${file}`).toString();
+    } catch {
+      oldHtml = "";
+    }
 
-    // sitemap.xml を更新
-    urlMap.set(fullUrl, {
-      loc: fullUrl,
-      lastmod
-    });
+    const newHtml = await fs.readFile(file, "utf-8");
 
-    // HTMLの <time> 最終更新日 を更新
-    let html = await fs.readFile(file, "utf-8");
+    if (!hasVisibleChange(oldHtml, newHtml)) {
+      console.log(`⏩ ${file} の本文に変更なし → 最終更新日は変更しません`);
+      continue;
+    }
 
-    // 公開日・最終更新日が両方入っている想定
-    html = html.replace(
-      // 正規表現: (<time datetime=")(古い日付)(">最終更新日：)(古い表示)(</time>)
+    const [year, month, day] = lastmod.split("-");
+    const japaneseDate = `${year}年${parseInt(month)}月${parseInt(day)}日`;
+
+    urlMap.set(fullUrl, { loc: fullUrl, lastmod });
+
+    let updatedHtml = newHtml;
+
+    updatedHtml = updatedHtml.replace(
       /(<time datetime=")(\d{4}-\d{2}-\d{2})(">最終更新日：)([^<]+)(<\/time>)/,
-      // ★ 2. datetime属性と表示テキストを別々に更新
-      (match, p1, p2, p3, p4, p5) => {
-        // p1: <time datetime="
-        // p3: ">最終更新日：
-        // p5: </time>
-        return `${p1}${lastmod}${p3}${japaneseDate}${p5}`;
-      }
+      `${'$1'}${lastmod}${'$3'}${japaneseDate}${'$5'}`
     );
 
-    await fs.writeFile(file, html, "utf-8");
-    console.log(`✅ ${file} の最終更新日を ${japaneseDate} に更新`);
+    updatedHtml = updatedHtml.replace(
+      /("dateModified"\s*:\s*")(\d{4}-\d{2}-\d{2})(")/,
+      `$1${lastmod}$3`
+    );
+
+    await fs.writeFile(file, updatedHtml, "utf-8");
+    console.log(`✅ ${file} の最終更新日を ${japaneseDate} に更新（timeタグ & JSON-LD）`);
   }
 
-  // sitemap.xml を書き出し
   const builder = new XMLBuilder({ ignoreAttributes: false, format: true });
   const updatedSitemap = builder.build({
     urlset: {
