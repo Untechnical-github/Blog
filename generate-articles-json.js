@@ -10,18 +10,44 @@ const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
   .split("\n")
   .filter(f => f.endsWith(".html") && f !== "index.html" && f !== "policy.html");
 
+const extractBodyContent = (html) => {
+  const match = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  return match ? match[1].trim() : "";
+};
+
+const hasVisibleChange = (oldHtml, newHtml) => {
+  const normalize = (text) =>
+    extractBodyContent(text)
+      .replace(/\s+/g, " ")
+      .replace(/<!--.*?-->/g, "");
+  return normalize(oldHtml) !== normalize(newHtml);
+};
+
 (async () => {
-  let articles = [];
+  let articleMap = new Map();
 
   try {
-    articles = JSON.parse(await fs.readFile(JSON_FILE, "utf-8"));
+    const data = await fs.readFile(JSON_FILE, "utf-8");
+    JSON.parse(data).forEach(article => articleMap.set(article.path, article));
   } catch {}
 
-  const articleMap = new Map(articles.map(a => [a.path, a]));
-
   for (const file of changedFiles) {
-    const html = await fs.readFile(file, "utf-8");
-    const dom = new JSDOM(html);
+
+    let oldHtml;
+    try {
+      oldHtml = execSync(`git show HEAD^:${file}`).toString();
+    } catch {
+      oldHtml = "";
+    }
+
+    const newHtml = await fs.readFile(file, "utf-8");
+
+    if (!hasVisibleChange(oldHtml, newHtml)) {
+      console.log(`⏩ ${file} の本文に変更なし → articles.jsonは更新しません`);
+      continue;
+    }
+
+    const dom = new JSDOM(newHtml);
     const document = dom.window.document;
 
     const title =
@@ -29,7 +55,8 @@ const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
       document.querySelector("h1")?.textContent?.trim() ||
       "";
 
-    const metaCategory = document.querySelector("meta[name='category']")?.getAttribute("content") || "";
+    const metaCategory =
+      document.querySelector("meta[name='category']")?.getAttribute("content") || "";
     const categories = metaCategory.split(",").map(c => c.trim()).filter(Boolean);
 
     let content =
@@ -41,22 +68,28 @@ const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
 
     const relativeImagePath =
       document.querySelector("main img, article img, body img")?.getAttribute("src") || "";
-    
+
     let image = "";
     if (relativeImagePath) {
       const fileUrl = new URL(file, BASE_URL).href;
       image = new URL(relativeImagePath, fileUrl).href;
     }
 
-    const newArticle = { title, category: categories, path: file, content, image };
+    articleMap.set(file, {
+      title,
+      category: categories,
+      path: file,
+      content,
+      image,
+    });
 
-    articleMap.set(file, newArticle);
+    console.log(`✅ ${file} の本文変更を検出 → articles.jsonに反映`);
   }
 
-  const updatedArticles = Array.from(articleMap.values()).sort((a, b) => {
+  const articles = Array.from(articleMap.values()).sort((a, b) => {
     return (a.path < b.path) ? 1 : -1;
   });
 
-  await fs.writeFile(JSON_FILE, JSON.stringify(updatedArticles, null, 2), "utf-8");
-  console.log(`✅ articles.json updated (${updatedArticles.length} articles, newest first)`);
+  await fs.writeFile(JSON_FILE, JSON.stringify(articles, null, 2), "utf-8");
+  console.log(`✅ articles.json updated (${articles.length} articles, newest first)`);
 })();
