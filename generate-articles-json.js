@@ -3,7 +3,6 @@ const { execSync } = require("child_process");
 const { JSDOM } = require("jsdom");
 
 const JSON_FILE = "articles.json";
-
 const BASE_URL = "https://untechnical.info/";
 
 const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
@@ -12,12 +11,13 @@ const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
   .filter(f => f.endsWith(".html") && f !== "index.html" && f !== "policy.html");
 
 (async () => {
-  let articleMap = new Map();
+  let articles = [];
 
   try {
-    const data = await fs.readFile(JSON_FILE, "utf-8");
-    JSON.parse(data).forEach(article => articleMap.set(article.path, article));
+    articles = JSON.parse(await fs.readFile(JSON_FILE, "utf-8"));
   } catch {}
+
+  const articleMap = new Map(articles.map(a => [a.path, a]));
 
   for (const file of changedFiles) {
     const html = await fs.readFile(file, "utf-8");
@@ -44,15 +44,19 @@ const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
     
     let image = "";
     if (relativeImagePath) {
-
       const fileUrl = new URL(file, BASE_URL).href;
       image = new URL(relativeImagePath, fileUrl).href;
     }
 
-    articleMap.set(file, { title, category: categories, path: file, content, image });
+    const newArticle = { title, category: categories, path: file, content, image };
+
+    articleMap.set(file, newArticle);
   }
 
-  const articles = Array.from(articleMap.values()).reverse();
-  await fs.writeFile(JSON_FILE, JSON.stringify(articles, null, 2), "utf-8");
-  console.log(`✅ articles.json updated (${articles.length} articles, newest first)`);
+  const updatedArticles = Array.from(articleMap.values()).sort((a, b) => {
+    return (a.path < b.path) ? 1 : -1;
+  });
+
+  await fs.writeFile(JSON_FILE, JSON.stringify(updatedArticles, null, 2), "utf-8");
+  console.log(`✅ articles.json updated (${updatedArticles.length} articles, newest first)`);
 })();
