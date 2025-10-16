@@ -32,7 +32,6 @@ const hasVisibleChange = (oldHtml, newHtml) => {
   } catch {}
 
   for (const file of changedFiles) {
-
     let oldHtml;
     try {
       oldHtml = execSync(`git show HEAD^:${file}`).toString();
@@ -41,7 +40,6 @@ const hasVisibleChange = (oldHtml, newHtml) => {
     }
 
     const newHtml = await fs.readFile(file, "utf-8");
-
     if (!hasVisibleChange(oldHtml, newHtml)) {
       console.log(`⏩ ${file} の本文に変更なし → articles.jsonは更新しません`);
       continue;
@@ -75,19 +73,36 @@ const hasVisibleChange = (oldHtml, newHtml) => {
       image = new URL(relativeImagePath, fileUrl).href;
     }
 
+    let datePublished = "";
+    let dateModified = "";
+    const ldJsonScript = document.querySelector("script[type='application/ld+json']");
+    if (ldJsonScript) {
+      try {
+        const ldData = JSON.parse(ldJsonScript.textContent);
+        datePublished = ldData.datePublished || "";
+        dateModified = ldData.dateModified || "";
+      } catch (e) {
+        console.warn(`⚠️ JSON-LD parse error in ${file}`);
+      }
+    }
+
     articleMap.set(file, {
       title,
       category: categories,
       path: file,
       content,
       image,
+      datePublished,
+      dateModified
     });
 
     console.log(`✅ ${file} の本文変更を検出 → articles.jsonに反映`);
   }
 
   const articles = Array.from(articleMap.values()).sort((a, b) => {
-    return (a.path < b.path) ? 1 : -1;
+    const dateA = new Date(a.datePublished || 0);
+    const dateB = new Date(b.datePublished || 0);
+    return dateB - dateA;
   });
 
   await fs.writeFile(JSON_FILE, JSON.stringify(articles, null, 2), "utf-8");
