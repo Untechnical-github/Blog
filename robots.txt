@@ -1,5 +1,3 @@
 User-agent: *
-Disallow: /policy.html
-Disallow: /camera_sound/camera_sound.html
 
 Sitemap: https://untechnical.info/sitemap.xml
