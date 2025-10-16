@@ -28,9 +28,9 @@ jobs:
         run: node generate-sitemap.js
 
       - name: Generate articles.json
-        run: node generate-articles-json.js
+        run: node generate-articles.js
 
-      - name: Commit changes # 👈 分かりやすいように名前も変更
+      - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
