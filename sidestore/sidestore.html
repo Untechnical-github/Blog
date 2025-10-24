@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="SideStoreを用いて、iOSでIPAをサイドロードする方法を解説">
+    <meta name="google-site-verification" content="0Lm3uRwedrKk66bbYr_2TmZNx986VFE1yXWuB2h1iAs" /> 
+
+    <meta property="og:type" content="website"> 
+    <meta property="og:site_name" content="Untechnical">
+    <meta property="og:title" content="iPhone・iPadでSideStoreを用いてApp Store外のアプリをサイドロードする方法">
+    <meta property="og:description" content="SideStoreを用いて、iOSでIPAをサイドロードする方法を解説">
+    <meta property="og:url" content="https://untechnical.info/apptesters/apptesters.html">
+    <meta property="og:image" content="https://untechnical.info/apptesters/apptesters.jpg">
+ 
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="iPhone・iPadでSideStoreを用いてApp Store外のアプリをサイドロードする方法">
+    <meta name="twitter:description" content="SideStoreを用いて、iOSでIPAをサイドロードする方法を解説">
+    <meta name="twitter:image" content="https://untechnical.info/apptesters/apptesters.jpg">
+
+    <meta name="category" content="iOS">
+
+    <title>iPhone・iPadでSideStoreを用いてApp Store外のアプリをサイドロードする方法</title>
+    <link rel="icon" href="../profile.ico" type="image/x-icon">
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: black;
+        box-sizing: border-box;
+        max-width: 100%;
+      }
+    
+      header {
+        background-color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 40px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+    
+      header a {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 700;
+        font-size: 1.6em;
+        color: black;
+        text-decoration: none;
+        letter-spacing: 0.5px;
+        transition: color 0.3s ease;
+      }
+
+      header a:hover {
+        color: #0073e6;
+      }
+    
+      main {
+        padding: 20px;
+        max-width: 100%;
+      }
+    
+      img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 100%;
+        max-height: 75vh;
+        height: auto;
+        object-fit: contain;
+      }
+    
+      h1 {
+        text-align: left;
+        font-size: 2.5em;
+        font-weight: 700;
+        color: black;
+        margin: 40px 0;
+      }
+
+      nav {
+        text-align: left;
+        margin-top: 20px;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: black;
+        font-size: 1.1em;
+        margin: 0 20px;
+        letter-spacing: 0.5px;
+        transition: color 0.3s ease;
+      }
+
+      nav a:hover {
+        color: #0073e6;
+      }
+
+      nav ul {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+      }
+
+      nav ul li {
+        font-size: 1.2em;
+        margin: 0 15px;
+        padding: 10px 0;
+      }
+
+      section h2 {
+        text-align: left;
+        font-size: 2.2em;
+        color: black;
+      }
+    
+      section h3 {
+        text-align: left;
+        font-size: 1.5em;
+        color: black;
+      }
+    
+      section p {
+        font-size: 1em;
+        line-height: 1.7;
+        white-space: pre-line;
+        color: black;
+        text-align: justify;
+      }
+
+      .reference {
+        text-align: center;
+        font-size: 0.9em;
+        color: #aaa;
+        margin-bottom: 50px;
+      }
+
+      .reference a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      section .image1 {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        width: auto;
+        height: 400px;
+      }
+
+      section .image2 {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        width: 500px;
+        height: auto;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      .link-preview {
+        display: block;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #ffffff;
+        padding: 15px;
+        margin-bottom: 20px;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+
+      .link-preview:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        border-color: #0073e6;
+      }
+
+      .link-preview img {
+        max-width: 100%;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        height: auto;
+        object-fit: cover;
+      }
+
+      .preview-title {
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-bottom: 5px;
+        color: #222;
+      }
+
+      .preview-description {
+        font-size: 0.95em;
+        color: #555;
+        line-height: 1.4;
+      }
+
+      pre code {
+        background-color: #1e1e1e;
+        color: #f8f8f2;
+        font-family: Consolas, Monaco, "Courier New", monospace;
+        font-size: 0.95em;
+        padding: 12px;
+        border-radius: 8px;
+        display: block;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+
+      .article-dates {
+        text-align: left;
+        color: #666;
+        font-size: 0.9em;
+        margin-bottom: 20px;
+      }
+
+      .box-section1 {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 40px 30px;
+        max-width: 600px;
+        margin: 40px auto;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .box-section2 {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 40px 30px;
+        max-width: 600px;
+        margin: 40px auto;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .box-section2 h2{
+        text-align: center;
+      }
+
+      .box-section2 p{
+        text-align: center;
+      }
+
+      .profile-image {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+
+      .social-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 4px;
+        transition: opacity 0.3s ease;
+      }
+
+      .social-icon:hover {
+        opacity: 0.7;
+      }
+
+      .mail-button {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 12px 20px;
+        background-color: #0073e6;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 1em;
+        transition: background-color 0.3s ease;
+      }
+
+      .mail-button:hover {
+        background-color: #005bb5;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.8);
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .modal-content {
+        max-width: 90%;
+        max-height: 80%;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        touch-action: none;
+        transition: transform 0.2s;
+      }
+
+      .close {
+        position: absolute;
+        top: 20px;
+        right: 35px;
+        color: #fff;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 2100;
+      }
+
+      .close:hover {
+        color: #bbb;
+      }
+
+      .zoomable {
+        cursor: zoom-in;
+        transition: transform 0.2s;
+      }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://untechnical.info/sidestore/sidestore.html"
+        },
+        "headline": "iPhone・iPadでSideStoreを用いてApp Store外のアプリをサイドロードする方法",
+        "description": "SideStoreを用いて、iOSでIPAをサイドロードする方法を解説",
+        "image": "https://untechnical.info/sidestore/sidestore.jpg",
+        "author": {
+          "@type": "Person",
+          "name": "Untechnical"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Untechnical",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://untechnical.info/profile.png"
+          }
+        },
+        "url": "https://untechnical.info/sidestore/sidestore.html",
+        "datePublished": "2025-10-24",
+        "dateModified": "2025-10-24"
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <a href="../index.html">Untechnical</a>
+      </div>
+    </header>
+    <main>
+      <section>
+        <div class="box-section1">
+          <h1>iPhone・iPadでSideStoreを用いてApp Store外のアプリをサイドロードする方法</h1>
+          <div class="article-dates">
+            <time datetime="2025--">公開日：2025年10月24日</time><br>
+            <time datetime="2025-10-17">最終更新日：2025年10月24日</time>
+          </div>
+          <img src="sidestore.jpg" alt="イメージ" class="zoomable">
+          <h2>サイドロードとは?</h2>
+          <p>
+            サイドロードとは、iOSならApp Store、AndroidならGoogle Play Store以外からアプリをインストールすることを指す。
+            これにより、アプリを特定のバージョンに戻したり、正規のアプリストアで配信されていないようなアプリをインストールできる。
+            Androidはapkと呼ばれるファイルを入手することで直接サイドロードできるが、iOSは制限が厳しく、一般的なユーザーはサイドロードできるアプリが3つに制限される、7日に1回再署名が必要、通知機能が使えないなど大きなデメリットを有する。
+            ここではサイドロードできるアプリ数を擬似的に無制限にし、かつ7日に1回の再署名の負担をできる限り少なくできる方法を解説する。
+          </p>
+          <h2>手順</h2>
+          <nav>
+            <ul>
+            <li><a href="#altserver">AltServerを用いてSideStoreをサイドロードする</a></li>
+            <li><a href="#sidestore">SideStoreを用いてLiveContainerをサイドロードする</a></li>
+            <li><a href="#livecontainer">LiveContainerを用いてサイドロードする</a></li>
+            </ul>
+          </nav>
+          <section id="altserver">
+            <h2>AltServerを用いてSideStoreをサイドロードする</h2>
+            <div class="reference">
+              <a href="https://altstore.io/" target="blank">
+                <img src="altservert.png" alt="AltServer" class="image2 zoomable">
+                AltStoreより引用
+              </a>
+            </div>
+            <p>
+              ここではAltServerを用いてSideStoreをサイドロードし、使えるようにする。
+              この手順ではPCが必要になる。
+            </p>
+            <h3>1.PCでSideStoreのサイトを開く</h3>
+            <p>
+              以下のリンクからSideStoreのサイトを開く。
+            </p>
+            <a href="https://sidestore.io/" target="_blank" class="link-preview"></a>
+            <h3>2.AltServer、SideStore、idevice_pair、iTunes、iCloudをダウンロードし、AltServer、iTunes、iCloudをインストールする</h3>
+            <p>
+              WindowsではiTunesとiCloudはMicrosoft Storeでインストールしたものは利用できないため、それらがすでにインストールされている場合は一度アンインストールしてからSideStoreのサイトからダウンロードしたiTunesとiCloudをインストールする。
+              MacではAltServer、SideStore、idevice_pairをダウンロードし、AltServerをインストールする。
+            </p>
+            <img src="altserver2.png" class="image2 zoomable" alt="ダウンロード">
+            <h3>3.iPhoneまたはiPadで設定アプリを開く</h3>
+            <img src="altserver3.PNG" class="image1 zoomable" alt="設定アプリ">
+            <h3>4. "プライバシーとセキュリティ" をタップする</h3>
+            <img src="altserver4.PNG" class="image1 zoomable" alt="プライバシーとセキュリティ">
+            <h3>5. "デベロッパーモード" をタップする</h3>
+            <img src="altserver5.PNG" class="image1 zoomable" alt="デベロッパーモード">
+            <h3>6. "デベロッパーモード" をオンにする</h3>
+            <img src="altserver6.PNG" class="image1 zoomable" alt="オン">
+            <h3>7. "再起動" をタップし、デバイスを再起動する</h3>
+            <img src="altserver7.PNG" class="image1 zoomable" alt="再起動">
+            <h3>8.デベロッパーモードを有効にする</h3>
+            <p>再起動後の画面でホームバーを上にスワイプし、 "有効にする" をクリックする</p>
+            <img src="altserver8-1.jpg" class="image1 zoomable" alt="スワイプ">
+            <img src="altserver8-2.jpg" class="image1 zoomable" alt="有効にする">
+            <h3>9.PCとiPhoneまたはiPadをUSBケーブルで接続する</h3>
+            <p>この時点でiPhoneまたはiPadのロックを解除しておく。</p>
+            <img src="altserver9.jpg" class="image2 zoomable" alt="USB">
+            <h3>10.iPhoneまたはiPadに表示された "信頼" をクリックする</h3>
+            <img src="altserver10.PNG" class="image1 zoomable" alt="信頼">
+            <h3>11.PCでAltServerを起動する</h3>
+            <img src="altserver11.png" class="image1 zoomable" alt="AltServer">
+            <h3>12.システムトレイ上のAltServerのアイコンをShiftキーを押しながらクリックする</h3>
+            <p>Macではメニューバー上のALtServerのアイコンをOptionキーを押しながらクリックする</p>
+            <img src="altserver12.png" class="image2 zoomable" alt="アイコン">
+            <h3>13. "Sideload .ipa" からUSBで接続した端末の名前をクリックする</h3>
+            <img src="altserver13.png" class="image2 zoomable" alt="サイドロード">
+            <h3>14.ダウンロードしたSideStoreのIPAを選択する</h3>
+            <img src="altserver14.png" class="image2 zoomable" alt="IPA">
+            <h3>15.Apple IDとそのパスワードを入力し、 "Install" をクリックする</h3>
+            <p>これにより、入力したApple IDでSideStoreのIPAに署名を行い、サイドロードをしたことになる。</p>
+            <img src="altserver15.png" class="image2 zoomable" alt="Install">
+            <h3>16.iPhoneで設定アプリを開く</h3>
+            <p>ここからはPCとiPhoneまたはiPadがUSBで接続されていなくても問題ない。</p>
+            <img src="altserver16.PNG" class="image1 zoomable" alt="設定アプリ">
+            <h3>17. "一般" をタップする</h3>
+            <img src="altserver3.PNG" class="image1 zoomable" alt="一般">
+            <h3>18. "VPNとデバイス管理" をクリックする</h3>
+            <img src="altserver18.PNG" class="image1 zoomable" alt="VPNとデバイス管理">
+            <h3>19. "デベロッパアプリ" の下の、 "[15で入力したApple ID]" をタップする</h3>
+            <img src="altserver19.PNG" class="image1 zoomable" alt="デベロッパアプリ">
+            <h3>20. "[15で入力したApple]を信頼" をクリックする</h3>
+            <img src="altserver20.PNG" class="image1 zoomable" alt="信頼">
+            <h3>21. "許可" をクリックする</h3>
+            <img src="altserver21.PNG" class="image1 zoomable" alt="許可">
+            <h3>22.PCとiPhoneまたはiPadをUSBケーブルで接続する</h3>
+            <p>この時点でiPhoneまたはiPadのロックを解除しておく。</p>
+            <img src="altserver9.jpg" class="image2 zoomable" alt="USB">
+            <h3>23.PCでidevice_pairを起動する</h3>
+            <p>Windowsの場合、ダウンロードしたidevice_pairのファイルをクリックすると "WindowsによってPCが保護されました" と表示されるが、 "詳細情報" をクリックしてから "実行" をクリックする</p>
+            <img src="altserver23-1.png" class="image2 zoomable" alt="idevice_pair">
+            <img src="altserver23-2.png" class="image2 zoomable" alt="詳細情報">
+            <img src="altserver23-3.png" class="image2 zoomable" alt="実行">
+            <h3>24. "Load" または "Generate" をクリックする</h3>
+            <img src="altserver24.png" class="image2 zoomable" alt="Load">
+            <h3>25.iPhoneまたはiPadに表示された "信頼" をクリックする</h3>
+            <img src="altserver10.PNG" class="image1 zoomable" alt="信頼">
+            <h3>26. "SideStore" の下の "Install" をクリックする</h3>
+            <p>ペアリングファイルはiPhoneまたはiPadを更新またはリセットするとペアリングファイルが無効になるため、その際は再度ペアリングをする必要がある。</p>
+            <img src="altserver26-1.png" class="image2 zoomable" alt="Install">
+            <img src="altserver26-2.png" class="image2 zoomable" alt="Success">
+            <h3>27.iPhoneまたはiPadでStosVPNをインストールする</h3>
+            <p>
+              以下のリンクからStosVPNをインストールする
+            </p>
+            <a href="https://apps.apple.com/us/app/stosvpn/id6744003051" target="_blank" class="link-preview"></a>
+            <h3>28.StosVPNを開く</h3>
+            <img src="altserver28.PNG" class="image1 zoomable" alt="StosVPN">
+            <h3>29. "Connect" をタップする</h3>
+            <img src="altserver29.PNG" class="image1 zoomable" alt="Connect">
+            <h3>30. "許可" をタップする</h3>
+            <p>
+              SideStoreでアプリをサイドロードしたり再署名する際はVPNに接続している必要がある。
+              他のVPNを利用中でなければ、常に接続した状態にしておくことを推奨する。
+            </p>
+            <img src="altserver30.PNG" class="image1 zoomable" alt="許可">
+            <h3>31.SideStoreを開く</h3>
+            <img src="altserver31.PNG" class="image1 zoomable" alt="SideStore">
+            <h3>32. "Settings" タブで "Sign in with Apple ID" をタップする</h3>
+            <img src="altserver32.PNG" class="image1 zoomable" alt="Sign in with Apple ID">
+            <h3>33.[15で入力したApple]でサインインする</h3>
+            <img src="altserver33.PNG" class="image1 zoomable" alt="サインイン">
+            <h3>34. "Got it" をタップする</h3>
+            <img src="altserver34.PNG" class="image1 zoomable" alt="Got it">
+            <h3>35. "Refresh Now" をタップする</h3>
+            <img src="altserver35.PNG" class="image1 zoomable" alt="Refresh Now">
+            <h3>36.拡張機能を保持または削除するか選ぶ</h3>
+            <p>
+              拡張機能とはウィジェットや共有メニューといった機能のことであり、その機能ごとにApp IDが存在する。
+              Apple Developper Programに登録していないApple IDで署名をした場合、登録できるApp IDが10個までに制限される。
+              他にもSideStoreでサイドロードしたアプリの拡張機能を使うためにApp IDを登録する場合、ここでSideStoreの拡張機能を保持するか削除するか選択する必要がある。
+              なお、ここでRefreshができない場合はStosVPNに接続中であることを確認するか、ペアリングファイルを再度設定する。
+            </p>
+            <img src="altserver36.PNG" class="image1 zoomable" alt="拡張機能">
+          </section>
+          <section id="sidestore">
+            <h2>SideStoreを用いてLiveContainerをサイドロードする</h2>
+            <div class="reference">
+              <a href="https://docs.sidestore.io/ja/" target="blank">
+                <img src="sidestore.png" alt="SideStore" class="image2 zoomable">
+                SideStoreより引用
+              </a>
+            </div>
+            <p>
+              ここではSideStoreを用いてLiveContainerをサイドロードし、使えるようにする。
+              また、LiveContainerに限らずSideStoreでアプリをサイドロードする手順はこれと同様である。
+              この手順ではPCは使わない。
+            </p>
+            <h3>1.LiveContainerのIPAをダウンロードする</h3>
+            <p>
+              以下のリンクからLiveContainerのIPAをダウンロードする。
+              LiveContainer以外のアプリをサイドロードする際はそのIPAをダウンロードする。
+            </p>
+            <a href="https://github.com/LiveContainer/LiveContainer/releases" target="_blank" class="link-preview"></a>
+            <h3>2.SideStoreを開く</h3>
+            <img src="altserver31.PNG" class="image1 zoomable" alt="SideStore">
+            <h3>3. "My Apps" タブで 左上の "+" をタップする</h3>
+            <img src="sidestore3.PNG" class="image1 zoomable" alt="+">
+            <h3>4.LiveContainerのIPAを選択する</h3>
+            <p>サイドロードするアプリのIPAを選択する。</p>
+            <img src="sidestore4.PNG" class="image1 zoomable" alt="IPA">
+            <h3>5.拡張機能を保持または削除するか選ぶ</h3>
+            <p>
+              これでサイドロードが完了するが、アプリの署名期限が0日になる前にRefleshをする必要がある。
+              もし署名期限が0日になった場合、そのアプリは起動できなくなるので再度この手順でアプリをサイドロードする必要がある。
+              また、Refreshができない場合はStosVPNに接続中であることを確認するか、ペアリングファイルを再度設定する。
+            </p>
+            <img src="sidestore5.PNG" class="image1 zoomable" alt="拡張機能">
+            <h3>SideStoreによるサイドロードのメリット</h3>
+            <p>
+              ･証明書を用いて行うサイドロードと違い、サイドロードできなくなるリスクがなく、無料で実行できる。
+              ･SideloadlyやAltStoreと違い、アプリの再署名時にPCに接続したり、PCと同じWi-Fiに接続している必要がない。
+            </p>
+            <h3>SideStoreによるサイドロードのデメリット</h3>
+            <p>
+              ･ "My Apps" タブからサイドロードしたアプリの署名期限が0日になる前にRefreshする必要があり、署名期限が0日になった場合はそのアプリのIPAを再びサイドロードする必要がある
+              ･App IDは11個以上登録できない
+              ･アプリはSideStoreを含めて4つ以上サイドロードできない
+              ･アプリの通知機能が利用できない
+            </p>
+          <section id="livecontainer">
+            <h2>LiveContainerを用いてサイドロードする</h2>
+            <div class="reference">
+              <a href="https://github.com/LiveContainer" target="blank">
+                <img src="livecontainer.png" alt="LiveContainer" class="image2 zoomable">
+                GitHubより引用
+              </a>
+            </div>
+            <p>
+              先述の通り、SideStoreではそれを含めて4つ以上のアプリのサイドロードができない。
+              そこで、LiveContainer内でアプリを動かすことでその制限を突破するという方法がある。
+            </p>
+            <h3>1.LiveContainerを開く</h3>
+            <img src="livecontainer1.PNG" class="image1 zoomable" alt="LiveContainer">
+            <h3>2. "設定" タブで "SideStoreから証明書をインストール" をタップする</h3>
+            <img src="livecontainer2.PNG" class="image1 zoomable" alt="SideStoreから証明書をインストール">
+            <h3>3. "Export" をタップする</h3>
+            <img src="livecontainer3.PNG" class="image1 zoomable" alt="Export">
+            <h3>4.左上の "+" をタップする</h3>
+            <img src="livecontainer4.PNG" class="image1 zoomable" alt="+">
+            <h3>5. "IPAファイルをインストール" をタップする</h3>
+            <img src="livecontainer5.PNG" class="image1 zoomable" alt="IPAファイルをインストール">
+            <h3>6.サイドロードするアプリのIPAを選択する</h3>
+            <img src="livecontainer6.PNG" class="image1 zoomable" alt="IPA">
+            <h3>7.サイドロードしたアプリを長押しする</h3>
+            <img src="livecontainer7.PNG" class="image1 zoomable" alt="長押し">
+            <h3>8. "ホーム画面に追加" をタップする</h3>
+            <img src="livecontainer8.PNG" class="image1 zoomable" alt="ホーム画面に追加">
+            <h3>9. "アプリクリップを作成" をタップする</h3>
+            <img src="livecontainer9.PNG" class="image1 zoomable" alt="アプリクリップを作成">
+            <h3>10. "許可" をタップする</h3>
+            <img src="liveContainer10.PNG" class="image1 zoomable" alt="許可">
+            <h3>11. 設定アプリを開く</h3>
+            <img src="liveContainer11.PNG" class="image1 zoomable" alt="設定アプリ">
+            <h3>12. "ダウンロード済みのプロファイル" をタップする</h3>
+            <img src="liveContainer12.PNG" class="image1 zoomable" alt="ダウンロード済みのプロファイル">
+            <h3>13. "インストール" をタップする</h3>
+            <img src="liveContainer13.PNG" class="image1 zoomable" alt="インストール">
+            <h3>14. "次へ" をタップする</h3>
+            <img src="liveContainer14.PNG" class="image1 zoomable" alt="次へ">
+            <h3>15. "インストール" をタップする</h3>
+            <img src="liveContainer15.PNG" class="image1 zoomable" alt="インストール">
+            <h3>15. "インストール" をタップし、パスワードを入力する</h3>
+            <p>これにより、ホーム画面上にサイドロードしたアプリのアイコンが追加され、タップすると起動できるようになっている。</p>
+            <img src="liveContainer15.PNG" class="image1 zoomable" alt="パスワード">
+            <h3>LiveContainerによるサイドロードのメリット</h3>
+            <p>
+              ･証明書を用いて行うサイドロードと違い、サイドロードできなくなるリスクがなく、無料で実行できる。
+              ･AltStore, SideStore, Sideloadlyと違い、7日に1度再署名をする必要がなく、サイドロードできるアプリ数に制限がない
+            </p>
+            <h3>LiveContainerによるサイドロードのデメリット</h3>
+            <p>
+              ･LiveContainerでサイドロードしたアプリは同時に1つまでしか起動できない
+              ･通知機能はもちろん、ウィジェットや共有メニューといった機能が利用できない
+            </p>
+          </section>
+          <h2>サイドロードの動き</h2>
+          <p>
+            先述のようにiOSでは厳しく制限されているサイドロードだが、これにはもちろんメリットがある。
+            Appleにとっての主なメリットは、アプリストアをApp Storeに限定することでアプリ内の課金や定期購入などによる収益を独占できること。
+            ユーザーにとっての主なメリットは、App Storeでは審査に通ったアプリしか配信されないため、危険なアプリをインストールするリスクを避けられること。
+            しかし、EUが2024年にEU域内で販売される端末にサイドロードの解放を義務化し、日本政府も同じような方針を打ち出している。
+            サイドロードが解放されれば他のアプリストアが使えるようになって課金や定期購入の金額が安くなったり、App Storeで配信されていないアプリをインストールできるようになったりとユーザーにとって利便性が上がるものの、セキュリティでの懸念点が大きくなる。
+            サイドロードはまさに両刃の剣である。
+          </p>
+        </div>
+      </section>
+      <section id="about">
+        <div class="box-section2">
+          <div class="profile-container">
+            <h2>プロフィール</h2>
+            <img src="../profile.png" alt="プロフィール画像" class="profile-image">
+            <div class="profile-text">
+              <p>スマホを中心とするガジェットによるライフハックを提供します。</p>
+              <div class="social-links">
+                <a href="https://x.com/Untechnical_" target="_blank" rel="noopener noreferrer">
+                  <img src="../x.png" alt="X" class="social-icon">
+                </a>
+                <!--a href="https://www.instagram.com/untechnical.info?igsh=bWJwdXFkNW13dDI=" target="_blank" rel="noopener noreferrer">
+                  <img src="../instagram.png" alt="Instagram" class="social-icon">
+                </a>
+                <a href="https://www.tiktok.com/@untechnical.info?_t=ZS-8xVI3gsxlYI&_r=1" target="_blank" rel="noopener noreferrer">
+                  <img src="../tiktok.png" alt="TikTok" class="social-icon">
+                </a-->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box-section2">
+          <div class="contact-form">
+            <h2>問い合わせフォーム</h2>
+            <p>ご連絡は以下のメールアドレスまたはXのDMからお願いいたします。</p>
+            <a href="mailto:untechnical@untechnical.info" class="mail-button">メール︰untechnical@untechnical.info</a>
+            <a href="https://x.com/Untechnical_" class="mail-button">X︰Untechnical_</a>
+          </div>
+        </div>
+        <!--div class="box-section2">
+          <h2>プライバシーポリシー</h2>
+          <a href="../policy.html" class="mail-button">プライバシーポリシー</a>
+        </div-->
+      </section>
+      <div id="imgModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+      </div>
+    </main>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+
+      const modal = document.getElementById("imgModal");
+      const modalImg = document.getElementById("modalImage");
+
+      document.querySelectorAll(".zoomable").forEach(img => {
+        img.addEventListener("click", () => {
+
+          modalImg.src = img.src;
+
+          modal.style.display = "flex";
+
+          document.body.style.overflow = "hidden";
+        });
+      });
+
+      const closeModal = () => {
+        modal.style.display = "none";
+        document.body.style.overflow = "";
+      };
+
+      document.querySelector(".close").addEventListener("click", closeModal);
+
+      modal.addEventListener("click", e => {
+        if (e.target.id === "imgModal") {
+          closeModal();
+        }
+      });
+
+      async function fetchOGData(url, anchorElement) {
+          try {
+              const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
+              const { data, status } = await response.json();
+              if (status === "success") {
+                  if (data.title) {
+                      const titleElem = document.createElement("div");
+                      titleElem.textContent = data.title;
+                      titleElem.className = "preview-title";
+                      anchorElement.appendChild(titleElem);
+                  }
+                  if (data.image?.url) {
+                      const img = document.createElement("img");
+                      img.src = data.image.url;
+                      img.alt = "Preview";
+                      img.width = 200;
+                      anchorElement.appendChild(img);
+                  }
+                  if (data.description) {
+                      const descElem = document.createElement("div");
+                      descElem.textContent = data.description;
+                      descElem.className = "preview-description";
+                      anchorElement.appendChild(descElem);
+                  }
+              }
+          } catch (error) { console.error("OGP情報の取得に失敗:", error); }
+      }
+      document.querySelectorAll(".link-preview").forEach(async (anchor) => { await fetchOGData(anchor.href, anchor); });
+      });
+    </script>
+  </body>
+</html>
