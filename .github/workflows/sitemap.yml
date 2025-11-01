@@ -1,4 +1,4 @@
-name: Auto Update Sitemap & Articles JSON
+name: Auto Update Sitemap & Articles & RSS
 
 on:
   push:
@@ -12,6 +12,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Generate sitemap.xml
         run: node generate-sitemap.js
 
@@ -25,6 +37,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sitemap.xml articles.json rss.xml
-          git commit -m "Auto-update sitemap, articles, and RSS" || echo "No changes to commit"
+          git add sitemap.xml articles.json rss.xml 
+          git commit -m "Auto-update Sitemap, Articles, and RSS" || echo "No changes to commit"
           git push
