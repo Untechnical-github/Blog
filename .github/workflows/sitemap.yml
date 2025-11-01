@@ -38,3 +38,6 @@ jobs:
           git commit -m "Auto-update sitemap and articles" || echo "No changes to commit"
           git push
 
+      - name: Generate RSS feed
+        run: node generate-rss.js
+
