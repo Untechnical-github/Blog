@@ -5,22 +5,34 @@
     <link>https://untechnical.info/</link>
     <description>高度情報社会の最先端を駆け抜ける</description>
     <language>ja</language>
-    <lastBuildDate>Fri, 24 Oct 2025 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Invalid Date</lastBuildDate>
     <item>
       <title>iPhone・iPadでSideStoreを用いてApp Store外のアプリをサイドロードする方法</title>
-      <pubDate>Fri, 24 Oct 2025 00:00:00 GMT</pubDate>
+      <link>https://untechnical.info/sidestore/sidestore.html</link>
+      <guid>https://untechnical.info/sidestore/sidestore.html</guid>
+      <pubDate>Invalid Date</pubDate>
+      <description>SideStoreを用いて、iOSでIPAをサイドロードする方法を解説</description>
     </item>
     <item>
       <title>iPhone・iPadでFeatherを用いてApp Store外のアプリをサイドロードする方法</title>
-      <pubDate>Mon, 13 Oct 2025 00:00:00 GMT</pubDate>
+      <link>https://untechnical.info/feather/feather.html</link>
+      <guid>https://untechnical.info/feather/feather.html</guid>
+      <pubDate>Invalid Date</pubDate>
+      <description>AppTestersで証明書を購入し、Featherを用いてIPAをサイドロードする方法を解説</description>
     </item>
     <item>
       <title>Xiaoxin Pad Pro 2025をグローバル化する方法</title>
-      <pubDate>Mon, 18 Aug 2025 00:00:00 GMT</pubDate>
+      <link>https://untechnical.info/xiaoxin_pad_pro/xiaoxin_pad_pro.html</link>
+      <guid>https://untechnical.info/xiaoxin_pad_pro/xiaoxin_pad_pro.html</guid>
+      <pubDate>Thu, 19 Jun 2025 00:00:00 GMT</pubDate>
+      <description>Xiaoxin Pad Pro 2025にグローバルROMをインストールする方法を解説</description>
     </item>
     <item>
       <title>iPhone・Androidのシャッター音を消す方法</title>
+      <link>https://untechnical.info/camera_sound/camera_sound.html</link>
+      <guid>https://untechnical.info/camera_sound/camera_sound.html</guid>
       <pubDate>Thu, 19 Jun 2025 00:00:00 GMT</pubDate>
+      <description>機種ごとに標準カメラアプリのシャッター音を完全に消す方法を解説</description>
     </item>
   </channel>
 </rss>
