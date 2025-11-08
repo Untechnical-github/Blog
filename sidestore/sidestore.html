@@ -76,7 +76,7 @@
     
       h1 {
         text-align: left;
-        font-size: 2.5em;
+        font-size: 2.4em;
         font-weight: 700;
         color: black;
         margin: 40px 0;
@@ -90,7 +90,7 @@
       nav a {
         text-decoration: none;
         color: black;
-        font-size: 1.1em;
+        font-size: 1.2em;
         margin: 0 20px;
         letter-spacing: 0.5px;
         transition: color 0.3s ease;
@@ -114,18 +114,24 @@
 
       section h2 {
         text-align: left;
-        font-size: 2.2em;
+        font-size: 2.0em;
+        color: black;
+      }
+
+      section h3 {
+        text-align: left;
+        font-size: 1.6em;
         color: black;
       }
     
-      section h3 {
+      section h4 {
         text-align: left;
-        font-size: 1.5em;
+        font-size: 1.2em;
         color: black;
       }
     
       section p {
-        font-size: 1em;
+        font-size: 1.0em;
         line-height: 1.7;
         white-space: pre-line;
         color: black;
@@ -134,7 +140,7 @@
 
       .reference {
         text-align: center;
-        font-size: 0.9em;
+        font-size: 1.0em;
         color: #aaa;
         margin-bottom: 50px;
       }
@@ -202,7 +208,7 @@
       }
 
       .preview-description {
-        font-size: 0.95em;
+        font-size: 1.0em;
         color: #555;
         line-height: 1.4;
       }
@@ -211,7 +217,7 @@
         background-color: #1e1e1e;
         color: #f8f8f2;
         font-family: Consolas, Monaco, "Courier New", monospace;
-        font-size: 0.95em;
+        font-size: 1.0em;
         padding: 12px;
         border-radius: 8px;
         display: block;
@@ -223,7 +229,7 @@
       .article-dates {
         text-align: left;
         color: #666;
-        font-size: 0.9em;
+        font-size: 1.0em;
         margin-bottom: 20px;
       }
 
@@ -292,7 +298,7 @@
         color: #ffffff;
         text-decoration: none;
         border-radius: 6px;
-        font-size: 1em;
+        font-size: 1.0em;
         transition: background-color 0.3s ease;
       }
 
@@ -414,103 +420,104 @@
               ここではAltServerを用いてSideStoreをサイドロードし、使えるようにする。
               この手順ではPCが必要になる。
             </p>
-            <h3>1.PCでSideStoreのサイトを開く</h3>
+            <h3>方法</h3>
+            <h4>1.PCでSideStoreのサイトを開く</h4>
             <p>
               以下のリンクからSideStoreのサイトを開く。
             </p>
             <a href="https://sidestore.io/" target="_blank" class="link-preview"></a>
-            <h3>2.AltServer、SideStore、idevice_pair、iTunes、iCloudをダウンロードし、AltServer、iTunes、iCloudをインストールする</h3>
+            <h4>2.AltServer、SideStore、idevice_pair、iTunes、iCloudをダウンロードし、AltServer、iTunes、iCloudをインストールする</h4>
             <p>
               WindowsではiTunesとiCloudはMicrosoft Storeでインストールしたものは利用できないため、それらがすでにインストールされている場合は一度アンインストールしてからSideStoreのサイトからダウンロードしたiTunesとiCloudをインストールする。
               MacではAltServer、SideStore、idevice_pairをダウンロードし、AltServerをインストールする。
             </p>
             <img src="altserver2.png" class="image2 zoomable" alt="ダウンロード">
-            <h3>3.iPhoneまたはiPadで設定アプリを開く</h3>
+            <h4>3.iPhoneまたはiPadで設定アプリを開く</h4>
             <img src="altserver3.PNG" class="image1 zoomable" alt="設定アプリ">
-            <h3>4. "プライバシーとセキュリティ" をタップする</h3>
+            <h4>4. "プライバシーとセキュリティ" をタップする</h4>
             <img src="altserver4.PNG" class="image1 zoomable" alt="プライバシーとセキュリティ">
-            <h3>5. "デベロッパーモード" をタップする</h3>
+            <h4>5. "デベロッパーモード" をタップする</h4>
             <img src="altserver5.PNG" class="image1 zoomable" alt="デベロッパーモード">
-            <h3>6. "デベロッパーモード" をオンにする</h3>
+            <h4>6. "デベロッパーモード" をオンにする</h4>
             <img src="altserver6.PNG" class="image1 zoomable" alt="オン">
-            <h3>7. "再起動" をタップし、デバイスを再起動する</h3>
+            <h4>7. "再起動" をタップし、デバイスを再起動する</h4>
             <img src="altserver7.PNG" class="image1 zoomable" alt="再起動">
-            <h3>8.デベロッパーモードを有効にする</h3>
+            <h4>8.デベロッパーモードを有効にする</h4>
             <p>再起動後の画面でホームバーを上にスワイプし、 "有効にする" をクリックする</p>
             <img src="altserver8-1.jpg" class="image1 zoomable" alt="スワイプ">
             <img src="altserver8-2.jpg" class="image1 zoomable" alt="有効にする">
-            <h3>9.PCとiPhoneまたはiPadをUSBケーブルで接続する</h3>
+            <h4>9.PCとiPhoneまたはiPadをUSBケーブルで接続する</h4>
             <p>この時点でiPhoneまたはiPadのロックを解除しておく。</p>
             <img src="altserver9.jpg" class="image2 zoomable" alt="USB">
-            <h3>10.iPhoneまたはiPadに表示された "信頼" をクリックする</h3>
+            <h4>10.iPhoneまたはiPadに表示された "信頼" をクリックする</h4>
             <img src="altserver10.PNG" class="image1 zoomable" alt="信頼">
-            <h3>11.PCでAltServerを起動する</h3>
+            <h4>11.PCでAltServerを起動する</h4>
             <img src="altserver11.png" class="image1 zoomable" alt="AltServer">
-            <h3>12.システムトレイ上のAltServerのアイコンをShiftキーを押しながらクリックする</h3>
+            <h4>12.システムトレイ上のAltServerのアイコンをShiftキーを押しながらクリックする</h4>
             <p>Macではメニューバー上のALtServerのアイコンをOptionキーを押しながらクリックする</p>
             <img src="altserver12.png" class="image2 zoomable" alt="アイコン">
-            <h3>13. "Sideload .ipa" からUSBで接続した端末の名前をクリックする</h3>
+            <h4>13. "Sideload .ipa" からUSBで接続した端末の名前をクリックする</h4>
             <img src="altserver13.png" class="image2 zoomable" alt="サイドロード">
-            <h3>14.ダウンロードしたSideStoreのIPAを選択する</h3>
+            <h4>14.ダウンロードしたSideStoreのIPAを選択する</h4>
             <img src="altserver14.png" class="image2 zoomable" alt="IPA">
-            <h3>15.Apple IDとそのパスワードを入力し、 "Install" をクリックする</h3>
+            <h4>15.Apple IDとそのパスワードを入力し、 "Install" をクリックする</h4>
             <p>これにより、入力したApple IDでSideStoreのIPAに署名を行い、サイドロードをしたことになる。</p>
             <img src="altserver15.png" class="image2 zoomable" alt="Install">
-            <h3>16.iPhoneで設定アプリを開く</h3>
+            <h4>16.iPhoneで設定アプリを開く</h4>
             <p>ここからはPCとiPhoneまたはiPadがUSBで接続されていなくても問題ない。</p>
             <img src="altserver16.PNG" class="image1 zoomable" alt="設定アプリ">
-            <h3>17. "一般" をタップする</h3>
+            <h4>17. "一般" をタップする</h4>
             <img src="altserver3.PNG" class="image1 zoomable" alt="一般">
-            <h3>18. "VPNとデバイス管理" をクリックする</h3>
+            <h4>18. "VPNとデバイス管理" をクリックする</h4>
             <img src="altserver18.PNG" class="image1 zoomable" alt="VPNとデバイス管理">
-            <h3>19. "デベロッパアプリ" の下の、 "[15で入力したApple ID]" をタップする</h3>
+            <h4>19. "デベロッパアプリ" の下の、 "[15で入力したApple ID]" をタップする</h4>
             <img src="altserver19.PNG" class="image1 zoomable" alt="デベロッパアプリ">
-            <h3>20. "[15で入力したApple]を信頼" をクリックする</h3>
+            <h4>20. "[15で入力したApple]を信頼" をクリックする</h4>
             <img src="altserver20.PNG" class="image1 zoomable" alt="信頼">
-            <h3>21. "許可" をクリックする</h3>
+            <h4>21. "許可" をクリックする</h4>
             <img src="altserver21.PNG" class="image1 zoomable" alt="許可">
-            <h3>22.PCとiPhoneまたはiPadをUSBケーブルで接続する</h3>
+            <h4>22.PCとiPhoneまたはiPadをUSBケーブルで接続する</h4>
             <p>この時点でiPhoneまたはiPadのロックを解除しておく。</p>
             <img src="altserver9.jpg" class="image2 zoomable" alt="USB">
-            <h3>23.PCでidevice_pairを起動する</h3>
+            <h4>23.PCでidevice_pairを起動する</h4>
             <p>Windowsの場合、ダウンロードしたidevice_pairのファイルをクリックすると "WindowsによってPCが保護されました" と表示されるが、 "詳細情報" をクリックしてから "実行" をクリックする</p>
             <img src="altserver23-1.png" class="image2 zoomable" alt="idevice_pair">
             <img src="altserver23-2.png" class="image2 zoomable" alt="詳細情報">
             <img src="altserver23-3.png" class="image2 zoomable" alt="実行">
-            <h3>24. "Load" または "Generate" をクリックする</h3>
+            <h4>24. "Load" または "Generate" をクリックする</h4>
             <img src="altserver24.png" class="image2 zoomable" alt="Load">
-            <h3>25.iPhoneまたはiPadに表示された "信頼" をクリックする</h3>
+            <h4>25.iPhoneまたはiPadに表示された "信頼" をクリックする</h4>
             <img src="altserver10.PNG" class="image1 zoomable" alt="信頼">
-            <h3>26. "SideStore" の下の "Install" をクリックする</h3>
-            <p>ペアリングファイルはiPhoneまたはiPadを更新またはリセットするとペアリングファイルが無効になるため、その際は再度ペアリングをする必要がある。</p>
+            <h4>26. "SideStore" の下の "Install" をクリックする</h4>
+            <p>ペアリングファイルはiPhoneまたはiPadをアップデートするとペアリングファイルが無効になるため、その際は再度ペアリングをする必要がある。</p>
             <img src="altserver26-1.png" class="image2 zoomable" alt="Install">
             <img src="altserver26-2.png" class="image2 zoomable" alt="Success">
-            <h3>27.iPhoneまたはiPadでStosVPNをインストールする</h3>
+            <h4>27.iPhoneまたはiPadでStosVPNをインストールする</h4>
             <p>
               以下のリンクからStosVPNをインストールする
             </p>
             <a href="https://apps.apple.com/us/app/stosvpn/id6744003051" target="_blank" class="link-preview"></a>
-            <h3>28.StosVPNを開く</h3>
+            <h4>28.StosVPNを開く</h4>
             <img src="altserver28.PNG" class="image1 zoomable" alt="StosVPN">
-            <h3>29. "Connect" をタップする</h3>
+            <h4>29. "Connect" をタップする</h4>
             <img src="altserver29.PNG" class="image1 zoomable" alt="Connect">
-            <h3>30. "許可" をタップする</h3>
+            <h4>30. "許可" をタップする</h4>
             <p>
               SideStoreでアプリをサイドロードしたり再署名する際はVPNに接続している必要がある。
               他のVPNを利用中でなければ、常に接続した状態にしておくことを推奨する。
             </p>
             <img src="altserver30.PNG" class="image1 zoomable" alt="許可">
-            <h3>31.SideStoreを開く</h3>
+            <h4>31.SideStoreを開く</h4>
             <img src="altserver31.PNG" class="image1 zoomable" alt="SideStore">
-            <h3>32. "Settings" タブで "Sign in with Apple ID" をタップする</h3>
+            <h4>32. "Settings" タブで "Sign in with Apple ID" をタップする</h4>
             <img src="altserver32.PNG" class="image1 zoomable" alt="Sign in with Apple ID">
-            <h3>33.15で入力したApple IDでサインインする</h3>
+            <h4>33.15で入力したApple IDでサインインする</h4>
             <img src="altserver33.PNG" class="image1 zoomable" alt="サインイン">
-            <h3>34. "Got it" をタップする</h3>
+            <h4>34. "Got it" をタップする</h4>
             <img src="altserver34.PNG" class="image1 zoomable" alt="Got it">
-            <h3>35. "Refresh Now" をタップする</h3>
+            <h4>35. "Refresh Now" をタップする</h4>
             <img src="altserver35.PNG" class="image1 zoomable" alt="Refresh Now">
-            <h3>36.拡張機能を保持または削除するか選ぶ</h3>
+            <h4>36.拡張機能を保持または削除するか選ぶ</h4>
             <p>
               拡張機能とはウィジェットや共有メニューといった機能のことであり、その機能ごとにApp IDが存在する。
               Apple Developper Programに登録していないApple IDで署名をした場合、登録できるApp IDが10個までに制限される。
@@ -530,40 +537,50 @@
             <p>
               ここではSideStoreを用いてLiveContainerをサイドロードし、使えるようにする。
               また、LiveContainerに限らずSideStoreでアプリをサイドロードする手順はこれと同様である。
+              さらにサイドロードしたアプリをアップデートする際も同様の手順で行う。
               この手順ではPCは使わない。
             </p>
-            <h3>1.LiveContainerのIPAをダウンロードする</h3>
+            <h3>方法</h3>
+            <h4>1.LiveContainerのIPAをダウンロードする</h4>
             <p>
               以下のリンクからLiveContainerのIPAをダウンロードする。
               LiveContainer以外のアプリをサイドロードする際はそのIPAをダウンロードする。
             </p>
             <a href="https://github.com/LiveContainer/LiveContainer/releases" target="_blank" class="link-preview"></a>
-            <h3>2.SideStoreを開く</h3>
+            <h4>2.SideStoreを開く</h4>
             <img src="altserver31.PNG" class="image1 zoomable" alt="SideStore">
-            <h3>3. "My Apps" タブで 左上の "+" をタップする</h3>
+            <h4>3. "My Apps" タブで 左上の "+" をタップする</h4>
             <img src="sidestore3.PNG" class="image1 zoomable" alt="+">
-            <h3>4.LiveContainerのIPAを選択する</h3>
+            <h4>4.LiveContainerのIPAを選択する</h4>
             <p>サイドロードするアプリのIPAを選択する。</p>
             <img src="sidestore4.PNG" class="image1 zoomable" alt="IPA">
-            <h3>5.拡張機能を保持または削除するか選ぶ</h3>
+            <h4>5.拡張機能を保持または削除するか選ぶ</h4>
             <p>
-              これでサイドロードが完了するが、アプリの署名期限が0日になる前にRefleshをする必要がある。
+              これでサイドロードが完了するが、アプリの署名期限が0日になる前に "My Apps" タブからRefleshをする必要がある。
               もし署名期限が0日になった場合、そのアプリは起動できなくなるので再度この手順でアプリをサイドロードする必要がある。
               また、Refreshができない場合はStosVPNに接続中であることを確認するか、ペアリングファイルを再度設定する。
             </p>
             <img src="sidestore5.PNG" class="image1 zoomable" alt="拡張機能">
             <h3>SideStoreによるサイドロードのメリット</h3>
-            <p>
-              ･証明書を用いて行うサイドロードと違い、サイドロードできなくなるリスクがなく、無料で実行できる。
-              ･SideloadlyやAltStoreと違い、アプリの再署名時にPCに接続したり、PCと同じWi-Fiに接続している必要がない。
-            </p>
-            <h3>SideStoreによるサイドロードのデメリット</h3>
-            <p>
-              ･ "My Apps" タブからサイドロードしたアプリの署名期限が0日になる前にRefreshする必要があり、署名期限が0日になった場合はそのアプリのIPAを再びサイドロードする必要がある
-              ･App IDは11個以上登録できない
-              ･アプリはSideStoreを含めて4つ以上サイドロードできない
-              ･アプリの通知機能が利用できない
-            </p>
+            <h4>･サイドロードできなくなるリスクがない</h4>
+            <p>証明書を用いて行うサイドロードと違い、サイドロードできなくなったりサイドロードしたアプリが使えなくなることがない。</p>
+            <h4>･無料で実行できる</h4>
+            <p>SideStoreの利用には一切コストがかからない。</p>
+            <h4>･アプリの再署名時にPCに接続したり、PCと同じWi-Fiに接続している必要がない。</h4>
+            <p>SideloadlyやAltStoreと違い、再署名はスマホ単体で行える。</p>
+            <h4>SideStoreによるサイドロードのデメリット</h4>
+            <h4>･署名期限が0日になる前にRefreshする必要がある</h4>
+            <p>7日に一度、サイドロードしたアプリを再署名しないとsプリが利用できなくなる。</p>
+            <h4>･署名期限が0日になった場合は再びサイドロードする必要がある</h4>
+            <p>署名期限が切れた場合はアプリのアップデートの際と同じようにもう一度サイドロードする必要がある。</p>
+            <h4>･App IDは11個以上登録できない</h4>
+            <p>拡張機能やウィジェットごとにApp IDが1つ消費されるため、11個以上にならないように利用する拡張機能やウィジェットを選択する必要がある。</p>
+            <h4>･アプリはSideStoreを含めて4つ以上サイドロードできない</h4>
+            <p>この方法ではアプリは3つまでしかサイドロードできず、さらにその枠の1つをSideStoreが使用するため、後述のLiveContainerを利用しない限り実質アプリは2つまでしかサイドロードできない。</p>
+            <h4>･アプリの通知機能が利用できない</h4>
+            <p>通知機能を利用したい場合は証明書を用いたサイドロードを行う必要がある。</p>
+            <h4>･デバイスのアップデート毎にペアリングをする必要がある</h4>
+            <p>ペアリングファイルはiPhoneまたはiPadをアップデートするとペアリングファイルが無効になるため、その際は再度ペアリングをする必要がある。</p>
           <section id="livecontainer">
             <h2>LiveContainerを用いてサイドロードする</h2>
             <div class="reference">
@@ -575,50 +592,61 @@
             <p>
               先述の通り、SideStoreではそれを含めて4つ以上のアプリのサイドロードができない。
               そこで、LiveContainer内でアプリを動かすことでその制限を突破するという方法がある。
+              サイドロードしたアプリをアップデートする際も4･5･6を同様の手順で行う。
             </p>
-            <h3>1.LiveContainerを開く</h3>
+            <h3>方法</h3>
+            <h4>1.LiveContainerを開く</h4>
             <img src="livecontainer1.PNG" class="image1 zoomable" alt="LiveContainer">
-            <h3>2. "設定" タブで "SideStoreから証明書をインストール" をタップする</h3>
+            <h4>2. "設定" タブで "SideStoreから証明書をインストール" をタップする</h4>
             <img src="livecontainer2.PNG" class="image1 zoomable" alt="SideStoreから証明書をインストール">
-            <h3>3. "Export" をタップする</h3>
+            <h4>3. "Export" をタップする</h4>
             <img src="livecontainer3.PNG" class="image1 zoomable" alt="Export">
-            <h3>4.左上の "+" をタップする</h3>
+            <h4>4. "アプリ" タブで左上の "+" をタップする</h4>
             <img src="livecontainer4.PNG" class="image1 zoomable" alt="+">
-            <h3>5. "IPAファイルをインストール" をタップする</h3>
+            <h4>5. "IPAファイルをインストール" をタップする</h4>
             <img src="livecontainer5.PNG" class="image1 zoomable" alt="IPAファイルをインストール">
-            <h3>6.サイドロードするアプリのIPAを選択する</h3>
+            <h4>6.サイドロードするアプリのIPAを選択する</h4>
             <img src="livecontainer6.PNG" class="image1 zoomable" alt="IPA">
-            <h3>7.サイドロードしたアプリを長押しする</h3>
+            <h4>7.サイドロードしたアプリを長押しする</h4>
             <img src="livecontainer7.PNG" class="image1 zoomable" alt="長押し">
-            <h3>8. "ホーム画面に追加" をタップする</h3>
+            <h4>8. "ホーム画面に追加" をタップする</h4>
             <img src="livecontainer8.PNG" class="image1 zoomable" alt="ホーム画面に追加">
-            <h3>9. "アプリクリップを作成" をタップする</h3>
+            <h4>9. "アプリクリップを作成" をタップする</h4>
             <img src="livecontainer9.PNG" class="image1 zoomable" alt="アプリクリップを作成">
-            <h3>10. "許可" をタップする</h3>
+            <h4>10. "許可" をタップする</h4>
             <img src="liveContainer10.PNG" class="image1 zoomable" alt="許可">
-            <h3>11. 設定アプリを開く</h3>
+            <h4>11. 設定アプリを開く</h4>
             <img src="liveContainer11.PNG" class="image1 zoomable" alt="設定アプリ">
-            <h3>12. "ダウンロード済みのプロファイル" をタップする</h3>
+            <h4>12. "ダウンロード済みのプロファイル" をタップする</h4>
             <img src="liveContainer12.PNG" class="image1 zoomable" alt="ダウンロード済みのプロファイル">
-            <h3>13. "インストール" をタップする</h3>
+            <h4>13. "インストール" をタップする</h4>
             <img src="liveContainer13.PNG" class="image1 zoomable" alt="インストール">
-            <h3>14. "次へ" をタップする</h3>
+            <h4>14. "次へ" をタップする</h4>
             <img src="liveContainer14.PNG" class="image1 zoomable" alt="次へ">
-            <h3>15. "インストール" をタップする</h3>
+            <h4>15. "インストール" をタップする</h4>
             <img src="liveContainer15.PNG" class="image1 zoomable" alt="インストール">
-            <h3>15. "インストール" をタップし、パスワードを入力する</h3>
+            <h4>15. "インストール" をタップし、パスワードを入力する</h4>
             <p>これにより、ホーム画面上にサイドロードしたアプリのアイコンが追加され、タップすると起動できるようになっている。</p>
             <img src="liveContainer15.PNG" class="image1 zoomable" alt="パスワード">
             <h3>LiveContainerによるサイドロードのメリット</h3>
+            <h4>･サイドロードできなくなるリスクがない</h4>
+            <p>証明書を用いて行うサイドロードと違い、サイドロードできなくなったりサイドロードしたアプリが使えなくなることがない。</p>
+            <h4>･無料で実行できる</h4>
+            <p>SideStoreの利用には一切コストがかからない。</p>
+            <h4>･7日に1度アプリを再署名する必要がない</h4>
             <p>
-              ･証明書を用いて行うサイドロードと違い、サイドロードできなくなるリスクがなく、無料で実行できる。
-              ･AltStore, SideStore, Sideloadlyと違い、7日に1度再署名をする必要がなく、サイドロードできるアプリ数に制限がない
+              LiveContainer上でインストールしたアプリは再署名の必要がない。
+              ただしLiveContainer自体はSideStoreのアプリから署名期限が0日になる前に再署名する必要がある。
             </p>
+            <h4>･サイドロードできるアプリ数に制限がない</h4>
+            <p>SideStoreでのサイドロードと違い、サイドロードできるアプリ数に制限がない。</p>
             <h3>LiveContainerによるサイドロードのデメリット</h3>
-            <p>
-              ･LiveContainerでサイドロードしたアプリは同時に1つまでしか起動できない
-              ･通知機能はもちろん、ウィジェットや共有メニューといった機能が利用できない
-            </p>
+            <h4>･アプリは同時に1つまでしか起動できない</h4>
+            <p>LiveContainer上で擬似的にアプリを起動しているため、アプリは同時に1つまでしか起動できない</p>
+            <h4>･通知機能、ウィジェットや共有メニューといった機能が利用できない</h4>
+            <p>LiveContainer上で擬似的にアプリを起動しているため、通知機能、ウィジェットや共有メニューといった機能が利用できない</p>
+            <h4>･LiveContainerの利用にはSideStoreが必要になる</h4>
+            <p>LiveContainerでサイドロードしたアプリは再署名が必要ないものの、結局LiveContainerはSideStoreを介して利用するためSideStoreと共に7日に1回は再署名が必要になる。</p>
           </section>
           <h2>サイドロードの動き</h2>
           <p>
