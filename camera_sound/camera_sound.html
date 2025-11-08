@@ -76,7 +76,7 @@
     
       h1 {
         text-align: left;
-        font-size: 2.5em;
+        font-size: 2.4em;
         font-weight: 700;
         color: black;
         margin: 40px 0;
@@ -90,7 +90,7 @@
       nav a {
         text-decoration: none;
         color: black;
-        font-size: 1.1em;
+        font-size: 1.2em;
         margin: 0 20px;
         letter-spacing: 0.5px;
         transition: color 0.3s ease;
@@ -114,24 +114,24 @@
 
       section h2 {
         text-align: left;
-        font-size: 2.2em;
+        font-size: 2.0em;
         color: black;
       }
 
       section h3 {
         text-align: left;
-        font-size: 1.8em;
+        font-size: 1.6em;
         color: black;
       }
     
       section h4 {
         text-align: left;
-        font-size: 1.5em;
+        font-size: 1.2em;
         color: black;
       }
     
       section p {
-        font-size: 1em;
+        font-size: 1.0em;
         line-height: 1.7;
         white-space: pre-line;
         color: black;
@@ -140,14 +140,23 @@
 
       .reference {
         text-align: center;
-        font-size: 0.9em;
+        font-size: 1.0em;
         color: #aaa;
-        margin-bottom: 50px;
       }
 
       .reference a {
         color: inherit;
         text-decoration: none;
+      }
+
+      section .image {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        width: 200px;
+        height: 200px;
       }
 
       section .image1 {
@@ -208,7 +217,7 @@
       }
 
       .preview-description {
-        font-size: 0.95em;
+        font-size: 1.0em;
         color: #555;
         line-height: 1.4;
       }
@@ -217,7 +226,7 @@
         background-color: #1e1e1e;
         color: #f8f8f2;
         font-family: Consolas, Monaco, "Courier New", monospace;
-        font-size: 0.95em;
+        font-size: 1.0em;
         padding: 12px;
         border-radius: 8px;
         display: block;
@@ -229,7 +238,7 @@
       .article-dates {
         text-align: left;
         color: #666;
-        font-size: 0.9em;
+        font-size: 1.0em;
         margin-bottom: 20px;
       }
 
@@ -298,7 +307,7 @@
         color: #ffffff;
         text-decoration: none;
         border-radius: 6px;
-        font-size: 1em;
+        font-size: 1.0em;
         transition: background-color 0.3s ease;
       }
 
@@ -431,7 +440,7 @@
             <img src="iphone1.jpg" class="image2 zoomable" alt="海外版">
             <p>
               海外版では先程述べたデメリットがあるのではと思う人もいるだろうが、iPhoneに関しては例外である。
-              まず、まめこmobileやイオシスなどのショップで香港版のiPhoneが未使用かつ保証付きで数多く販売されているため、他のスマホと比べて海外版が比較的入手しやすい。
+              まず、まめこmobileやイオシスなどのショップで香港版のiPhoneが未使用の状態で数多く販売されているため、他のスマホと比べて海外版が比較的入手しやすい。
               保証の面でもAppleはiPhoneをアクティベートした日から1年間は世界中のApple StoreまたはApple正規サービスプロバイダで保証が受けられる。
               さらにiPhoneは全世界のモデルでFeliCaが搭載され、カナダ版、グアム版、メキシコ版、サウジアラビア版などには技適もつく。
             </p>
@@ -458,15 +467,19 @@
               そこで、標準カメラアプリのMod "GCam" を使うという方法がある。
               Pixelのカメラアプリは非常に優秀で、ハードウェアが弱くてもソフトウェアの力できれいな写真が撮れる。
               そのため海外の開発者たちがそのアプリを他のスマホでも使えるように移植したアプリがGCamとなる。
-              ここではこのGCamを使用してシャッター音を消す。
+              ここではこのGCamを標準カメラアプリの代わりに使用してシャッター音を消す。
             </p>
             <h3>方法</h3>
-            <h4>1.<a href="https://www.celsoazevedo.com/files/android/google-camera/" target ="blank">GCam Hub</a>で任意のapkをダウンロードしてインストールする。</h4>
-            <img src="pixel1.jpg" class="image1 zoomable" alt="GCam Hub">
-            <p>中には正常に動作しないものもあるので、1つ1つ試してみる。</p>
-            <h4>2.アプリを起動する</h4>
+            <h4>1.Google Camera Portsで任意のapkをダウンロードしてインストールする。</h4>
+            <p>
+              以下のリンクからGCamのapkをダウンロードしてインストールする。
+              中には正常に動作しないものもあるので、1つ1つ試してみる。
+            </p>
+            <a href="https://www.celsoazevedo.com/files/android/google-camera/" target="_blank" class="link-preview"></a>
+            <h4>2.カメラアプリを起動する</h4>
             <img src="pixel2.jpg" class="image1 zoomable" alt="カメラアプリ">
             <h4>3.設定画面を開く</h4>
+            <img src="pixel2.jpg" class="image1 zoomable" alt="カメラ設定">
             <img src="pixel3.jpg" class="image1 zoomable" alt="カメラ設定">
             <h4>4. "カメラの音" をオフにする</h4>
             <img src="pixel4.jpg" class="image1 zoomable" alt="シャッター音設定">
@@ -501,30 +514,35 @@
             </p>
             <h4>2.Galaxyで設定アプリを開く</h4>
             <img src="galaxy2.jpg" class="image1 zoomable" alt="設定アプリ">
-            <h4>3. "端末情報" を開く</h4>
+            <h4>3. "端末情報" をタップする</h4>
             <img src="galaxy3.jpg" class="image1 zoomable" alt="端末情報">
-            <h4>4. "ソフトウェア情報" を開く</h4>
+            <h4>4. "ソフトウェア情報" をタップする</h4>
             <img src="galaxy4.jpg" class="image1 zoomable" alt="ソフトウェア情報">
             <h4>5. "ビルド番号" を7回タップし、パスワードを入力する</h4>
+            <p>これにより、開発者オプションが有効になる。</p>
             <img src="galaxy5.jpg" class="image1 zoomable" alt="ビルド番号">
-            <h4>6. 設定アプリのはじめの画面に戻る</h4>
-            <img src="galaxy2.jpg" class="image1 zoomable" alt="設定アプリ">
-            <h4>7. "開発者向けオプション"を開く</h4>
+            <h4>6. "OK" をタップする</h4>
+            <img src="galaxy6.jpg" class="image1 zoomable" alt="OK">
+            <h4>7.設定アプリの "開発者向けオプション" をタップする</h4>
             <img src="galaxy7.jpg" class="image1 zoomable" alt="開発者向けオプション">
-            <h4>8. "adbデバッグ"をオンにする</h4>
+            <h4>8. "USBデバッグ" をオンにする</h4>
             <img src="galaxy8.jpg" class="image1 zoomable" alt="adbデバッグ">
-            <h4>9.PCとGalaxyをUSBケーブルで接続する</h4>
-            <img src="galaxy9.jpg" class="image2 zoomable" alt="USBケーブル">
-            <h4>10.PCのターミナルでadbコマンドを実行する</h4>
-            <img src="galaxy10.png" class="image2 zoomable" alt="adbコマンド">
-            <p>Windowsはコマンドプロンプト、Macはターミナルで</p>
-              <pre><code>adb shell settings put system csc_pref_camera_forced_shuttersound_key 0</code></pre>
+            <h4>9. "OK" をタップする</h4>
+            <img src="galaxy9.jpg" class="image2 zoomable" alt="OK">
+            <h4>10.PCとGalaxyをUSBケーブルで接続する</h4>
+            <img src="galaxy10.jpg" class="image zoomable" alt="USBケーブル">
+            <h4>11. "許可" をタップする</h4>
+            <img src="galaxy11.jpg" class="image1 zoomable" alt="許可">
+            <h4>12.PCのターミナルでシャッター音の動作を海外仕様にするadbコマンドを実行する</h4>
+            <img src="galaxy12.png" class="image2 zoomable" alt="adbコマンド">
+            <p>WindowsやMacのターミナルで</p>
+            <pre><code>adb shell settings put system csc_pref_camera_forced_shuttersound_key 0</code></pre>
             <p>
                 を実行する。
                 これにより、シャッター音の動作が海外仕様となる。
             </p>
-            <h4>11.システム音の音量を0にする</h4>
-            <img src="galaxy11.jpg" class="image1 zoomable" alt="システム音設定">
+            <h4>13.システム音の音量を0にする</h4>
+            <img src="galaxy13.jpg" class="image1 zoomable" alt="システム音設定">
             <p>
               シャッター音の音量はシステム音の音量と同期される。
               充電時や画面ロックの解除、タッチ操作の際に鳴るシステム音の音量を0にすることでシャッター音が消える。
@@ -546,56 +564,72 @@
                 Xiaomiより引用
               </a>
             </div>
-            <p>XiaomiはSoCにDimensityを搭載したキャリア版とSIMフリー版で、方法は異なるがそれぞれシャッター音が消せる。</p>
+            <p>XiaomiはSoCにDimensityを搭載したキャリア版とオープンマーケット版で、方法は異なるがそれぞれシャッター音が消せる。</p>
             <h3>Dimensity搭載のキャリア版の方法</h3>
             <h4>1.設定アプリを開く</h4>
             <img src="xiaomi1.jpg" class="image1 zoomable" alt="設定アプリ">
             <h4>2. "デバイス情報" を開く</h4>
-            <img src="xiaomi2.jpg" class="image1 zoomable" alt="デバイス情報">
+            <img src="xiaomi1.jpg" class="image1 zoomable" alt="デバイス情報">
             <h4>3. "OSバージョン" を7回タップし、パスワードを入力する</h4>
             <img src="xiaomi3.jpg" class="image1 zoomable" alt="OSバージョン"> 
-            <h4>4.電話アプリでコードを入力する</h4>
+            <h4>4.電話アプリを開く</h4>
             <img src="xiaomi4.jpg" class="image1 zoomable" alt="電話アプリ">
+            <h4>5. "キーパッド" タブでコードを入力する</h4>
             <p>電話アプリを開き、</p>
               <pre><code>*#*#3646633#*#*</code></pre>
-            <p>を入力する。</p>
-            <h4>5. "Hardware Testing" を表示する。</h4>
-            <img src="xiaomi5.jpg" class="image1 zoomable" alt="Hardware Testing">
-            <h4>6. "Audio" をタップする。</h4>
-            <img src="xiaomi6.jpg" class="image1 zoomable" alt="Audio">
-            <h4>7. "Volume" をタップする。</h4>
-            <img src="xiaomi7.jpg" class="image1 zoomable" alt="Volume">
-            <h4>8. "Audio Playback" をタップする。</h4>
-            <img src="xiaomi8.jpg" class="image1 zoomable" alt="Audio Playback">
-            <h4>9. "System" を "Enforced_Audible" に変更する。</h4>
-            <img src="xiaomi9.jpg" class="image1 zoomable" alt="Enforced_Audible">
-            <h4>10 "BT A2DP" を "Speaker" に変更する。</h4>
-            <img src="xiaomi10.jpg" class="image1 zoomable" alt="BT A2DP">
-            <h4>11. "Index15" の値を "255" から "0" にする。</h4>
-            <img src="xiaomi11.jpg" class="image1 zoomable" alt="Index15">
+            <p>
+              を入力する。
+              これにより、MediaTek Engineer Modeが起動する。
+            </p>
+            <img src="xiaomi5.jpg" class="image1 zoomable" alt="MediaTek Engineer Mode">
+            <h4>6. "アプリの使用時のみ" をタップする。</h4>
+            <img src="xiaomi6.jpg" class="image1 zoomable" alt="アプリの使用時のみ">
+            <h4>7. "アプリの使用時のみ" をタップする。</h4>
+            <img src="xiaomi7.jpg" class="image1 zoomable" alt="アプリの使用時のみ">
+            <h4>8. "許可" をタップする。</h4>
+            <img src="xiaomi8.jpg" class="image1 zoomable" alt="許可">
+            <h4>9. "許可" をタップする。</h4>
+            <img src="xiaomi9.jpg" class="image1 zoomable" alt="許可">
+            <h4>10. "Hardware Testing" を表示する。</h4>
+            <img src="xiaomi10.jpg" class="image1 zoomable" alt="Hardware Testing">
+            <h4>11. "Audio" をタップする。</h4>
+            <img src="xiaomi11.jpg" class="image1 zoomable" alt="Audio">
+            <h4>12. "Volume" をタップする。</h4>
+            <img src="xiaomi12.jpg" class="image1 zoomable" alt="Volume">
+            <h4>13. "Audio Playback" をタップする。</h4>
+            <img src="xiaomi13.jpg" class="image1 zoomable" alt="Audio Playback">
+            <h4>14. "System" を "Enforced_Audible" に変更する。</h4>
+            <img src="xiaomi14.jpg" class="image1 zoomable" alt="Enforced_Audible">
+            <h4>15 "BT A2DP" を "Speaker" に変更する。</h4>
+            <img src="xiaomi15.jpg" class="image1 zoomable" alt="BT A2DP">
+            <h4>16. "Index15" の値を "255" から "0" にする。</h4>
+            <img src="xiaomi16.jpg" class="image1 zoomable" alt="Index15">
             <p>この値がシャッター音の音量になる。</p>
-            <h4>12. "Set" をタップする。</h4>
-            <img src="xiaomi12.jpg" class="image1 zoomable" alt="Set">
-            <h4>13. "Set succeeded" が表示されたら "OK" をタップする。</h4>
-            <img src="xiaomi13.jpg" class="image1 zoomable" alt="Set succeeded">
-            <h3>SIMフリー版の方法</h3>
+            <h4>17. "Set" をタップする。</h4>
+            <img src="xiaomi17.jpg" class="image1 zoomable" alt="Set">
+            <h4>18. "OK" をタップする。</h4>
+            <img src="xiaomi18.jpg" class="image1 zoomable" alt="OK">
+            <h3>オープンマーケット版の方法</h3>
             <h4>1.設定アプリを開く</h4>
             <img src="xiaomi1.jpg" class="image1 zoomable" alt="設定アプリ">
             <h4>2. "追加設定" をタップする</h4>
             <img src="xiaomi2_2.jpg" class="image1 zoomable" alt="追加設定">
-            <h4>3. "地域" を日本と韓国以外にする</h4>
+            <h4>3. "地域" をタップする</h4>
             <img src="xiaomi3_2.jpg" class="image1 zoomable" alt="地域">
+            <h4>4. "地域" を日本と韓国以外にする</h4>
+            <img src="xiaomi4_2.jpg" class="image1 zoomable" alt="地域">
             <p>ここで地域を変更しても特に問題はない。</p>
-            <h4>4.カメラアプリを起動する</h4>
-            <img src="xiaomi4_2.jpg" class="image1 zoomable" alt="カメラアプリ">
-            <h4>5.設定画面を開く</h4>
+            <h4>5.カメラアプリを起動する</h4>
+            <img src="xiaomi5_2.jpg" class="image1 zoomable" alt="カメラアプリ">
+            <h4>6.設定画面を開く</h4>
             <img src="xiaomi5_2.jpg" class="image1 zoomable" alt="カメラ設定">
-            <h4>6. "シャッター音" をオフにする</h4>
-            <img src="xiaomi6_2.jpg" class="image1 zoomable" alt="シャッター音設定">
+            <img src="xiaomi6_2.jpg" class="image1 zoomable" alt="カメラ設定">
+            <h4>7. "一般" タブで "シャッター音" をオフにする</h4>
+            <img src="xiaomi7_2.jpg" class="image1 zoomable" alt="シャッター音設定">
             <p>地域が日本と韓国以外に設定されているとこの項目が現れる。</p>
             <h3>デメリット</h3>
             <h4>･キャリア版の方法はDimensity搭載端末のみ</h4>
-            <p>キャリア版の方法で電話アプリから開くEngineerModeはSoCにDimensityを搭載した端末用のモードのため、Redmi Note 13 Pro 5GのようなSoCにSnapdragonを搭載したキャリア専売のスマホはこの方法が使えず、シャッター音は消せない。</p>
+            <p>キャリア版の方法で電話アプリから開くMediaTek Engineer ModeはSoCにDimensityを搭載した端末用のモードのため、Redmi Note 13 Pro 5GのようなSoCにSnapdragonを搭載したキャリア専売のスマホはこの方法が使えず、シャッター音は消せない。</p>
           </section>
           <section id="xperia">
             <h2>Xperia</h2>
@@ -606,14 +640,14 @@
               </a>
             </div>
             <p>
-              XperiaのSony Store直販モデルはシャッター音が消せる。
+              Xperiaのオープンマーケット版はシャッター音が消せる。
               その方法はカメラアプリの設定を変更する方法とマナーモードまたはサイレントモードにする方法の2通りある。
             </p>
             <h3>カメラアプリの設定を変更する方法</h3>
-            <h4>1.XperiaのSony Store直販モデルを購入する</h4>
+            <h4>1.Xperiaのオープンマーケット版を購入する</h4>
             <div class="reference">
               <a href="https://pur.store.sony.jp/xperia/products/XQ-EC44/XQ-EC44_purchase/" target="blank">
-                <img src="xperia1.jpg" class="image2 zoomable" alt="SIMフリー版">
+                <img src="xperia1.jpg" class="image2 zoomable" alt="オープンマーケット版">
                 SONYより引用
               </a>
             </div>
@@ -622,19 +656,22 @@
             <img src="xperia2.png" class="image1 zoomable" alt="カメラアプリ">
             <p>Xperia 10シリーズや2024年以降のモデルのカメラアプリだけでなく、Xperia 1/5シリーズの2023年モデル以前のPhoto Proアプリも対象である。</p>
             <h4>3.設定画面を開く</h4>
+            <img src="xperia2.png" class="image1 zoomable" alt="カメラアプリ">
             <img src="xperia3.png" class="image1 zoomable" alt="カメラ設定">
-            <h4>4. "カメラ操作音" を "OFF" にする</h4>
-            <img src="xperia4.png" class="image1 zoomable" alt="シャッター音設定">
+            <h4>4. "カメラ操作音" をタップする</h4>
+            <img src="xperia4.png" class="image1 zoomable" alt="カメラ操作音">
+            <h4>5. "OFF" をタップする</h4>
+            <img src="xperia5.png" class="image1 zoomable" alt="オフ">
             <h3>マナーモードまたはサイレントモードにする方法</h3>
-            <h4>1.XperiaのSony Store直販モデルを購入する</h3>
+            <h4>1.Xperiaのオープンマーケット版を購入する</h3>
             <p>楽天モバイルやIIJmio、mineoなども含む通信事業者が販売するモデルはシャッター音が消せない。</p>
             <h4>2.マナーモードまたはサイレントモードに設定する</h3>
             <img src="xperia2_2.png" class="image1 zoomable" alt="マナーモード">
             <p>着信音がオフの状態ではカメラアプリの設定に関わらずシャッター音が鳴らない。</p>
             <h3>デメリット</h3>
-            <h4>･対応機種はSony Store直販モデルのみ</h3>
+            <h4>･対応機種はオープンマーケット版のみ</h3>
             <p>
-              通信事業者が販売するXperiaはシャッター音が消せない。
+              UQモバイルやY!mobile、楽天モバイルを含むキャリアが販売するXperiaはシャッター音が消せない。
               qUnlock Toolを使ってBLUを許可して実行し、root化してシャッター音を消す方法もあるが、qUnlock Toolは有料でありさらに確実にBLUを許可できる保証もない。
             </p>
           </section>
@@ -646,29 +683,29 @@
                 SHARPより引用
               </a>
             </div>
-            <p>AQUOSはSIMフリー版でシャッター音が消せる。</p>
+            <p>AQUOSはオープンマーケット版でシャッター音が消せる。</p>
             <h3>方法</h3>
-            <h4>1.2024年以降発売のSIMフリー版のAQUOSを購入する</h4>
+            <h4>1.2024年以降発売のオープンマーケット版のAQUOSを購入する</h4>
             <div class="reference">
               <a href="https://jp.sharp/k-tai/mvno/" target="blank">
-                <img src="aquos1.jpg" class="image2 zoomable" alt="SIMフリー版">
+                <img src="aquos1.jpg" class="image2 zoomable" alt="オープンマーケット版">
                 SHARPより引用
               </a>
             </div>
             <p>
-              Xperiaと異なり、SHARP直販モデルだけでなく楽天モバイルやIIJmio、mineoなどの通信事業者が販売するモデルでもシャッター音が消せる。
+              Xperiaと異なり、楽天モバイル版でもシャッター音が消せる。
               もちろん、UQモバイルやY!mobileを含むキャリア版ではシャッター音が消せない。
             </p>
             <h4>2.カメラアプリを開く</h4>
             <img src="aquos2.png" class="image1 zoomable" alt="カメラアプリ">
             <h4>3.設定画面を開く</h4>
-            <img src="aquos3.png" class="image1 zoomable" alt="カメラ設定">
-            <h4>4. "シャッター音" をオフにする</h4>
+            <img src="aquos2.png" class="image1 zoomable" alt="カメラ設定">
+            <h4>4. "共通" タブから "シャッター音" をオフにする</h4>
             <img src="aquos4.png" class="image1 zoomable" alt="シャッター音設定">
             <h3>デメリット</h3>
-            <h4>･対応機種は2024年以降発売のSIMフリー版のみ</h4>
+            <h4>･対応機種は2024年以降発売のオープンマーケット版のみ</h4>
             <p>
-              2023年以前のモデル、またはキャリア版ではシャッター音が消せない。
+              2023年以前のモデル、または楽天モバイルを除くキャリア版ではシャッター音が消せない。
               また、Xperiaと違いブートローダーアンロックもできない。
             </p>
           </section>
@@ -787,11 +824,11 @@
             それにも関わらず、なぜ多くのメーカーが日本で販売する端末でシャッター音を強制するのか。
             主な理由として、携帯キャリアによる自主規制がある。
             カメラ付きの携帯電話が発売され始めてから、盗撮防止という目的で携帯キャリアによるシャッター音の強制が行われてきた。
-            これに準じてSIMフリー版でもシャッター音を強制しているメーカーが多い。
+            これに準じてオープンマーケット版でもシャッター音を強制しているメーカーが多い。
             しかし、シャッター音を鳴らしたところで盗撮の防止になるとは考えにくい。
             また、先述の通り日本と韓国以外ではシャッター音の強制は行われていない。
             よって、この自主規制は無用の長物である。
-            最近はXperiaやAQUOSもSIMフリー版でシャッター音を消せるようになった。
+            最近はXperiaやAQUOSもオープンマーケット版でシャッター音を消せるようになった。
             今後このような流れが日本のスマホ業界で広がっていくことを期待したい。
           </p>
         </div>
@@ -813,9 +850,6 @@
                 <a href="https://www.tiktok.com/@untechnical.info?_t=ZS-8xVI3gsxlYI&_r=1" target="_blank" rel="noopener noreferrer">
                   <img src="../tiktok.png" alt="TikTok" class="social-icon">
                 </a-->
-                <a href="../rss.xml" target="_blank" rel="noopener noreferrer">
-                  <img src="../rss.png" alt="RSS" class="social-icon">
-                </a>
               </div>
             </div>
           </div>
