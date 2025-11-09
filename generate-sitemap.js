@@ -7,10 +7,11 @@ const { XMLParser, XMLBuilder } = require("fast-xml-parser");
 const BASE_URL = "https://untechnical.info";
 const SITEMAP_FILE = "sitemap.xml";
 
-const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
+// ✅ 全ての未マージコミットを対象に変更（複数HTML更新対応）
+const changedFiles = execSync("git diff --name-only origin/main...HEAD")
   .toString()
   .split("\n")
-  .filter(f => f.endsWith(".html"));
+  .filter(f => f.endsWith(".html") && f.trim().length > 0);
 
 const getGitDate = (file) => {
   try {
@@ -58,7 +59,7 @@ const hasVisibleChange = (oldHtml, newHtml) => {
 
     let oldHtml;
     try {
-      oldHtml = execSync(`git show HEAD^:${file}`).toString();
+      oldHtml = execSync(`git show origin/main:${file}`).toString(); // ✅ origin/main基準に変更
     } catch {
       oldHtml = "";
     }
