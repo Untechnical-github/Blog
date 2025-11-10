@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 2
+          fetch-depth: 0   # ✅ 全履歴取得（diff比較に必要）
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -24,16 +24,31 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # ✅ 今回のコミットで変更された .html ファイルを取得
+      - name: Get changed HTML files
+        id: changed_files
+        run: |
+          CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- '*.html' | tr '\n' ' ')
+          echo "changed_files=$CHANGED" >> $GITHUB_ENV
+          echo "🔍 Changed HTML files: $CHANGED"
+
+      # ✅ sitemap.xml の更新（全体構築だが内部で差分処理される）
       - name: Generate sitemap.xml
-        run: node generate-sitemap.js
+        run: node generate-sitemap.js ${{ env.changed_files }}
 
+      # ✅ 記事リスト更新スクリプトに変更されたHTMLを渡す
       - name: Generate articles.json
-        run: node generate-articles.js
+        run: node generate-articles.js ${{ env.changed_files }}
 
+      # ✅ 変更内容をコミット
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sitemap.xml articles.json
-          git commit -m "Auto-update Sitemap, Articles" || echo "No changes to commit"
+          if [ -n "${{ env.changed_files }}" ]; then
+            git add sitemap.xml articles.json ${{ env.changed_files }}
+          else
+            git add sitemap.xml articles.json
+          fi
+          git commit -m "Auto-update Sitemap, Articles, and HTML dates" || echo "No changes to commit"
           git push
