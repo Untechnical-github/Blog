@@ -551,8 +551,6 @@
             <p>アップデート後は適用した変更が元に戻されるため、アップデート毎にコマンドを実行する必要がある。</p>
             <h4>･システム音の音量を0にする必要がある</h4>
             <p>あまりいないと思うが、普段からシステム音を鳴らしている人はカメラ起動時のみシステム音の音量を0にするオートメーションを作成するなど、工夫する必要がある。</p>
-            <h4>･今後アップデートによりこの方法が使えなくなる可能性がある</h4>
-            <p>これはバグに近い挙動のため、今後アップデートでこの方法が塞がれる可能性がある。</p> 
           </section>
           <section id="xiaomi">
             <h2>Xiaomi</h2>
@@ -624,8 +622,8 @@
             <img src="xiaomi7_2.jpg" class="image1 zoomable" alt="シャッター音設定">
             <p>地域が日本と韓国以外に設定されているとこの項目が現れる。</p>
             <h3>デメリット</h3>
-            <h4>･キャリア版の方法はDimensity搭載端末のみ</h4>
-            <p>キャリア版の方法で電話アプリから開くMediaTek Engineer ModeはSoCにDimensityを搭載した端末用のモードのため、Redmi Note 13 Pro 5GのようなSoCにSnapdragonを搭載したキャリア専売のスマホはこの方法が使えず、シャッター音は消せない。</p>
+            <h4>･対応機種はオープンマーケット版またはDimensity搭載端末のみ</h4>
+            <p>電話アプリから開くMediaTek Engineer ModeはSoCにDimensityを搭載した端末用のモードのため、Redmi Note 13 Pro 5GのようなSoCにSnapdragonを搭載したキャリア専売のスマホはこの方法が使えず、シャッター音は消せない。</p>
           </section>
           <section id="xperia">
             <h2>Xperia</h2>
@@ -692,64 +690,101 @@
                 motorolaより引用
               </a>
             </div>
-            <p>motorolaはシャッター音が消せるが、日本のSIMを利用している状態ではシャッター音が鳴る。
-              ここではeSIMまたはデュアルSIMに対応している必要があるが、日本のSIMを利用していてもシャッター音が消えるようにする方法を述べる。
-            </p>
-            <h3>eSIM対応機種の方法</h3>
-            <h4>1.<a href="https://play.google.com/store/apps/details?id=com.transatel.selfcare.ubigi&hl=en&gl=US" target="blank">Ubigi</a>のアプリをインストールし、起動する</h4>
-            <p>Ubigiとは海外で使えるeSIMを発行できるサービスである。</p>
-            <img src="motorola1.jpg" class="image1 zoomable" alt="Ubigi">
-            <h4>2.Ubigiアカウントを作成する</h4>
-            <img src="motorola2.jpg" class="image1 zoomable" alt="Ubigiアカウント">
-            <h4>3. "Ubigi eSIMをリンクさせる" をタップする</h4>
-            <img src="motorola3.jpg" class="image1 zoomable" alt="Ubigi eSIMをリンクさせる">
-            <h4>4. "スマートフォン" を選択する</h4>
-            <img src="motorola4.jpg" class="image1 zoomable" alt="スマートフォン">
-            <h4>5. "いいえ" を2回選択する</h4>
-            <img src="motorola5.jpg" class="image1 zoomable" alt="いいえ">
-            <img src="motorola5_2.jpg" class="image1 zoomable" alt="いいえ">
-            <h4>6. "フリーeSIMを今すぐインストールする" をタップする</h4>
-            <img src="motorola6.jpg" class="image1 zoomable" alt="フリーeSIMを今すぐインストールする">
-            <h4>7. eSIMを追加する</h4>
-            <img src="motorola7.jpg" class="image1 zoomable" alt="eSIM">
             <p>
-              端末に認識されたらバッテリー節約のためにeSIMを無効化することを推奨する。
-              ただし、無効化した状態で再起動するとシャッター音が再び鳴るようになる。
+              motorolaは本来シャッター音が消せるが、日本のSIMを追加するとシャッター音が消せなくなる。
+              しかし、日本のSIMを利用している状態でも海外のSIMを追加することで再びシャッター音が消せるようになる。
+              ここでは海外のSIMカードを用いる方法とeSIMを用いる方法に分けて解説する。
             </p>
-            <h4>8.カメラアプリを開く</h4>
-            <img src="motorola8.png" class="image1 zoomable" alt="カメラアプリ">
-            <h4>9.設定画面を開く</h4>
-            <img src="motorola9.png" class="image1 zoomable" alt="カメラ設定">
-            <h4>10. "シャッター音" をオフにする</h4>
-            <img src="motorola10.png" class="image1 zoomable" alt="シャッター音設定">
-            <p>海外のeSIM(Ubigi)が認識されているため、日本のSIMを利用していてもシャッター音の項目が現れる。</p>
-            <h3>デュアルSIM対応機種の方法</h3>
+            <h3>海外のeSIMを用いる方法</h3>
+            <p>
+              この方法では、Ubigiという海外のプリペイドeSIMを追加する。
+              motorolaのスマホはnanoSIMが2枚利用できる端末および一部モデルでeSIM非対応のため、それらの端末ではこの方法は利用できない。
+            </p>
+            <h4>1.Ubigiをインストールする</h4>
+            <p>以下のリンクからUbigiをインストールする。</p>
+            <a href="https://play.google.com/store/apps/details?id=com.transatel.selfcare.ubigi&hl=ja" target="_blank" class="link-preview"></a>
+            <h4>2.Ubigiを開く</h4>
+            <img src="nothing2.png" class="image1 zoomable" alt="Ubigi">
+            <h4>3. "はじめに進む" をタップする</h4>
+            <img src="nothing3.png" class="image1 zoomable" alt="はじめに進む">
+            <h4>4. "次へ" をタップする</h4>
+            <img src="nothing4.png" class="image1 zoomable" alt="次へ">
+            <h4>5. "同意して閉じる" をタップする</h4>
+            <img src="nothing5.png" class="image1 zoomable" alt="同意して閉じる">
+            <h4>6.Ubigiのアカウントを登録する</h4>
+            <img src="nothing6.png" class="image1 zoomable" alt="アカウント">
+            <h4>7. "スマートフォン" をタップする</h4>
+            <img src="nothing7.png" class="image1 zoomable" alt="スマートフォン">
+            <h4>8. "新しいUbigi eSIMを購入する" をタップする</h4>
+            <img src="nothing8.png" class="image1 zoomable" alt="新しいUbigi eSIMを購入する">
+            <h4>9.適当な国や地域のデータプランを選ぶ</h4>
+            <p>2025年11月時点ではアメリカが最安になっている。</p>
+            <img src="nothing9-1.png" class="image1 zoomable" alt="データプラン">
+            <img src="nothing9-2.png" class="image1 zoomable" alt="データプラン">
+            <h4>10. "次へ" をタップする</h4>
+            <img src="nothing10.png" class="image1 zoomable" alt="次へ">
+            <h4>11.画面下のチェックボックスをタップする</h4>
+            <img src="nothing11.png" class="image1 zoomable" alt="チェックボックス">
+            <h4>12. "このデバイス" をタップする</h4>
+            <img src="nothing12.png" class="image1 zoomable" alt="このデバイス">
+            <h4>13. "次へ" をタップする</h4>
+            <img src="nothing13.png" class="image1 zoomable" alt="次へ">
+            <h4>14. "支払い" をタップし、支払いを完了させる</h4>
+            <img src="nothing14-1.png" class="image1 zoomable" alt="支払い">
+            <img src="nothing14-2.png" class="image1 zoomable" alt="支払い">
+            <h4>15. "ダッシュボードを見る" をタップする</h4>
+            <img src="nothing15.png" class="image1 zoomable" alt="ダッシュボードを見る">
+            <h4>16. "eSIMをインストール" をタップする</h4>
+            <img src="nothing16.png" class="image1 zoomable" alt="eSIMをインストール">
+            <h4>17. "続ける" をタップする</h4>
+            <img src="nothing17.png" class="image1 zoomable" alt="続ける">
+            <h4>18. "はい" をタップする</h4>
+            <p>これによりUbigiのeSIMが端末に追加される</p>
+            <img src="nothing18.png" class="image1 zoomable" alt="はい">
+            <h4>19.カメラアプリを開く</h4>
+            <img src="motorola19.png" class="image1 zoomable" alt="カメラアプリ">
+            <h4>20.設定画面を開く</h4>
+            <img src="motorola19.png" class="image1 zoomable" alt="カメラ設定">
+            <h4>21. "シャッター音" をオフにする</h4>
+            <img src="motorola21.png" class="image1 zoomable" alt="シャッター音">
+            <h3>海外のSIMカードを用いる方法</h3>
+            <p>
+              この方法では、海外のSIMカードを追加する。
+              motorolaのスマホはeSIM対応端末および一部のモデルでnanoSIMが1枚しか利用できないため、それらの端末ではこの方法は利用できない。
+            </p>
             <h4>1.海外のSIMカードを挿入する</h4>
             <div class="reference">
               <a href="https://www.amazon.co.jp/%E3%82%A2%E3%83%A1%E3%83%AA%E3%82%ABSIM-7%E6%97%A5%E9%96%93%E3%80%90%E4%BD%BF%E3%81%84%E6%94%BE%E9%A1%8C%E3%80%914G-LTE-%E9%AB%98%E9%80%9F%E3%83%87%E3%83%BC%E3%82%BF%E9%80%9A%E4%BF%A1-SIM%E3%82%AB%E3%83%BC%E3%83%89-T-Mobile/dp/B07RFQNF7J/ref=sr_1_8?dib=eyJ2IjoiMSJ9.Wf4is3lcFSZnPM0Sbx424b-ssatLKPKMk0xkJdjQn_Ua3FQk1et73nwZLqUDY5APWXw-bJ92TqoJkIx9qWzutF2r14n51jjz-m2LNLPv5izpBexcEGa7IrcugdmNa2lqrL5DYvwwdFA40fXQTUzTKYUhNLDf9Zu5LMCFd61eJEr4yWTn4MC_iZSWTdq3m0-uQjCuiDZvBjluaEAvRO70nkcpNuYIbboxEmg6iCJfN5UL8vRY_cUh9R4rmPKor4EW4XU9VoSu3JHVuL1joG-cEn8TOeJVXZDILyIicPxMyeU.lWsEoVY-bBhsnUhAIi7cPxFcwE12NixujPfG9v8JB8w&dib_tag=se&keywords=%E4%BA%BA%E6%B0%97%E3%81%AE%E6%B5%B7%E5%A4%96%2BSIM%E3%83%A9%E3%83%B3%E3%82%AD%E3%83%B3%E3%82%B0&qid=1744876192&sr=8-8&th=1" target="blank">
-                <img src="motorola1_2.jpg" class="image2 zoomable" alt="海外SIM">
+                <img src="motorola1_2.jpg" class="image zoomable" alt="海外SIM">
                 Amazonより引用
               </a>
             </div>
             <p>
-              ECで海外のプリペイドSIMを購入するのが手っ取り早い。
-              また、端末に認識されたらバッテリー節約のためにSIMを無効化することを推奨する。
-              ただし、無効化した状態で再起動するとシャッター音が再び鳴るようになる。
+              海外のSIMカードを手に入れるにはECで海外のプリペイドSIMを購入するのが良い。
             </p>
             <h4>2.カメラアプリを開く</h4>
-            <img src="motorola8.png" class="image1 zoomable" alt="カメラアプリ">
+            <img src="motorola19.png" class="image1 zoomable" alt="カメラアプリ">
             <h4>3.設定画面を開く</h4>
-            <img src="motorola9.png" class="image1 zoomable" alt="カメラ設定">
+            <img src="nothing19.png" class="image1 zoomable" alt="カメラ設定">
             <h4>4. "シャッター音" をオフにする</h4>
-            <img src="motorola10.png" class="image1 zoomable" alt="シャッター音設定">
-            <p>海外のSIMカードが認識されているため、日本のSIMを利用していてもシャッター音の項目が現れる。</p>
+            <img src="motorola21.png" class="image1 zoomable" alt="シャッター音">
+            <h3>シャッター音の項目が現れない場合</h3>
+            <p>
+              シャッター音をオフにしたあとはバッテリー消耗を抑えるために海外のSIMを無効化しても音は消えたままだが、海外のSIMが無効化されている状態で端末を再起動すると再びシャッター音の項目が消え、音がなるようになる。
+              それ以外でもこの項目が現れない場合、一度すべてのSIMを無効化してから日本のSIM、海外のSIMの順に有効化してカメラアプリまたは端末を再起動してみる。
+            </p>
             <h3>デメリット</h3>
-            <h4>･対応機種はeSIMまたはデュアルSIM対応モデルのみ</h4>
-            <p>motorola razr 5Gのソフトバンク版など、eSIMおよびデュアルSIMに非対応の機種でシャッター音を消す場合は日本のSIMを利用できない。</p>
-            <h4>･eSIMを無効化した状態で再起動するとシャッター音が鳴るようになる</h4>
-            <p>再起動のたびにeSIMを有効化してカメラアプリからシャッター音をオフにしてからeSIMを再び無効化するか、バッテリー持ちを犠牲にしてeSIMを常に有効にするしかない。</p>
-            <h4>･今後アップデートによりこの方法が使えなくなる可能性がある</h4>
-            <p>Galaxyと同じくこれはバグに近い挙動のため、今後アップデートでこの方法が塞がれる可能性がある。</p>
+            <h4>･対応機種はeSIMまたはnanoSIMが2枚利用できる端末のみ</h4>
+            <p>SoftBank版のrazr 5Gなどのごく一部の機種はどちらにも当てはまらないため、そのような機種でシャッター音を消すには日本のSIMを利用しないようにするしか方法はない。</p>
+            <h4>･海外のSIMを手に入れる必要がある</h4>
+            <p>UbigiのeSIMを購入するにしても、海外のプリペイドSIMを購入するにしてもコストがかかる。</p>
+            <h4>･海外のSIMを無効化した状態で再起動するとシャッター音が鳴るようになる</h4>
+            <p>再起動のたびに海外のSIMを有効化してカメラアプリからシャッター音をオフにしてから海外のSIMを再び無効化するか、バッテリー持ちを犠牲にして海外のSIMを常に有効にするしかない。</p>
+            <h4>･シャッター音が消せる状態はバグのようなもの</h4>
+            <p>
+              本来日本のSIMが有効になっている状態でシャッター音は消せないはずだが、日本のSIMの次に海外のSIMを有効化することでシャッター音の項目が現れるのはもはやバグのようなものである。
+              よって、アップデートでこの方法が塞がれる可能性が他の機種より高いと思われる。
+            </p>
           </section>
           <section id="nothing">
             <h2>Nothing Phone</h2>
@@ -759,19 +794,101 @@
                 Nothingより引用
               </a>
             </div>
-            <p>Nothing Phoneもmotorolaと同じく日本のSIMを利用していない状態でシャッター音が消せるが、日本のSIMを利用した状態では海外のSIMを認識させてもシャッター音が消せない。</p>
-            <h3>方法</h3>
-            <h4>1.日本のSIMを利用しない</h4>
-            <p>Nothing Phoneでシャッター音を消す場合、海外のSIMカードを挿してローミングで使うか、SIMカードを挿さずモバイルデータ通信を諦めるしかない。</p>
+            <p>
+              Nothing Phoneは本来シャッター音が消せるが、日本のSIMを追加するとシャッター音が消せなくなる。
+              しかし、日本のSIMを利用している状態でも海外のSIMを追加することで再びシャッター音が消せるようになる。
+              ここでは海外のSIMカードを用いる方法とeSIMを用いる方法に分けて解説する。
+            </p>
+            <h3>海外のeSIMを用いる方法</h3>
+            <p>
+              この方法では、Ubigiという海外のプリペイドeSIMを追加する。
+              NothingのスマホでeSIMに対応しているのは2025年以降発売のモデルのみのため、それ以外ではこの方法が利用できない。
+            </p>
+            <h4>1.Ubigiをインストールする</h4>
+            <p>以下のリンクからUbigiをインストールする。</p>
+            <a href="https://play.google.com/store/apps/details?id=com.transatel.selfcare.ubigi&hl=ja" target="_blank" class="link-preview"></a>
+            <h4>2.Ubigiを開く</h4>
+            <img src="nothing2.png" class="image1 zoomable" alt="Ubigi">
+            <h4>3. "はじめに進む" をタップする</h4>
+            <img src="nothing3.png" class="image1 zoomable" alt="はじめに進む">
+            <h4>4. "次へ" をタップする</h4>
+            <img src="nothing4.png" class="image1 zoomable" alt="次へ">
+            <h4>5. "同意して閉じる" をタップする</h4>
+            <img src="nothing5.png" class="image1 zoomable" alt="同意して閉じる">
+            <h4>6.Ubigiのアカウントを登録する</h4>
+            <img src="nothing6.png" class="image1 zoomable" alt="アカウント">
+            <h4>7. "スマートフォン" をタップする</h4>
+            <img src="nothing7.png" class="image1 zoomable" alt="スマートフォン">
+            <h4>8. "新しいUbigi eSIMを購入する" をタップする</h4>
+            <img src="nothing8.png" class="image1 zoomable" alt="新しいUbigi eSIMを購入する">
+            <h4>9.適当な国や地域のデータプランを選ぶ</h4>
+            <p>2025年11月時点ではアメリカが最安になっている。</p>
+            <img src="nothing9-1.png" class="image1 zoomable" alt="データプラン">
+            <img src="nothing9-2.png" class="image1 zoomable" alt="データプラン">
+            <h4>10. "次へ" をタップする</h4>
+            <img src="nothing10.png" class="image1 zoomable" alt="次へ">
+            <h4>11.画面下のチェックボックスをタップする</h4>
+            <img src="nothing11.png" class="image1 zoomable" alt="チェックボックス">
+            <h4>12. "このデバイス" をタップする</h4>
+            <img src="nothing12.png" class="image1 zoomable" alt="このデバイス">
+            <h4>13. "次へ" をタップする</h4>
+            <img src="nothing13.png" class="image1 zoomable" alt="次へ">
+            <h4>14. "支払い" をタップし、支払いを完了させる</h4>
+            <img src="nothing14-1.png" class="image1 zoomable" alt="支払い">
+            <img src="nothing14-2.png" class="image1 zoomable" alt="支払い">
+            <h4>15. "ダッシュボードを見る" をタップする</h4>
+            <img src="nothing15.png" class="image1 zoomable" alt="ダッシュボードを見る">
+            <h4>16. "eSIMをインストール" をタップする</h4>
+            <img src="nothing16.png" class="image1 zoomable" alt="eSIMをインストール">
+            <h4>17. "続ける" をタップする</h4>
+            <img src="nothing17.png" class="image1 zoomable" alt="続ける">
+            <h4>18. "はい" をタップする</h4>
+            <p>これによりUbigiのeSIMが端末に追加される</p>
+            <img src="nothing18.png" class="image1 zoomable" alt="はい">
+            <h4>19.カメラアプリを開く</h4>
+            <img src="nothing19.png" class="image1 zoomable" alt="カメラアプリ">
+            <h4>20.設定画面を開く</h4>
+            <img src="nothing19.png" class="image1 zoomable" alt="カメラ設定">
+            <img src="nothing20.png" class="image1 zoomable" alt="カメラ設定">
+            <h4>21. "シャッター音" をオフにする</h4>
+            <img src="nothing21.png" class="image1 zoomable" alt="シャッター音">
+            <h3>海外のSIMカードを用いる方法</h3>
+            <p>
+              この方法では、海外のSIMカードを追加する。
+              NothingのスマホはすべてnanoSIMが2枚利用できるため、2024年以前発売のeSIM非対応のスマホでもこの方法でシャッター音をオフにできる。
+            </p>
+            <h4>1.海外のSIMカードを挿入する</h4>
+            <div class="reference">
+              <a href="https://www.amazon.co.jp/%E3%82%A2%E3%83%A1%E3%83%AA%E3%82%ABSIM-7%E6%97%A5%E9%96%93%E3%80%90%E4%BD%BF%E3%81%84%E6%94%BE%E9%A1%8C%E3%80%914G-LTE-%E9%AB%98%E9%80%9F%E3%83%87%E3%83%BC%E3%82%BF%E9%80%9A%E4%BF%A1-SIM%E3%82%AB%E3%83%BC%E3%83%89-T-Mobile/dp/B07RFQNF7J/ref=sr_1_8?dib=eyJ2IjoiMSJ9.Wf4is3lcFSZnPM0Sbx424b-ssatLKPKMk0xkJdjQn_Ua3FQk1et73nwZLqUDY5APWXw-bJ92TqoJkIx9qWzutF2r14n51jjz-m2LNLPv5izpBexcEGa7IrcugdmNa2lqrL5DYvwwdFA40fXQTUzTKYUhNLDf9Zu5LMCFd61eJEr4yWTn4MC_iZSWTdq3m0-uQjCuiDZvBjluaEAvRO70nkcpNuYIbboxEmg6iCJfN5UL8vRY_cUh9R4rmPKor4EW4XU9VoSu3JHVuL1joG-cEn8TOeJVXZDILyIicPxMyeU.lWsEoVY-bBhsnUhAIi7cPxFcwE12NixujPfG9v8JB8w&dib_tag=se&keywords=%E4%BA%BA%E6%B0%97%E3%81%AE%E6%B5%B7%E5%A4%96%2BSIM%E3%83%A9%E3%83%B3%E3%82%AD%E3%83%B3%E3%82%B0&qid=1744876192&sr=8-8&th=1" target="blank">
+                <img src="motorola1_2.jpg" class="image zoomable" alt="海外SIM">
+                Amazonより引用
+              </a>
+            </div>
+            <p>
+              海外のSIMカードを手に入れるにはECで海外のプリペイドSIMを購入するのが良い。
+            </p>
             <h4>2.カメラアプリを開く</h4>
-            <img src="nothing2.png" class="image1 zoomable" alt="カメラアプリ">
+            <img src="nothing19.png" class="image1 zoomable" alt="カメラアプリ">
             <h4>3.設定画面を開く</h4>
-            <img src="nothing3.png" class="image1 zoomable" alt="カメラ設定">
+            <img src="nothing19.png" class="image1 zoomable" alt="カメラ設定">
+            <img src="nothing20.png" class="image1 zoomable" alt="カメラ設定">
             <h4>4. "シャッター音" をオフにする</h4>
-            <img src="nothing4.png" class="image1 zoomable" alt="シャッター音設定">
+            <img src="nothing21.png" class="image1 zoomable" alt="シャッター音">
+            <h3>シャッター音の項目が現れない場合</h3>
+            <p>
+              シャッター音をオフにしたあとはバッテリー消耗を抑えるために海外のSIMを無効化しても音は消えたままだが、海外のSIMが無効化されている状態で端末を再起動すると再びシャッター音の項目が消え、音がなるようになる。
+              それ以外でもこの項目が現れない場合、一度すべてのSIMを無効化してから日本のSIM、海外のSIMの順に有効化してカメラアプリまたは端末を再起動してみる。
+            </p>
             <h3>デメリット</h3>
-            <h4>･日本のSIMカードが利用できない</h4>
-            <p>Nothing Phoneのシャッター音を消す場合、通信の制限が大きくなってしまうのでこの方法はおすすめしない。</p>
+            <h4>･海外のSIMを手に入れる必要がある</h4>
+            <p>UbigiのeSIMを購入するにしても、海外のプリペイドSIMを購入するにしてもコストがかかる。</p>
+            <h4>･海外のSIMを無効化した状態で再起動するとシャッター音が鳴るようになる</h4>
+            <p>再起動のたびに海外のSIMを有効化してカメラアプリからシャッター音をオフにしてから海外のSIMを再び無効化するか、バッテリー持ちを犠牲にして海外のSIMを常に有効にするしかない。</p>
+            <h4>･シャッター音が消せる状態はバグのようなもの</h4>
+            <p>
+              本来日本のSIMが有効になっている状態でシャッター音は消せないはずだが、日本のSIMの次に海外のSIMを有効化することでシャッター音の項目が現れるのはもはやバグのようなものである。
+              よって、アップデートでこの方法が塞がれる可能性が他の機種より高いと思われる。
+            </p>
           </section>
           <section id="nubia">
             <h2>Nubia</h2>
