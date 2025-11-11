@@ -1,14 +1,23 @@
 const fs = require("fs/promises");
 const { execSync } = require("child_process");
-const { JSDOM } = require("jsdom");
+const { XMLParser, XMLBuilder } = require("fast-xml-parser");
 
-const JSON_FILE = "articles.json";
-const BASE_URL = "https://untechnical.info/";
+const BASE_URL = "https://untechnical.info";
+const SITEMAP_FILE = "sitemap.xml";
 
+// ✅ 「直前のコミットとの差分」で .html ファイルを検出（articles.js と同じ方式）
 const changedFiles = execSync("git diff --name-only HEAD^ HEAD")
   .toString()
   .split("\n")
-  .filter(f => f.endsWith(".html") && f !== "index.html" && f !== "policy.html");
+  .filter(f => f.endsWith(".html") && f.trim().length > 0);
+
+const getGitDate = (file) => {
+  try {
+    return execSync(`git log -1 --format="%cI" "${file}"`).toString().trim();
+  } catch {
+    return new Date().toISOString();
+  }
+};
 
 const extractBodyContent = (html) => {
   const match = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
@@ -24,14 +33,23 @@ const hasVisibleChange = (oldHtml, newHtml) => {
 };
 
 (async () => {
-  let articleMap = new Map();
+  let sitemap = { urlset: { url: [] } };
 
   try {
-    const data = await fs.readFile(JSON_FILE, "utf-8");
-    JSON.parse(data).forEach(article => articleMap.set(article.path, article));
-  } catch {}
+    const xml = await fs.readFile(SITEMAP_FILE, "utf-8");
+    const parser = new XMLParser({ ignoreAttributes: false });
+    sitemap = parser.parse(xml);
+  } catch {
+    console.log("⚠️ 既存 sitemap.xml が見つかりません。新規作成します。");
+  }
+
+  const urlMap = new Map();
+  const existingUrls = sitemap.urlset?.url || [];
+  const urls = Array.isArray(existingUrls) ? existingUrls : [existingUrls];
+  urls.forEach(entry => urlMap.set(entry.loc, entry));
 
   for (const file of changedFiles) {
+    // ✅ 「前のコミット時点」のHTMLを取得
     let oldHtml;
     try {
       oldHtml = execSync(`git show HEAD^:${file}`).toString();
@@ -39,72 +57,49 @@ const hasVisibleChange = (oldHtml, newHtml) => {
       oldHtml = "";
     }
 
+    // ✅ 最新HTMLを読み込み
     const newHtml = await fs.readFile(file, "utf-8");
+
+    // ✅ 本文の変化がなければスキップ
     if (!hasVisibleChange(oldHtml, newHtml)) {
-      console.log(`⏩ ${file} の本文に変更なし → articles.jsonは更新しません`);
+      console.log(`⏩ ${file} の本文に変更なし → 最終更新日は変更しません`);
       continue;
     }
 
-    const dom = new JSDOM(newHtml);
-    const document = dom.window.document;
+    // ✅ 更新日を取得
+    const lastmod = getGitDate(file).split("T")[0];
+    const [year, month, day] = lastmod.split("-");
+    const japaneseDate = `${year}年${parseInt(month)}月${parseInt(day)}日`;
 
-    const title =
-      document.querySelector("title")?.textContent?.trim() ||
-      document.querySelector("h1")?.textContent?.trim() ||
-      "";
+    // ✅ URL構築
+    const relativeUrl = "/" + file.replace(/index\.html$/, "").replace(/\.html$/, "");
+    const fullUrl = `${BASE_URL}${relativeUrl}`;
+    urlMap.set(fullUrl, { loc: fullUrl, lastmod });
 
-    const metaCategory =
-      document.querySelector("meta[name='category']")?.getAttribute("content") || "";
-    const categories = metaCategory.split(",").map(c => c.trim()).filter(Boolean);
+    // ✅ HTML内の最終更新日（<time>タグ & JSON-LD）を書き換え
+    let updatedHtml = newHtml
+      .replace(
+        /(<time datetime=")(\d{4}-\d{2}-\d{2})(">最終更新日：)([^<]+)(<\/time>)/,
+        `${'$1'}${lastmod}${'$3'}${japaneseDate}${'$5'}`
+      )
+      .replace(
+        /("dateModified"\s*:\s*")(\d{4}-\d{2}-\d{2})(")/,
+        `$1${lastmod}$3`
+      );
 
-    let content =
-      document.querySelector("main")?.textContent?.trim() ||
-      document.querySelector("article")?.textContent?.trim() ||
-      document.body.textContent.trim();
-
-    content = content.replace(/\s+/g, " ").trim();
-
-    const relativeImagePath =
-      document.querySelector("main img, article img, body img")?.getAttribute("src") || "";
-
-    let image = "";
-    if (relativeImagePath) {
-      const fileUrl = new URL(file, BASE_URL).href;
-      image = new URL(relativeImagePath, fileUrl).href;
-    }
-
-    let datePublished = "";
-    let dateModified = "";
-    const ldJsonScript = document.querySelector("script[type='application/ld+json']");
-    if (ldJsonScript) {
-      try {
-        const ldData = JSON.parse(ldJsonScript.textContent);
-        datePublished = ldData.datePublished || "";
-        dateModified = ldData.dateModified || "";
-      } catch (e) {
-        console.warn(`⚠️ JSON-LD parse error in ${file}`);
-      }
-    }
-
-    articleMap.set(file, {
-      title,
-      category: categories,
-      path: file,
-      content,
-      image,
-      datePublished,
-      dateModified
-    });
-
-    console.log(`✅ ${file} の本文変更を検出 → articles.jsonに反映`);
+    await fs.writeFile(file, updatedHtml, "utf-8");
+    console.log(`✅ ${file} の最終更新日を ${japaneseDate} に更新（timeタグ & JSON-LD）`);
   }
 
-  const articles = Array.from(articleMap.values()).sort((a, b) => {
-    const dateA = new Date(a.datePublished || 0);
-    const dateB = new Date(b.datePublished || 0);
-    return dateB - dateA;
+  // ✅ sitemap.xml の再生成
+  const builder = new XMLBuilder({ ignoreAttributes: false, format: true });
+  const updatedSitemap = builder.build({
+    urlset: {
+      "@_xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9",
+      url: Array.from(urlMap.values())
+    }
   });
 
-  await fs.writeFile(JSON_FILE, JSON.stringify(articles, null, 2), "utf-8");
-  console.log(`✅ articles.json updated (${articles.length} articles, newest first)`);
+  await fs.writeFile(SITEMAP_FILE, updatedSitemap, "utf-8");
+  console.log("✅ sitemap.xml を更新しました");
 })();
