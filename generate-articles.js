@@ -1,111 +1,109 @@
 const fs = require("fs/promises");
-const { execSync } = require("child_process");
 const { JSDOM } = require("jsdom");
 
-const ARTICLES_FILE = "articles.json";
-const BASE_URL = "https://untechnical.info";
-
-const changedFiles = execSync("git diff --name-only origin/main...HEAD")
-  .toString()
-  .split("\n")
-  .filter(f => f.endsWith(".html") && f.trim().length > 0);
-
-const extractBodyContent = (html) => {
-  const match = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-  return match ? match[1].trim() : "";
-};
-
-const hasVisibleChange = (oldHtml, newHtml) => {
-  const oldBody = extractBodyContent(oldHtml)
-    .replace(/\s+/g, " ")
-    .replace(/<!--.*?-->/g, "");
-  const newBody = extractBodyContent(newHtml)
-    .replace(/\s+/g, " ")
-    .replace(/<!--.*?-->/g, "");
-  return oldBody !== newBody;
-};
-
-const getGitDate = (file) => {
-  try {
-    return execSync(`git log -1 --format="%cI" "${file}"`).toString().trim();
-  } catch {
-    return new Date().toISOString();
-  }
-};
-
-// ✅ HTML から記事情報を抽出
-const extractArticleData = (html, filePath) => {
-  const dom = new JSDOM(html);
-  const doc = dom.window.document;
-
-  const title = doc.querySelector("title")?.textContent.trim() || "無題の記事";
-
-  // ✅ 複数metaタグまたはカンマ区切りカテゴリ対応
-  const categories = Array.from(doc.querySelectorAll('meta[name="category"]'))
-    .flatMap(meta => meta.getAttribute("content").split(","))
-    .map(c => c.trim())
-    .filter(Boolean);
-
-  const contentText = doc.body.textContent
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 200);
-
-  const image =
-    doc.querySelector('meta[property="og:image"]')?.getAttribute("content") ||
-    `${BASE_URL}/${filePath.replace(/\.html$/, ".jpg")}`;
-
-  const times = doc.querySelectorAll("time[datetime]");
-  const datePublished = times[0]?.getAttribute("datetime") || getGitDate(filePath).split("T")[0];
-  const dateModified = times[1]?.getAttribute("datetime") || datePublished;
-
-  return {
-    title,
-    category: [...new Set(categories)], // ✅ 重複削除
-    path: filePath,
-    content: contentText,
-    image,
-    datePublished,
-    dateModified
-  };
-};
+const JSON_FILE = "articles.json";
+const BASE_URL = "https://untechnical.info/";
 
 (async () => {
-  let articles = [];
-  try {
-    const json = await fs.readFile(ARTICLES_FILE, "utf-8");
-    articles = JSON.parse(json);
-  } catch {
-    console.log("⚠️ 既存 articles.json が見つかりません。新規作成します。");
-  }
+  let articleMap = new Map();
 
-  const articleMap = new Map(articles.map(a => [a.path, a]));
+  // 既存 articles.json を読み込む
+  try {
+    const data = await fs.readFile(JSON_FILE, "utf-8");
+    JSON.parse(data).forEach(article => articleMap.set(article.path, article));
+  } catch {}
+
+  // 対象の HTML ファイル
+  const changedFiles = process.argv.slice(2).filter(f => f.endsWith(".html") && f !== "index.html" && f !== "policy.html");
+
+  const extractBodyContent = (html) => {
+    const match = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+    return match ? match[1].trim() : "";
+  };
+
+  const hasVisibleChange = (oldHtml, newHtml) => {
+    const normalize = (text) =>
+      extractBodyContent(text)
+        .replace(/\s+/g, " ")
+        .replace(/<!--.*?-->/g, "");
+    return normalize(oldHtml) !== normalize(newHtml);
+  };
 
   for (const file of changedFiles) {
-    let oldHtml;
-    try {
-      oldHtml = execSync(`git show origin/main:${file}`).toString();
-    } catch {
-      oldHtml = "";
-    }
-
     const newHtml = await fs.readFile(file, "utf-8");
 
-    if (!hasVisibleChange(oldHtml, newHtml)) {
-      console.log(`⏩ ${file} の本文に変更なし → articles.json は変更しません`);
+    const dom = new JSDOM(newHtml);
+    const document = dom.window.document;
+
+    // 本文
+    let content =
+      document.querySelector("main")?.textContent?.trim() ||
+      document.querySelector("article")?.textContent?.trim() ||
+      document.body.textContent.trim();
+    content = content.replace(/\s+/g, " ").trim();
+
+    // タイトル
+    const title =
+      document.querySelector("title")?.textContent?.trim() ||
+      document.querySelector("h1")?.textContent?.trim() ||
+      "";
+
+    // カテゴリ
+    const metaCategory =
+      document.querySelector("meta[name='category']")?.getAttribute("content") || "";
+    const categories = metaCategory.split(",").map(c => c.trim()).filter(Boolean);
+
+    // 画像
+    const relativeImagePath =
+      document.querySelector("main img, article img, body img")?.getAttribute("src") || "";
+    let image = "";
+    if (relativeImagePath) {
+      const fileUrl = new URL(file, BASE_URL).href;
+      image = new URL(relativeImagePath, fileUrl).href;
+    }
+
+    // JSON-LD から日付取得
+    let datePublished = "";
+    let dateModified = "";
+    const ldJsonScript = document.querySelector("script[type='application/ld+json']");
+    if (ldJsonScript) {
+      try {
+        const ldData = JSON.parse(ldJsonScript.textContent);
+        datePublished = ldData.datePublished || "";
+        dateModified = ldData.dateModified || "";
+      } catch (e) {
+        console.warn(`⚠️ JSON-LD parse error in ${file}`);
+      }
+    }
+
+    // 本文が変わっていなくても、dateModified が変わっていれば更新する
+    const oldArticle = articleMap.get(file);
+    const isChanged = !oldArticle || oldArticle.content !== content || oldArticle.dateModified !== dateModified;
+
+    if (!isChanged) {
+      console.log(`⏩ ${file} に本文・更新日変更なし → articles.json は更新しません`);
       continue;
     }
 
-    const data = extractArticleData(newHtml, file);
-    articleMap.set(file, data);
-    console.log(`✅ ${file} の記事情報を更新しました`);
+    articleMap.set(file, {
+      title,
+      category: categories,
+      path: file,
+      content,
+      image,
+      datePublished,
+      dateModified
+    });
+
+    console.log(`✅ ${file} の変更を検出 → articles.json に反映 (本文または更新日)`);
   }
 
-  // ✅ 公開日（新しい順）で並べ替え
-  const updatedArticles = Array.from(articleMap.values()).sort(
-    (a, b) => new Date(b.datePublished) - new Date(a.datePublished)
-  );
+  const articles = Array.from(articleMap.values()).sort((a, b) => {
+    const dateA = new Date(a.datePublished || 0);
+    const dateB = new Date(b.datePublished || 0);
+    return dateB - dateA;
+  });
 
-  await fs.writeFile(ARTICLES_FILE, JSON.stringify(updatedArticles, null, 2), "utf-8");
-  console.log("✅ articles.json を更新しました");
+  await fs.writeFile(JSON_FILE, JSON.stringify(articles, null, 2), "utf-8");
+  console.log(`✅ articles.json updated (${articles.length} articles, newest first)`);
 })();
