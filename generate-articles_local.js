@@ -14,6 +14,27 @@ const normalizePath = (p) =>
     .replace(/^\.\//, "");
 
 // ----------------------------
+// yyyy-mm-dd 形式の妥当性チェック
+// ----------------------------
+function isValidDate(dateStr) {
+  if (!dateStr) return false;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+  if (dateStr.includes("--")) return false;
+  return true;
+}
+
+// ----------------------------
+// time datetime の妥当性チェック
+// ----------------------------
+function getTimeTagDate(document) {
+  const t = document.querySelector("time[datetime]");
+  if (!t) return "";
+  const dt = t.getAttribute("datetime");
+  if (!dt || dt.includes("--") || !/^\d{4}-\d{2}-\d{2}$/.test(dt)) return "";
+  return dt;
+}
+
+// ----------------------------
 // 指定ディレクトリ配下の HTML をすべて取得
 // ----------------------------
 async function getAllHtmlFiles(dir) {
@@ -67,7 +88,43 @@ async function getAllHtmlFiles(dir) {
     const dom = new JSDOM(html);
     const document = dom.window.document;
 
+    // ----------------------------
+    // JSON-LD 日付取得
+    // ----------------------------
+    let datePublished = "";
+    let dateModified = "";
+
+    const ldJsonScript = document.querySelector("script[type='application/ld+json']");
+    if (ldJsonScript) {
+      try {
+        const ldData = JSON.parse(ldJsonScript.textContent);
+        datePublished = ldData.datePublished || "";
+        dateModified = ldData.dateModified || "";
+      } catch {
+        console.warn(`⚠️ JSON-LD parse error in ${normalizedPath}`);
+      }
+    }
+
+    // ----------------------------
+    // time datetime 日付チェック
+    // ----------------------------
+    const timeDate = getTimeTagDate(document);
+
+    // ----------------------------
+    // ❌ 日付が不完全なら除外
+    // ----------------------------
+    if (
+      !isValidDate(datePublished) ||
+      !isValidDate(dateModified) ||
+      !isValidDate(timeDate)
+    ) {
+      console.log(`⏩ 除外: ${normalizedPath}（日付が不完全）`);
+      continue;
+    }
+
+    // ----------------------------
     // 本文
+    // ----------------------------
     let content =
       document.querySelector("main")?.textContent?.trim() ||
       document.querySelector("article")?.textContent?.trim() ||
@@ -85,7 +142,7 @@ async function getAllHtmlFiles(dir) {
       document.querySelector("meta[name='category']")?.getAttribute("content") || "";
     const categories = metaCategory.split(",").map(c => c.trim()).filter(Boolean);
 
-    // 画像
+    // 画像URL
     const relativeImagePath =
       document.querySelector("main img, article img, body img")?.getAttribute("src") || "";
     let image = "";
@@ -94,21 +151,9 @@ async function getAllHtmlFiles(dir) {
       image = new URL(relativeImagePath, fileUrl).href;
     }
 
-    // JSON-LD
-    let datePublished = "";
-    let dateModified = "";
-    const ldJsonScript = document.querySelector("script[type='application/ld+json']");
-    if (ldJsonScript) {
-      try {
-        const ldData = JSON.parse(ldJsonScript.textContent);
-        datePublished = ldData.datePublished || "";
-        dateModified = ldData.dateModified || "";
-      } catch {
-        console.warn(`⚠️ JSON-LD parse error in ${normalizedPath}`);
-      }
-    }
-
-    // 上書き保存
+    // ----------------------------
+    // 記事登録
+    // ----------------------------
     articleMap.set(normalizedPath, {
       title,
       category: categories,
@@ -119,7 +164,7 @@ async function getAllHtmlFiles(dir) {
       dateModified
     });
 
-    console.log(`✅ ${normalizedPath} を追加/更新`);
+    console.log(`✅ 記事データ更新: ${normalizedPath}`);
   }
 
   // ------------------------------------------------
