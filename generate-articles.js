@@ -1,4 +1,5 @@
 const fs = require("fs/promises");
+const path = require("path");
 const { JSDOM } = require("jsdom");
 
 const JSON_FILE = "articles.json";
@@ -10,26 +11,20 @@ const BASE_URL = "https://untechnical.info/";
   // 既存 articles.json を読み込む
   try {
     const data = await fs.readFile(JSON_FILE, "utf-8");
-    JSON.parse(data).forEach(article => articleMap.set(article.path, article));
+    JSON.parse(data).forEach(article => {
+      articleMap.set(article.path, article);
+    });
   } catch {}
 
   // 対象の HTML ファイル
-  const changedFiles = process.argv.slice(2).filter(f => f.endsWith(".html") && f !== "index.html" && f !== "policy.html");
-
-  const extractBodyContent = (html) => {
-    const match = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-    return match ? match[1].trim() : "";
-  };
-
-  const hasVisibleChange = (oldHtml, newHtml) => {
-    const normalize = (text) =>
-      extractBodyContent(text)
-        .replace(/\s+/g, " ")
-        .replace(/<!--.*?-->/g, "");
-    return normalize(oldHtml) !== normalize(newHtml);
-  };
+  const changedFiles = process.argv
+    .slice(2)
+    .filter(f => f.endsWith(".html") && f !== "index.html" && f !== "policy.html");
 
   for (const file of changedFiles) {
+    // パスを正規化 → 同じ記事は常に同じキーになる
+    const normalizedPath = path.normalize(file).replace(/\\/g, "/");
+
     const newHtml = await fs.readFile(file, "utf-8");
 
     const dom = new JSDOM(newHtml);
@@ -58,11 +53,11 @@ const BASE_URL = "https://untechnical.info/";
       document.querySelector("main img, article img, body img")?.getAttribute("src") || "";
     let image = "";
     if (relativeImagePath) {
-      const fileUrl = new URL(file, BASE_URL).href;
+      const fileUrl = new URL(normalizedPath, BASE_URL).href;
       image = new URL(relativeImagePath, fileUrl).href;
     }
 
-    // JSON-LD から日付取得
+    // JSON-LD
     let datePublished = "";
     let dateModified = "";
     const ldJsonScript = document.querySelector("script[type='application/ld+json']");
@@ -71,31 +66,36 @@ const BASE_URL = "https://untechnical.info/";
         const ldData = JSON.parse(ldJsonScript.textContent);
         datePublished = ldData.datePublished || "";
         dateModified = ldData.dateModified || "";
-      } catch (e) {
-        console.warn(`⚠️ JSON-LD parse error in ${file}`);
+      } catch {
+        console.warn(`⚠️ JSON-LD parse error in ${normalizedPath}`);
       }
     }
 
-    // 本文が変わっていなくても、dateModified が変わっていれば更新する
-    const oldArticle = articleMap.get(file);
-    const isChanged = !oldArticle || oldArticle.content !== content || oldArticle.dateModified !== dateModified;
+    // 旧記事と比較（キーは normalizedPath）
+    const oldArticle = articleMap.get(normalizedPath);
+
+    const isChanged =
+      !oldArticle ||
+      oldArticle.content !== content ||
+      oldArticle.dateModified !== dateModified;
 
     if (!isChanged) {
-      console.log(`⏩ ${file} に本文・更新日変更なし → articles.json は更新しません`);
+      console.log(`⏩ ${normalizedPath} に本文・更新日変更なし → articles.json は更新しません`);
       continue;
     }
 
-    articleMap.set(file, {
+    // 上書き (重複せず確実に 1 件だけ)
+    articleMap.set(normalizedPath, {
       title,
       category: categories,
-      path: file,
+      path: normalizedPath,
       content,
       image,
       datePublished,
       dateModified
     });
 
-    console.log(`✅ ${file} の変更を検出 → articles.json に反映 (本文または更新日)`);
+    console.log(`✅ ${normalizedPath} → 更新を検知し articles.json に反映`);
   }
 
   const articles = Array.from(articleMap.values()).sort((a, b) => {
@@ -105,5 +105,5 @@ const BASE_URL = "https://untechnical.info/";
   });
 
   await fs.writeFile(JSON_FILE, JSON.stringify(articles, null, 2), "utf-8");
-  console.log(`✅ articles.json updated (${articles.length} articles, newest first)`);
+  console.log(`✅ articles.json updated (${articles.length} articles)`);
 })();
