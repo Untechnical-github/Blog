@@ -5,36 +5,66 @@ const { JSDOM } = require("jsdom");
 const JSON_FILE = "articles.json";
 const BASE_URL = "https://untechnical.info/";
 
-// 重要：パスを完全に統一する関数
+// ----------------------------
+// パスを完全統一する関数
+// ----------------------------
 const normalizePath = (p) =>
   path.normalize(p)
     .replace(/\\/g, "/")
     .replace(/^\.\//, "");
 
+// ----------------------------
+// 指定ディレクトリ配下の HTML をすべて取得
+// ----------------------------
+async function getAllHtmlFiles(dir) {
+  let results = [];
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      results = results.concat(await getAllHtmlFiles(fullPath));
+    } else if (
+      entry.isFile() &&
+      entry.name.endsWith(".html") &&
+      entry.name !== "index.html" &&
+      entry.name !== "policy.html"
+    ) {
+      results.push(normalizePath(fullPath));
+    }
+  }
+  return results;
+}
+
+// ----------------------------
+// メイン処理
+// ----------------------------
 (async () => {
   let articleMap = new Map();
 
-  // 既存 articles.json → Map に読み込み
+  // 既存 articles.json 読み込み
   try {
     const data = await fs.readFile(JSON_FILE, "utf-8");
     JSON.parse(data).forEach(article => {
-      const key = normalizePath(article.path);   // ← 読み込み時にも正規化！
+      const key = normalizePath(article.path);
       articleMap.set(key, { ...article, path: key });
     });
-  } catch {}
+  } catch {
+    console.log("⚠️ articles.json が存在しないため、新規作成します");
+  }
 
-  // 対象 HTML
-  const changedFiles = process.argv
-    .slice(2)
-    .filter(f => f.endsWith(".html") && f !== "index.html" && f !== "policy.html");
+  // ------------------------------------------------
+  // 1. 全 HTML を探索（index.html と policy.html は除外）
+  // ------------------------------------------------
+  const htmlFiles = await getAllHtmlFiles(".");
+  console.log(`📄 発見した HTML 数: ${htmlFiles.length}`);
 
-  for (const file of changedFiles) {
-
-    // キーを統一
+  for (const file of htmlFiles) {
     const normalizedPath = normalizePath(file);
+    const html = await fs.readFile(file, "utf-8");
 
-    const newHtml = await fs.readFile(file, "utf-8");
-    const dom = new JSDOM(newHtml);
+    const dom = new JSDOM(html);
     const document = dom.window.document;
 
     // 本文
@@ -78,20 +108,7 @@ const normalizePath = (p) =>
       }
     }
 
-    // 比較
-    const oldArticle = articleMap.get(normalizedPath);
-
-    const isChanged =
-      !oldArticle ||
-      oldArticle.content !== content ||
-      oldArticle.dateModified !== dateModified;
-
-    if (!isChanged) {
-      console.log(`⏩ ${normalizedPath} に本文・更新日変更なし → 更新しません`);
-      continue;
-    }
-
-    // 上書き保存（重複しない）
+    // 上書き保存
     articleMap.set(normalizedPath, {
       title,
       category: categories,
@@ -102,9 +119,12 @@ const normalizePath = (p) =>
       dateModified
     });
 
-    console.log(`✅ ${normalizedPath} 更新 → articles.json に反映`);
+    console.log(`✅ ${normalizedPath} を追加/更新`);
   }
 
+  // ------------------------------------------------
+  // 2. 日付順にソートして保存
+  // ------------------------------------------------
   const articles = Array.from(articleMap.values()).sort((a, b) => {
     const dateA = new Date(a.datePublished || 0);
     const dateB = new Date(b.datePublished || 0);
@@ -112,5 +132,5 @@ const normalizePath = (p) =>
   });
 
   await fs.writeFile(JSON_FILE, JSON.stringify(articles, null, 2), "utf-8");
-  console.log(`✅ articles.json updated (${articles.length} articles)`);
+  console.log(`🎉 完了！articles.json を更新 (${articles.length} 件)`);
 })();
