@@ -62,11 +62,31 @@ const formatDateJapanese = (date) => {
     try {
       let html = await fs.readFile(file, "utf-8");
 
+      // ▼▼▼ 追加修正箇所：ドラフト（未完成の日付）チェック ▼▼▼
+      // 日付に "--" (例: 2025--) や "年月日" が含まれているかチェック
+      // これらが含まれている場合、このファイルはまだ公開準備ができていないと判断し、
+      // HTMLの日付更新も、sitemapへの追加も行わない。
+      const isDraft = 
+        /datetime="[\d-]*--/.test(html) ||          // <time datetime="2025--">
+        /"datePublished":\s*"[\d-]*--"/.test(html) || // JSON-LD datePublished
+        /"dateModified":\s*"[\d-]*--"/.test(html) ||  // JSON-LD dateModified
+        /datetime="[^"]*年月日"/.test(html) ||      // 日本語プレースホルダーの念のためチェック
+        html.includes("2025年月日");                // 本文中のプレースホルダー
+
+      if (isDraft) {
+        console.log(`⛔ Skipping ${file}: 日付が未確定のため処理をスキップします。`);
+        // もし過去にsitemapに登録されていた場合は削除する
+        if (urlMap.has(fullUrl)) {
+            urlMap.delete(fullUrl);
+            console.log(`🗑️ ${file} を sitemap.xml から削除しました。`);
+        }
+        continue; // 次のループへ
+      }
+      // ▲▲▲ 追加修正箇所終わり ▲▲▲
+
       // ---------------------------------------------------------
       // 1. HTML内の <time> タグを更新
       // ---------------------------------------------------------
-      // パターン: <time datetime="2023-01-01">最終更新日：YYYY年M月D日</time>
-      // 多少のスペースや改行に対応できる正規表現
       const timeRegex = /(<time[^>]*datetime=")(\d{4}-\d{2}-\d{2})("[^>]*>)(.*?)(<\/time>)/s;
       
       if (timeRegex.test(html)) {

@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0   # ✅ 全履歴取得（diff比較に必要）
+          fetch-depth: 2  # ✅ 比較のために直前のコミットが必要 (0でもOKですが2で十分)
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -24,31 +24,101 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # ✅ 今回のコミットで変更された .html ファイルを取得
+      # 1. 今回のコミットで変更された .html ファイルの候補を取得
       - name: Get changed HTML files
         id: changed_files
         run: |
-          CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- '*.html' | tr '\n' ' ')
-          echo "changed_files=$CHANGED" >> $GITHUB_ENV
-          echo "🔍 Changed HTML files: $CHANGED"
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- '*.html' | tr '\n' ' ')
+          echo "raw_files=$CHANGED" >> $GITHUB_ENV
+          echo "📂 Raw changed files: $CHANGED"
 
-      # ✅ sitemap.xml の更新（全体構築だが内部で差分処理される）
+      # 2. ✅ 実質的な変更（本文・タイトル・カテゴリ）があるかチェックしてフィルタリング
+      - name: Filter meaningful changes
+        id: filter_changes
+        if: env.raw_files != ''
+        run: |
+          # 一時的な比較スクリプトを作成
+          cat << 'EOF' > filter_diff.js
+          const fs = require('fs');
+          const { execSync } = require('child_process');
+          const { JSDOM } = require('jsdom');
+
+          const files = process.argv.slice(2);
+          const meaningfulFiles = [];
+
+          // HTMLから比較用データを抽出する関数
+          const extractContent = (html) => {
+            if (!html) return "";
+            const dom = new JSDOM(html);
+            const doc = dom.window.document;
+            
+            // ノイズ除去: style, script, linkタグ、コメント等を削除
+            doc.querySelectorAll('script, style, link, noscript, iframe').forEach(el => el.remove());
+
+            // 比較対象: タイトル + カテゴリ + 本文テキスト
+            const title = doc.querySelector('title')?.textContent?.trim() || "";
+            const category = doc.querySelector('meta[name="category"]')?.getAttribute("content") || "";
+            // 本文は空白を詰めて正規化
+            const bodyText = doc.body?.textContent?.replace(/\s+/g, " ").trim() || "";
+
+            return JSON.stringify({ title, category, bodyText });
+          };
+
+          files.forEach(file => {
+            try {
+              // 現在のファイル内容
+              if (!fs.existsSync(file)) return; // 削除されたファイルは無視
+              const newHtml = fs.readFileSync(file, 'utf-8');
+              
+              // 直前のコミットのファイル内容
+              let oldHtml = "";
+              try {
+                oldHtml = execSync(`git show HEAD~1:${file}`, { stdio: ['pipe', 'pipe', 'ignore'] }).toString();
+              } catch (e) {
+                // 新規作成ファイルの場合は oldHtml が取得できないので "変更あり" とみなす
+                meaningfulFiles.push(file);
+                return;
+              }
+
+              // コンテンツ比較
+              if (extractContent(newHtml) !== extractContent(oldHtml)) {
+                meaningfulFiles.push(file);
+              }
+            } catch (err) {
+              console.error(`Error processing ${file}:`, err);
+              // エラー時は念のため変更リストに含める
+              meaningfulFiles.push(file);
+            }
+          });
+
+          console.log(meaningfulFiles.join(' '));
+          EOF
+
+          # フィルタリング実行
+          FILTERED=$(node filter_diff.js ${{ env.raw_files }})
+          echo "filtered_files=$FILTERED" >> $GITHUB_ENV
+          echo "🔍 Meaningful changes: $FILTERED"
+
+      # 3. sitemap.xml の更新（フィルタリング後のファイルのみ渡す）
       - name: Generate sitemap.xml
-        run: node generate-sitemap.js ${{ env.changed_files }}
+        if: env.filtered_files != ''
+        run: node generate-sitemap.js ${{ env.filtered_files }}
 
-      # ✅ 記事リスト更新スクリプトに変更されたHTMLを渡す
+      # 4. 記事リスト更新（フィルタリング後のファイルのみ渡す）
       - name: Generate articles.json
-        run: node generate-articles.js ${{ env.changed_files }}
+        if: env.filtered_files != ''
+        run: node generate-articles.js ${{ env.filtered_files }}
 
-      # ✅ 変更内容をコミット
+      # 5. 変更内容をコミット
       - name: Commit changes
+        if: env.filtered_files != ''
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "${{ env.changed_files }}" ]; then
-            git add sitemap.xml articles.json ${{ env.changed_files }}
-          else
-            git add sitemap.xml articles.json
-          fi
+          
+          # 変更されたHTML自体は既にGit管理下にあるはずだが、日付更新等で再度addが必要な場合に備える
+          git add sitemap.xml articles.json ${{ env.filtered_files }}
+          
+          # コミット（差分がない場合はエラーにならず終了するように || echo）
           git commit -m "Auto-update Sitemap, Articles, and HTML dates" || echo "No changes to commit"
           git push

@@ -27,7 +27,7 @@ const normalizePath = (p) =>
   for (const file of changedFiles) {
     const normalizedPath = normalizePath(file);
     
-    // HTML読み込み (generate-sitemap.js で日付更新済みのものを読む)
+    // HTML読み込み
     const newHtml = await fs.readFile(file, "utf-8");
     const dom = new JSDOM(newHtml);
     const document = dom.window.document;
@@ -66,14 +66,27 @@ const normalizePath = (p) =>
       try {
         const ldData = JSON.parse(ldJsonScript.textContent);
         datePublished = ldData.datePublished || "";
-        dateModified = ldData.dateModified || ""; // ここは更新後の日付になっているはず
+        dateModified = ldData.dateModified || "";
       } catch {
         console.warn(`⚠️ JSON-LD parse error in ${normalizedPath}`);
       }
     }
 
-    // 日付が取得できない場合はスキップせず、今日の日付を入れるなどのフォールバックも検討可能
-    // ここでは articles.json を更新
+    // ▼▼▼ 追加修正箇所：日付が不完全な場合は登録せずスキップ ▼▼▼
+    // "2025--" のようなハイフン連続や、日付が入っていないものを除外
+    const isInvalidDate = (dateStr) => {
+        return !dateStr || dateStr.includes("--") || dateStr.includes("年月日");
+    };
+
+    if (isInvalidDate(datePublished) || isInvalidDate(dateModified)) {
+        console.log(`⛔ ${normalizedPath} は日付が不完全なため articles.json から除外します (Pub: ${datePublished}, Mod: ${dateModified})`);
+        // マップに既にある場合は削除（以前は有効だったがドラフトに戻した場合など）
+        articleMap.delete(normalizedPath);
+        continue; // 次のファイルの処理へ
+    }
+    // ▲▲▲ 追加修正箇所終わり ▲▲▲
+
+    // articles.json を更新
     articleMap.set(normalizedPath, {
       title,
       category: categories,
