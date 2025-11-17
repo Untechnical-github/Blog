@@ -1,145 +1,123 @@
-const fs = require("fs/promises");
-const { execSync } = require("child_process");
-const { XMLParser, XMLBuilder } = require("fast-xml-parser");
+import fs from "fs/promises";
+import path from "path";
+import { execSync } from "child_process";
+import glob from "glob";
+import { XMLParser, XMLBuilder } from "fast-xml-parser";
+import { fileURLToPath } from "url";
 
-// -------- 基本設定 --------
+// __dirname を再現（ESMでは直接使えない）
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const BASE_URL = "https://untechnical.info";
 const SITEMAP_FILE = "sitemap.xml";
 
-// =====================================================
-// 1. CLI から差分 HTML を受け取る（GitHub Actions 経由）
-// =====================================================
-const cliChangedFiles = process.argv.slice(2).filter(f => f.endsWith(".html"));
+// 🔧 変更されたHTML一覧（origin/main...HEAD の差分）
+const changedFiles = execSync("git diff --name-only origin/main...HEAD")
+  .toString()
+  .split("\n")
+  .filter((f) => f.endsWith(".html") && f.trim().length > 0);
 
-// CLI 差分がある場合はそれを使う
-let changedFiles = [...cliChangedFiles];
+const getGitDate = (file) => {
+  try {
+    return execSync(`git log -1 --format="%cI" "${file}"`).toString().trim();
+  } catch {
+    return new Date().toISOString();
+  }
+};
 
-// CLI からの差分が空なら fallback → HEAD^ と比較
-if (changedFiles.length === 0) {
-  const diffResult = execSync(`git diff --name-only HEAD^ HEAD -- '*.html'`)
-    .toString()
-    .trim()
-    .split("\n")
-    .filter(f => f.endsWith(".html"));
-
-  changedFiles = diffResult;
-}
-
-console.log("🔍 対象 HTML:", changedFiles);
-
-if (changedFiles.length === 0) {
-  console.log("⏩ HTML の変更がないため sitemap 更新なし");
-  process.exit(0);
-}
-
-// =====================================================
-// 2. HTML の本文抽出 & 本文比較
-// =====================================================
+// BODYだけ取り出す
 const extractBodyContent = (html) => {
   const match = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
   return match ? match[1].trim() : "";
 };
 
+// 可視部分の本文が変化したか判定
 const hasVisibleChange = (oldHtml, newHtml) => {
   const oldBody = extractBodyContent(oldHtml)
     .replace(/\s+/g, " ")
     .replace(/<!--.*?-->/g, "");
-
   const newBody = extractBodyContent(newHtml)
     .replace(/\s+/g, " ")
     .replace(/<!--.*?-->/g, "");
-
   return oldBody !== newBody;
 };
 
-// =====================================================
-// 3. sitemap.xml 読み込み → Map 化
-// =====================================================
-let sitemap = { urlset: { url: [] } };
+(async () => {
+  let sitemap = { urlset: { url: [] } };
 
-try {
-  const xml = await fs.readFile(SITEMAP_FILE, "utf-8");
-  const parser = new XMLParser({ ignoreAttributes: false });
-  sitemap = parser.parse(xml);
-} catch {
-  console.log("⚠️ sitemap.xml が存在しないため新規作成します。");
-}
-
-const urlMap = new Map();
-const existingUrls = sitemap.urlset?.url || [];
-const urls = Array.isArray(existingUrls) ? existingUrls : [existingUrls];
-
-urls.forEach(entry => urlMap.set(entry.loc, entry));
-
-// =====================================================
-// 4. 各 HTML ファイルを処理
-// =====================================================
-for (const file of changedFiles) {
-  console.log(`\n📄 処理中: ${file}`);
-
-  // URL化
-  const relativeUrl = "/" + file.replace(/index\.html$/, "").replace(/\.html$/, "");
-  const fullUrl = `${BASE_URL}${relativeUrl}`;
-
-  // Git 日付
-  const lastmodIso = execSync(`git log -1 --format="%cI" "${file}"`)
-    .toString()
-    .trim();
-  const lastmod = lastmodIso.split("T")[0];
-
-  // 旧HTML（HEAD^ なら確実に存在）
-  let oldHtml = "";
+  // 既存 sitemap.xml 読み込み
   try {
-    oldHtml = execSync(`git show HEAD^:${file}`).toString();
+    const xml = await fs.readFile(SITEMAP_FILE, "utf-8");
+    const parser = new XMLParser({ ignoreAttributes: false });
+    sitemap = parser.parse(xml);
   } catch {
-    oldHtml = "";
+    console.log("⚠️ 既存 sitemap.xml が見つかりません。新規作成します。");
   }
 
-  // 新HTML
-  const newHtml = await fs.readFile(file, "utf-8");
+  // Map に登録
+  const urlMap = new Map();
+  const existingUrls = sitemap.urlset?.url || [];
+  const urls = Array.isArray(existingUrls) ? existingUrls : [existingUrls];
 
-  // 本文比較
-  if (!hasVisibleChange(oldHtml, newHtml)) {
-    console.log(`⏩ 本文に変更なし → 最終更新日を変更しません`);
-    continue;
+  urls.forEach((entry) => urlMap.set(entry.loc, entry));
+
+  for (const file of changedFiles) {
+    const relativeUrl = "/" + file.replace(/index\.html$/, "").replace(/\.html$/, "");
+    const fullUrl = `${BASE_URL}${relativeUrl}`;
+    const lastmod = getGitDate(file).split("T")[0];
+
+    let oldHtml = "";
+    try {
+      oldHtml = execSync(`git show origin/main:${file}`).toString();
+    } catch {
+      oldHtml = "";
+    }
+
+    const newHtml = await fs.readFile(file, "utf-8");
+
+    // 本文が変化していなければ timeタグは更新しない
+    if (!hasVisibleChange(oldHtml, newHtml)) {
+      console.log(`⏩ ${file} の本文に変更なし → 最終更新日は変更しません`);
+      continue;
+    }
+
+    // 日本語表記へ変換
+    const [year, month, day] = lastmod.split("-");
+    const japaneseDate = `${year}年${parseInt(month)}月${parseInt(day)}日`;
+
+    // sitemap の更新
+    urlMap.set(fullUrl, { loc: fullUrl, lastmod });
+
+    // HTML を書き換える
+    let updatedHtml = newHtml;
+
+    // <time datetime="xxxx-xx-xx"> の更新
+    updatedHtml = updatedHtml.replace(
+      /(<time datetime=")(\d{4}-\d{2}-\d{2})(">最終更新日：)([^<]+)(<\/time>)/,
+      `${"$1"}${lastmod}${"$3"}${japaneseDate}${"$5"}`
+    );
+
+    // JSON-LD の dateModified
+    updatedHtml = updatedHtml.replace(
+      /("dateModified"\s*:\s*")(\d{4}-\d{2}-\d{2})(")/,
+      `$1${lastmod}$3`
+    );
+
+    await fs.writeFile(file, updatedHtml, "utf-8");
+
+    console.log(`✅ ${file} の最終更新日を ${japaneseDate} に更新`);
   }
 
-  // -------- HTML 内部の日付更新 --------
-  const [year, month, day] = lastmod.split("-");
-  const japaneseDate = `${year}年${parseInt(month)}月${parseInt(day)}日`;
+  // sitemap.xml を再生成
+  const builder = new XMLBuilder({ ignoreAttributes: false, format: true });
+  const updatedSitemap = builder.build({
+    urlset: {
+      "@_xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9",
+      url: Array.from(urlMap.values()),
+    },
+  });
 
-  let updatedHtml = newHtml;
-
-  // timeタグ更新
-  updatedHtml = updatedHtml.replace(
-    /(<time datetime=")(\d{4}-\d{2}-\d{2})(">最終更新日：)([^<]+)(<\/time>)/,
-    `${'$1'}${lastmod}${'$3'}${japaneseDate}${'$5'}`
-  );
-
-  // JSON-LD 更新
-  updatedHtml = updatedHtml.replace(
-    /("dateModified"\s*:\s*")(\d{4}-\d{2}-\d{2})(")/,
-    `$1${lastmod}$3`
-  );
-
-  await fs.writeFile(file, updatedHtml, "utf-8");
-
-  console.log(`✅ ${file} → 最終更新日を ${japaneseDate} に更新`);
-
-  // sitemap へ登録
-  urlMap.set(fullUrl, { loc: fullUrl, lastmod });
-}
-
-// =====================================================
-// 5. sitemap.xml を書き出し
-// =====================================================
-const builder = new XMLBuilder({ ignoreAttributes: false, format: true });
-const outputXml = builder.build({
-  urlset: {
-    "@_xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9",
-    url: Array.from(urlMap.values())
-  }
-});
-
-await fs.writeFile(SITEMAP_FILE, outputXml, "utf-8");
-console.log("✅ sitemap.xml 更新完了");
+  await fs.writeFile(SITEMAP_FILE, updatedSitemap, "utf-8");
+  console.log("✅ sitemap.xml を更新しました");
+})();
