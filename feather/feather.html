@@ -465,11 +465,10 @@
             <img src="certificate8.PNG" class="image1 zoomable" alt="インストール">
             <h4>9.画面に表示されたUDIDをコピーする</h4>
             <img src="certificate9.PNG" class="image1 zoomable" alt="UDID">
-            <h4>10.certificateのサイトを開く</h4>
+            <h4>10.AppTestersのサイトを開く</h4>
+            <p>以下のリンクから、AppTestersのサイトを開く。</p>
             <a href="https://apptesters.org/purchase-certificate" target="_blank" class="link-preview"></a>
-            <h4>11. "Buy Certificate" をタップする</h4>
-            <img src="certificate11.PNG" class="image1 zoomable" alt="Buy Certificate">
-            <h4>12.購入するプランを選択する</h4>
+            <h4>11.購入するプランを選択する</h4>
             <p>
               AppTestersでは証明書のサポートについて3つのプランから選ぶことができる。
                "Full revoke protection" とは、AppleがAppTestersのようなサービスで利用されている証明書を稀に失効させることがあり、その際に証明書をAppTestersが無料で再発行してくれる保証のことである。
@@ -477,23 +476,40 @@
               Ultimate Planでも5年間で最大2回までしか引き継ぎができない点に注意する必要がある。
               また、iPhone以外のデバイスはEssential Planでは登録できないので、Premium PlanまたはUltimate Planを選ぶ必要がある。              
             </p>
-            <img src="certificate12.PNG" class="image1 zoomable" alt="プラン">
-            <h4>13.支払いとUDIDの提出をする</h4>
+            <img src="certificate11.PNG" class="image1 zoomable" alt="プラン">
+            <h4>12.支払いとUDIDの提出をする</h4>
             <p>支払いとUDIDの提出が終わったら、証明書のzipファイルがダウンロードできるようになるまで4営業日待つ。</p>
-            <img src="certificate13.PNG" class="image1 zoomable" alt="支払い">
-            <h4>14.証明書のzipファイルをダウンロードする</h4>
-            <p>AppTestersから "Your Certificate is Ready!" というメールが届いたら、AppTestersにログインして "Orders" から証明書をダウンロードする</p>
-            <img src="certificate14-1.PNG" class="image1 zoomable" alt="ダウンロード">
-            <img src="certificate14-2.PNG" class="image1 zoomable" alt="ダウンロード">
-            <img src="certificate14-3.PNG" class="image1 zoomable" alt="ダウンロード">
-            <h4>15.ダウンロードした証明書のzipファイルを展開する</h4>
+            <img src="certificate12.PNG" class="image1 zoomable" alt="支払い">
+            <h4>13.証明書のzipファイルをダウンロードする</h4>
+            <p>AppTestersから "Your Certificate is Ready!" というメールが届いたら、AppTestersにログインして右上の "≡" をタップして "Orders" を開き、証明書をダウンロードする</p>
+            <img src="certificate13-1.PNG" class="image1 zoomable" alt="ダウンロード">
+            <img src="certificate13-2.PNG" class="image1 zoomable" alt="ダウンロード">
+            <img src="certificate13-3.PNG" class="image1 zoomable" alt="ダウンロード">
+            <h4>14.ダウンロードした証明書のzipファイルを展開する</h4>
             <p>
               ファイルアプリでダウンロードした証明書のzipファイルをタップすると展開でき、certificate infoファイル、mobileprovisionファイル、p12ファイルが入ったフォルダが生成される。
               certificate infoファイルにはp12ファイルのパスワードが記載されている。
             </p>
-            <img src="certificate15-1.PNG" class="image1 zoomable" alt="展開">
-            <img src="certificate15-2.PNG" class="image1 zoomable" alt="展開">
-            <img src="certificate15-3.PNG" class="image1 zoomable" alt="展開">
+            <img src="certificate14-1.PNG" class="image1 zoomable" alt="展開">
+            <img src="certificate14-2.PNG" class="image1 zoomable" alt="展開">
+            <img src="certificate14-3.PNG" class="image1 zoomable" alt="展開">
+            <h3>証明書を失効させられた場合</h3>
+            <p>
+              証明書が無効になると、サイドロードしたアプリが起動できなくなる。
+              この場合、再び証明書を取得するには2周間から1ヶ月かかる。
+              すぐに証明書を得るには、新たに証明書を購入する必要がある。
+              以下では、証明書が失効させられた場合の割引証明書の購入手順を示す。
+            </p>
+            <h4>1.AppTestersのサイトを開く</h4>
+            <p>以下のリンクから、AppTestersのサイトを開く。</p>
+            <a href="https://apptesters.org/purchase-certificate" target="_blank" class="link-preview"></a>
+            <h4>2. "Got Revoked?" でUDIDを入力し、 "Check" をタップする</h4>
+            <p>開いたサイトの、プランの選択画面の下に "Got Revoked?" と表示がある。</p>
+            <img src="certificate2_2.PNG" class="image1 zoomable" alt="Got Revoked?">
+            <h4>3. "Discounted certificate" の右の "View" をタップする</h4>
+            <img src="certificate3_2.PNG" class="image1 zoomable" alt="View">
+            <h4>4.プランを選択して購入する</h4>
+            <img src="certificate4_2.PNG" class="image1 zoomable" alt="購入">
           </section>
           <section id="apptesters">
             <h2>AppTesters IPA Signerを用いてFeatherをサイドロードする</h2>
