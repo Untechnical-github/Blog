@@ -5,39 +5,34 @@ const { JSDOM } = require("jsdom");
 const JSON_FILE = "articles.json";
 const BASE_URL = "https://untechnical.info/";
 
-// 重要：パスを完全に統一する関数
 const normalizePath = (p) =>
-  path.normalize(p)
-    .replace(/\\/g, "/")
-    .replace(/^\.\//, "");
+  path.normalize(p).replace(/\\/g, "/").replace(/^\.\//, "");
 
 (async () => {
   let articleMap = new Map();
 
-  // 既存 articles.json → Map に読み込み
   try {
     const data = await fs.readFile(JSON_FILE, "utf-8");
     JSON.parse(data).forEach(article => {
-      const key = normalizePath(article.path);   // ← 読み込み時にも正規化！
+      const key = normalizePath(article.path);
       articleMap.set(key, { ...article, path: key });
     });
   } catch {}
 
-  // 対象 HTML
+  // 引数からファイルリストを取得
   const changedFiles = process.argv
     .slice(2)
     .filter(f => f.endsWith(".html") && f !== "index.html" && f !== "policy.html");
 
   for (const file of changedFiles) {
-
-    // キーを統一
     const normalizedPath = normalizePath(file);
-
+    
+    // HTML読み込み (generate-sitemap.js で日付更新済みのものを読む)
     const newHtml = await fs.readFile(file, "utf-8");
     const dom = new JSDOM(newHtml);
     const document = dom.window.document;
 
-    // 本文
+    // 本文取得
     let content =
       document.querySelector("main")?.textContent?.trim() ||
       document.querySelector("article")?.textContent?.trim() ||
@@ -47,8 +42,7 @@ const normalizePath = (p) =>
     // タイトル
     const title =
       document.querySelector("title")?.textContent?.trim() ||
-      document.querySelector("h1")?.textContent?.trim() ||
-      "";
+      document.querySelector("h1")?.textContent?.trim() || "";
 
     // カテゴリ
     const metaCategory =
@@ -64,7 +58,7 @@ const normalizePath = (p) =>
       image = new URL(relativeImagePath, fileUrl).href;
     }
 
-    // JSON-LD
+    // JSON-LD から日付取得
     let datePublished = "";
     let dateModified = "";
     const ldJsonScript = document.querySelector("script[type='application/ld+json']");
@@ -72,26 +66,14 @@ const normalizePath = (p) =>
       try {
         const ldData = JSON.parse(ldJsonScript.textContent);
         datePublished = ldData.datePublished || "";
-        dateModified = ldData.dateModified || "";
+        dateModified = ldData.dateModified || ""; // ここは更新後の日付になっているはず
       } catch {
         console.warn(`⚠️ JSON-LD parse error in ${normalizedPath}`);
       }
     }
 
-    // 比較
-    const oldArticle = articleMap.get(normalizedPath);
-
-    const isChanged =
-      !oldArticle ||
-      oldArticle.content !== content ||
-      oldArticle.dateModified !== dateModified;
-
-    if (!isChanged) {
-      console.log(`⏩ ${normalizedPath} に本文・更新日変更なし → 更新しません`);
-      continue;
-    }
-
-    // 上書き保存（重複しない）
+    // 日付が取得できない場合はスキップせず、今日の日付を入れるなどのフォールバックも検討可能
+    // ここでは articles.json を更新
     articleMap.set(normalizedPath, {
       title,
       category: categories,
@@ -102,9 +84,10 @@ const normalizePath = (p) =>
       dateModified
     });
 
-    console.log(`✅ ${normalizedPath} 更新 → articles.json に反映`);
+    console.log(`✅ ${normalizedPath} を articles.json に更新登録 (Modified: ${dateModified})`);
   }
 
+  // 日付順にソート
   const articles = Array.from(articleMap.values()).sort((a, b) => {
     const dateA = new Date(a.datePublished || 0);
     const dateB = new Date(b.datePublished || 0);
