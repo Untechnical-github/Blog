@@ -131,16 +131,5 @@
     "image": "https://untechnical.info/camera_sound/camera_sound.jpg",
     "datePublished": "2025-06-19",
     "dateModified": "2025-11-17"
-  },
-  {
-    "title": "adbでWear OSのPixel WatchやGalaxy Watchなどのアプリを無効化する方法",
-    "category": [
-      "Android"
-    ],
-    "path": "wear_os_adb/wear_os_adb.html",
-    "content": "adbでWear OSのPixel WatchやGalaxy Watchなどのアプリを無効化する方法 公開日：2025年月日 最終更新日：2025年月日 Wear OSでもadbコマンドが使える Wear OSはGoogleが開発したスマートウォッチ向けのOSであり、元の名をAndorid Wearという。 このOSはPixel WatchやGalaxy Watchなどに搭載されている。 これはAndroidベースのOSなので、apkからアプリをインストールでき、さらにadbコマンドも使える。 Wear OSには設定アプリから無効化できるアプリも存在する一方でadbでしか消せないアプリも多数ある。 ここではAndroidと同様にadbでWear OSのPixel WatchやGalaxy Watchなどのアプリを無効化する方法を解説する。 Galaxy Watchのアプリを無効化する ここではWear OS搭載のGalaxy Watchを用いてアプリを無効化する手順を示す。 Pixel Watchなどでは画面のUIが異なるが、基本的には同じ操作を行う。 方法 1.Galaxy Watchの設定アプリを開く 2. \"接続\" をタップする 3. \"Wi-Fi\" をタップする 4.Androidスマホと同じWi-Fiに接続する ここで接続するWi-Fiは、adbコマンドを実行するAndroidスマホで接続しているWi-Fiと同じである必要がある。 Wi-Fi環境がない場合、adbコマンドを実行するAndroidスマホでテザリングをしてそのWi-Fiに接続することでも実行できる。 5.設定アプリの \"時計について\" をタップするく 6. \"ソフトウェア情報\" をタップするく 7. \"ソフトウェアバージョン\" を7回タップする これにより、開発者オプションが有効になる。 8.設定アプリの \"開発者オプション\" をタップする 9. \"ADBデバッグ\" をオンにする 10. \"ワイヤレスのデバッグ\" をタップするく 11. \"ワイヤレスのデバッグ\" をオンにする ここで表示された \"IPアドレスとポート\" はAndroidスマホと接続する際に用いる。 12. \"新しいデバイスをペアリング\" をタップする ここで表示された \"IPアドレスとポート\" と \"Wi-Fiペア設定コード\" はAndroidスマホとペアリングする際に用いる。 ここでの \"IPアドレスとポート\" は11で表示されたものとは異なり、Androidスマホと接続する際には使えない。 13.AndoridスマホにADB Shellをインストールする 以下のリンクからADB Shellをインストールする 14.ADB Shellのアプリを開く 15. \"ターミナル\" タブの \"ローカルターミナル\" をタップする 16.Galaxy Watchとペアリングするadbコマンドを実行する 以下のコマンドを実行する。 adb pair [12で表示されたIPアドレスとポート] このコマンド実行後、ペアリングが完了してGalaxy Watchに接続できるようになる。 一度ペアリングすれば、次回以降この手順は不要になる。 17.12で表示されたWi-Fiペア設定コードを入力する 18.Galaxy Watchと接続するadbコマンドを実行する 以下のコマンドを実行する。 adb connect [11で表示されたIPアドレスとポート] このコマンド実行後、接続が完了してGalaxy Watchにadbコマンドが実行できるようになる。 19.Galaxy Watchのアプリのパッケージ名を表示するadbコマンドを実行する すべてのアプリを表示する場合、以下のコマンドを実行する。 adb shell pm list packae サードパーティアプリのみ表示する場合、以下のコマンドを実行する。 adb shell pm list packae -3 システムアプリのみ表示する場合、以下のコマンドを実行する。 adb shell pm list packae -s 特定の文字がパッケージ名に含まれるアプリのみ表示する場合、以下のコマンドを実行する。 adb shell pm list package | grep [特定の文字] 20.Galaxy Watchのアプリを無効化または削除するadbコマンドを実行する 無効化する場合、以下のコマンドを実行する。 adb shell pm disable-user --user 0 [無効化するアプリのパッケージ名] 削除する場合、以下のコマンドを実行する。 adb shell pm uninstall -k --user 0 [無効化するアプリのパッケージ名] プロフィール 高度情報社会の最先端を駆け抜ける 問い合わせフォーム ご連絡は以下のメールアドレスまたはXのDMからお願いいたします。 メール︰untechnical@untechnical.info X︰Untechnical_ ×",
-    "image": "https://untechnical.info/wear_os_adb/wear_os_adb.jpg",
-    "datePublished": "2025--",
-    "dateModified": "2025--"
   }
 ]
