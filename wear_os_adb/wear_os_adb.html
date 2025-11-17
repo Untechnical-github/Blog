@@ -5,21 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="adbを用いてWear OSのアプリを無効化する方法を解説">
     <meta name="google-site-verification" content="0Lm3uRwedrKk66bbYr_2TmZNx986VFE1yXWuB2h1iAs" /> 
-
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Untechnical">
     <meta property="og:title" content="adbでWear OSのPixel WatchやGalaxy Watchなどのアプリを無効化する方法">
     <meta property="og:description" content="adbを用いてWear OSのアプリを無効化する方法を解説">
     <meta property="og:url" content="https://untechnical.info/wear_os_adb/wear_os_adb.html">
     <meta property="og:image" content="https://untechnical.info/wear_os_adb/wear_os_adb.jpg">
- 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="adbでWear OSのPixel WatchやGalaxy Watchなどのアプリを無効化する方法">
     <meta name="twitter:description" content="adbを用いてWear OSのアプリを無効化する方法を解説">
     <meta name="twitter:image" content="https://untechnical.info/wear_os_adb/wear_os_adb.jpg">
-
     <meta name="category" content="Android">
-
     <title>adbでWear OSのPixel WatchやGalaxy Watchなどのアプリを無効化する方法</title>
     <link rel="icon" href="https://untechnical.info/profile.ico" type="image/x-icon">
     <link rel="shortcut icon" href="https://untechnical.info/profile.ico" type="image/x-icon">
@@ -474,6 +470,21 @@
           <p>以下のコマンドを実行する。</p>
           <pre><code>adb connect [11で表示されたIPアドレスとポート]</code></pre>
           <p>このコマンド実行後、接続が完了してGalaxy Watchにadbコマンドが実行できるようになる。</p>
+          <h4>19.Galaxy Watchのアプリのパッケージ名を表示するadbコマンドを実行する</h4>
+          <p>すべてのアプリを表示する場合、以下のコマンドを実行する。</p>
+          <pre><code>adb shell pm list packae</code></pre>
+          <p>サードパーティアプリのみ表示する場合、以下のコマンドを実行する。</p>
+          <pre><code>adb shell pm list packae -3</code></pre>
+          <p>システムアプリのみ表示する場合、以下のコマンドを実行する。</p>
+          <pre><code>adb shell pm list packae -s</code></pre>
+          <p>特定の文字がパッケージ名に含まれるアプリのみ表示する場合、以下のコマンドを実行する。</p>
+          <pre><code>adb shell pm list package | grep [特定の文字]</code></pre>
+          <img src="wear_os_adb18.jpg" alt="ADB Shell" class="image1 zoomable">
+          <h4>20.Galaxy Watchのアプリを無効化または削除するadbコマンドを実行する</h4>
+          <p>無効化する場合、以下のコマンドを実行する。</p>
+          <pre><code>adb shell pm disable-user --user 0 [無効化するアプリのパッケージ名]</code></pre>
+          <p>削除する場合、以下のコマンドを実行する。</p>
+          <pre><code>adb shell pm uninstall -k --user 0 [無効化するアプリのパッケージ名]</code></pre>
         </div>
       </section>
       <section id="about">
