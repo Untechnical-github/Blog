@@ -1,11 +1,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://untechnical.info/policy</loc>
-    <lastmod>2025-11-02</lastmod>
+    <lastmod>2025-11-21</lastmod>
   </url>
   <url>
     <loc>https://untechnical.info/</loc>
-    <lastmod>2025-11-02</lastmod>
+    <lastmod>2025-11-21</lastmod>
   </url>
   <url>
     <loc>https://untechnical.info/camera_sound/camera_sound</loc>
@@ -53,6 +53,10 @@
   </url>
   <url>
     <loc>https://untechnical.info/camera_sound/xperia/xperia</loc>
+    <lastmod>2025-11-21</lastmod>
+  </url>
+  <url>
+    <loc>https://untechnical.info/wear_os_adb/wear_os_adb</loc>
     <lastmod>2025-11-21</lastmod>
   </url>
 </urlset>
