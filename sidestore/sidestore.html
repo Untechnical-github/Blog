@@ -326,28 +326,24 @@
         height: 100%;
         background-color: rgba(0,0,0,0.8);
         overflow: hidden;
-        /* flexの中央寄せは削除し、JSで完全制御します */
       }
 
       .modal-content {
-        /* 変更点: 絶対配置にしてJSで座標を完全支配します */
+
         position: absolute;
         top: 0;
         left: 0;
-        
-        /* 初期サイズ制限 */
+
         max-width: 100%;
         max-height: 100%;
-        
-        /* 座標計算の基準を左上に固定 */
+
         transform-origin: 0 0;
         
         touch-action: none;
         cursor: grab;
         user-select: none;
         -webkit-user-drag: none;
-        
-        /* 重要: ホイール操作時の transition はJS側で制御するため、基本はスムーズにしておく */
+
         transition: transform 0.1s ease-out;
         will-change: transform;
       }
@@ -750,7 +746,6 @@
         const modal = document.getElementById("imgModal");
         const modalImg = document.getElementById("modalImage");
 
-        // --- 状態管理変数 ---
         let state = { x: 0, y: 0, scale: 1 };
 
         const updateTransform = () => {
@@ -772,7 +767,6 @@
           modalImg.style.cursor = "grab";
         };
 
-        // --- モーダル開閉 ---
         document.querySelectorAll(".zoomable").forEach(img => {
           img.addEventListener("click", () => {
             modalImg.src = img.src;
@@ -793,11 +787,6 @@
         modal.addEventListener("click", e => {
           if (e.target.id === "imgModal") closeModal();
         });
-
-
-        // ===========================================================
-        //  1. PC用ロジック (変更なし)
-        // ===========================================================
 
         modalImg.addEventListener('wheel', (e) => {
           e.preventDefault();
@@ -861,18 +850,12 @@
           }
         });
 
-
-        // ===========================================================
-        //  2. スマホ用ロジック (ピンチ+パン対応版)
-        // ===========================================================
-
-        // 変数を「初期値」ではなく「直前の値」として扱います
         let lastTouchDistance = 0;
         let lastTouchCenter = { x: 0, y: 0 };
         
         let isPinching = false;
-        let lastTouchX = 0; // 1本指ドラッグ用
-        let lastTouchY = 0; // 1本指ドラッグ用
+        let lastTouchX = 0;
+        let lastTouchY = 0;
 
         const getDistance = (touches) => {
           const dx = touches[0].clientX - touches[1].clientX;
@@ -887,30 +870,27 @@
             };
         };
 
-        // --- Touch Start ---
         modalImg.addEventListener('touchstart', (e) => {
           if (e.touches.length === 1) {
-            // 1本指: ドラッグ準備
+
             if (state.scale > 1) {
                 lastTouchX = e.touches[0].clientX;
                 lastTouchY = e.touches[0].clientY;
                 modalImg.style.transition = "none";
             }
           } else if (e.touches.length === 2) {
-            // 2本指: ピンチ+パン準備
+
             isPinching = true;
-            // ピンチ開始時点の「距離」と「中心座標」を記録
+
             lastTouchDistance = getDistance(e.touches);
             lastTouchCenter = getMidpoint(e.touches);
             modalImg.style.transition = "none";
           }
         }, { passive: false });
-
-        // --- Touch Move ---
+-
         modalImg.addEventListener('touchmove', (e) => {
           if (e.cancelable) e.preventDefault();
 
-          // 1. 1本指でのドラッグ
           if (e.touches.length === 1 && !isPinching) {
             if (state.scale <= 1) return;
 
@@ -927,40 +907,28 @@
             updateTransform();
 
           } 
-          // 2. 2本指でのピンチ ＆ パン (同時処理)
+
           else if (e.touches.length === 2) {
             const currentDistance = getDistance(e.touches);
             const currentCenter = getMidpoint(e.touches);
 
             if (lastTouchDistance === 0) return;
 
-            // --- 拡大率の計算 (前回フレームとの比率) ---
             const scaleRatio = currentDistance / lastTouchDistance;
             let newScale = state.scale * scaleRatio;
 
-            // 縮小リセット判定
             if (newScale <= 1) {
                 centerImage();
                 return;
             }
 
-            // --- 座標の計算 (Google Photo方式) ---
-            // 1. 「直前の中心点(lastTouchCenter)」における画像の相対位置(オフセット)を求める
-            //    relativeX = (直前の指の位置 - 直前の画像の左上)
             const relativeX = lastTouchCenter.x - state.x;
             const relativeY = lastTouchCenter.y - state.y;
-
-            // 2. 新しい座標を計算する
-            //    新しい座標 = (現在の指の位置) - (さっきの相対位置 * 拡大率)
-            //    
-            //    「さっき指の下にあった画像上の点」が、拡大された後も「現在の指の下」に来るように移動させる計算です。
-            //    currentCenterが移動していれば、自動的にstate.x/yも追従して移動(パン)します。
             
             state.x = currentCenter.x - (relativeX * scaleRatio);
             state.y = currentCenter.y - (relativeY * scaleRatio);
             state.scale = newScale;
 
-            // --- 次のフレームのために値を更新 ---
             lastTouchDistance = currentDistance;
             lastTouchCenter = currentCenter;
 
@@ -969,15 +937,13 @@
           }
         }, { passive: false });
 
-        // --- Touch End ---
         modalImg.addEventListener('touchend', (e) => {
           if (e.touches.length < 2) {
             isPinching = false;
           }
 
-          // ピンチ終了 -> 1本指ドラッグへの引き継ぎ処理
           if (e.touches.length === 1) {
-            // 残った指の位置を即座に取得し、ドラッグの基準点を更新
+
             lastTouchX = e.touches[0].clientX;
             lastTouchY = e.touches[0].clientY;
             modalImg.style.transition = "none";
@@ -987,7 +953,6 @@
           }
         });
 
-        // --- OGP / Copy (変更なし) ---
         async function fetchOGData(url, anchorElement) {
             try {
             const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
