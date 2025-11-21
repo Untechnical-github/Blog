@@ -224,11 +224,16 @@
         font-family: Consolas, Monaco, "Courier New", monospace;
         font-size: 1.0em;
         padding: 12px;
+        padding-right: 60px;
         border-radius: 8px;
         display: block;
         overflow-x: auto;
         white-space: pre-wrap;
         line-height: 1.5;
+      }
+
+      pre {
+        position: relative;
       }
 
       .article-dates {
@@ -352,6 +357,26 @@
       .zoomable {
         cursor: zoom-in;
         transition: transform 0.2s;
+      }
+
+      .copy-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background-color: #0073e6;
+        color: #fff;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 5px;
+        font-size: 0.8em;
+        cursor: pointer;
+        opacity: 0.85;
+        transition: opacity 0.3s ease;
+        z-index: 10;
+      }
+
+      .copy-btn:hover {
+        opacity: 1;
       }
     </style>
     <script type="application/ld+json">
@@ -610,61 +635,88 @@
     <script>
       document.addEventListener('DOMContentLoaded', () => {
 
-      const modal = document.getElementById("imgModal");
-      const modalImg = document.getElementById("modalImage");
+        const modal = document.getElementById("imgModal");
+        const modalImg = document.getElementById("modalImage");
 
-      document.querySelectorAll(".zoomable").forEach(img => {
-        img.addEventListener("click", () => {
+        document.querySelectorAll(".zoomable").forEach(img => {
+          img.addEventListener("click", () => {
 
-          modalImg.src = img.src;
+            modalImg.src = img.src;
 
-          modal.style.display = "flex";
+            modal.style.display = "flex";
 
-          document.body.style.overflow = "hidden";
+            document.body.style.overflow = "hidden";
+          });
         });
-      });
 
-      const closeModal = () => {
-        modal.style.display = "none";
-        document.body.style.overflow = "";
-      };
+        const closeModal = () => {
+          modal.style.display = "none";
+          document.body.style.overflow = "";
+        };
 
-      document.querySelector(".close").addEventListener("click", closeModal);
+        document.querySelector(".close").addEventListener("click", closeModal);
 
-      modal.addEventListener("click", e => {
-        if (e.target.id === "imgModal") {
-          closeModal();
-        }
-      });
+        modal.addEventListener("click", e => {
+          if (e.target.id === "imgModal") {
+            closeModal();
+          }
+        });
 
-      async function fetchOGData(url, anchorElement) {
+        async function fetchOGData(url, anchorElement) {
           try {
-              const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
-              const { data, status } = await response.json();
-              if (status === "success") {
-                  if (data.title) {
-                      const titleElem = document.createElement("div");
-                      titleElem.textContent = data.title;
-                      titleElem.className = "preview-title";
-                      anchorElement.appendChild(titleElem);
-                  }
-                  if (data.image?.url) {
-                      const img = document.createElement("img");
-                      img.src = data.image.url;
-                      img.alt = "Preview";
-                      img.width = 200;
-                      anchorElement.appendChild(img);
-                  }
-                  if (data.description) {
-                      const descElem = document.createElement("div");
-                      descElem.textContent = data.description;
-                      descElem.className = "preview-description";
-                      anchorElement.appendChild(descElem);
-                  }
+            const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
+            const { data, status } = await response.json();
+            if (status === "success") {
+              if (data.title) {
+                const titleElem = document.createElement("div");
+                titleElem.textContent = data.title;
+                titleElem.className = "preview-title";
+                anchorElement.appendChild(titleElem);
               }
-          } catch (error) { console.error("OGP情報の取得に失敗:", error); }
-      }
-      document.querySelectorAll(".link-preview").forEach(async (anchor) => { await fetchOGData(anchor.href, anchor); });
+              if (data.image?.url) {
+                const img = document.createElement("img");
+                img.src = data.image.url;
+                img.alt = "Preview";
+                img.width = 200;
+                anchorElement.appendChild(img);
+              }
+              if (data.description) {
+                const descElem = document.createElement("div");
+                descElem.textContent = data.description;
+                descElem.className = "preview-description";
+                anchorElement.appendChild(descElem);
+              }
+            }
+          } catch (error) {
+            console.error("OGP情報の取得に失敗:", error); 
+          }
+        }
+
+        document.querySelectorAll(".link-preview").forEach(async (anchor) => { await fetchOGData(anchor.href, anchor); });
+        
+        document.querySelectorAll("pre code").forEach(codeBlock => {
+          const pre = codeBlock.parentElement;
+
+          const button = document.createElement("button");
+          button.className = "copy-btn";
+          button.textContent = "Copy";
+
+          pre.appendChild(button);
+
+          button.addEventListener("click", async () => {
+            let text = codeBlock.textContent;
+
+            text = text.replace(/\[.*?\]/g, "").trim();
+
+            try {
+              await navigator.clipboard.writeText(text);
+              button.textContent = "Copied!";
+              setTimeout(() => (button.textContent = "Copy"), 1500);
+            } catch (err) {
+              console.error("コピー失敗:", err);
+            }
+          });
+        });
       });
     </script>
   </body>
