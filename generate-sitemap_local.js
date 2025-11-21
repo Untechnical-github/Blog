@@ -7,9 +7,6 @@ const { XMLParser, XMLBuilder } = require("fast-xml-parser");
 const BASE_URL = "https://untechnical.info";
 const SITEMAP_FILE = "sitemap.xml";
 
-// ----------------------------
-// yyyy-mm-dd の妥当性チェック
-// ----------------------------
 function isValidDate(dateStr) {
   if (!dateStr) return false;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
@@ -17,22 +14,15 @@ function isValidDate(dateStr) {
   return true;
 }
 
-// ----------------------------
-// HTMLファイル一覧取得（index.html / policy.html も含む）
-// ----------------------------
 function getAllHtmlFiles() {
   return glob.sync("**/*.html").map(f => f.replace(/\\/g, "/"));
 }
 
-// ----------------------------
-// HTMLの日付を取得（JSON-LD → time datetime）
-// ----------------------------
-async function getDateFromHtml(file) {
+async function getModifiedDateFromHtml(file) {
   const html = await fs.readFile(file, "utf-8");
   const dom = new JSDOM(html);
   const doc = dom.window.document;
 
-  // JSON-LD
   const ld = doc.querySelector('script[type="application/ld+json"]');
   if (ld) {
     try {
@@ -43,20 +33,15 @@ async function getDateFromHtml(file) {
     } catch {}
   }
 
-  // time datetime
-  const timeTag = doc.querySelector("time[datetime]");
-  if (timeTag) {
-    const dt = timeTag.getAttribute("datetime")?.split("T")[0] || "";
+  const modifiedTag = doc.querySelector('time.modified[datetime]');
+  if (modifiedTag) {
+    const dt = modifiedTag.getAttribute("datetime")?.split("T")[0] ?? "";
     if (isValidDate(dt)) return dt;
   }
 
-  // ❌ 日付情報が不完全 → 除外扱い
   return null;
 }
 
-// ----------------------------
-// URL生成
-// ----------------------------
 function toUrl(file) {
   return `${BASE_URL}/${file
     .replace(/index\.html$/, "")
@@ -64,7 +49,6 @@ function toUrl(file) {
 }
 
 (async () => {
-  // 既存 sitemap.xml を読み込み
   let urlMap = new Map();
   try {
     const xml = await fs.readFile(SITEMAP_FILE, "utf-8");
@@ -80,24 +64,22 @@ function toUrl(file) {
     console.log("⚠️ sitemap.xml が見つかりません。新規作成します");
   }
 
-  // 全 HTML をチェック
   const htmlFiles = getAllHtmlFiles();
   console.log(`🔍 発見した HTML 総数: ${htmlFiles.length}`);
 
   for (const file of htmlFiles) {
     const url = toUrl(file);
-    const date = await getDateFromHtml(file);
+    const modifiedDate = await getModifiedDateFromHtml(file);
 
-    if (!date) {
-      console.log(`⏩ 除外: ${file}（日付が不完全）`);
+    if (!modifiedDate) {
+      console.log(`⏩ 除外: ${file}（最終更新日不明 or 公開前ドラフト）`);
       continue;
     }
 
-    urlMap.set(url, { loc: url, lastmod: date });
-    console.log(`✅ ${file} → ${date}`);
+    urlMap.set(url, { loc: url, lastmod: modifiedDate });
+    console.log(`✅ ${file} → 最終更新日: ${modifiedDate}`);
   }
 
-  // XML に変換
   const builder = new XMLBuilder({ ignoreAttributes: false, format: true });
   const output = builder.build({
     urlset: {

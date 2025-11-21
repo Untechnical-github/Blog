@@ -5,17 +5,11 @@ const { JSDOM } = require("jsdom");
 const JSON_FILE = "articles.json";
 const BASE_URL = "https://untechnical.info/";
 
-// ----------------------------
-// パスを完全統一する関数
-// ----------------------------
 const normalizePath = (p) =>
   path.normalize(p)
     .replace(/\\/g, "/")
     .replace(/^\.\//, "");
 
-// ----------------------------
-// yyyy-mm-dd 形式の妥当性チェック
-// ----------------------------
 function isValidDate(dateStr) {
   if (!dateStr) return false;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
@@ -23,9 +17,6 @@ function isValidDate(dateStr) {
   return true;
 }
 
-// ----------------------------
-// time datetime の妥当性チェック
-// ----------------------------
 function getTimeTagDate(document) {
   const t = document.querySelector("time[datetime]");
   if (!t) return "";
@@ -34,9 +25,6 @@ function getTimeTagDate(document) {
   return dt;
 }
 
-// ----------------------------
-// 指定ディレクトリ配下の HTML をすべて取得
-// ----------------------------
 async function getAllHtmlFiles(dir) {
   let results = [];
   const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -58,13 +46,9 @@ async function getAllHtmlFiles(dir) {
   return results;
 }
 
-// ----------------------------
-// メイン処理
-// ----------------------------
 (async () => {
   let articleMap = new Map();
 
-  // 既存 articles.json 読み込み
   try {
     const data = await fs.readFile(JSON_FILE, "utf-8");
     JSON.parse(data).forEach(article => {
@@ -75,9 +59,6 @@ async function getAllHtmlFiles(dir) {
     console.log("⚠️ articles.json が存在しないため、新規作成します");
   }
 
-  // ------------------------------------------------
-  // 1. 全 HTML を探索（index.html と policy.html は除外）
-  // ------------------------------------------------
   const htmlFiles = await getAllHtmlFiles(".");
   console.log(`📄 発見した HTML 数: ${htmlFiles.length}`);
 
@@ -88,9 +69,6 @@ async function getAllHtmlFiles(dir) {
     const dom = new JSDOM(html);
     const document = dom.window.document;
 
-    // ----------------------------
-    // JSON-LD 日付取得
-    // ----------------------------
     let datePublished = "";
     let dateModified = "";
 
@@ -105,14 +83,8 @@ async function getAllHtmlFiles(dir) {
       }
     }
 
-    // ----------------------------
-    // time datetime 日付チェック
-    // ----------------------------
     const timeDate = getTimeTagDate(document);
 
-    // ----------------------------
-    // ❌ 日付が不完全なら除外
-    // ----------------------------
     if (
       !isValidDate(datePublished) ||
       !isValidDate(dateModified) ||
@@ -122,27 +94,21 @@ async function getAllHtmlFiles(dir) {
       continue;
     }
 
-    // ----------------------------
-    // 本文
-    // ----------------------------
     let content =
       document.querySelector("main")?.textContent?.trim() ||
       document.querySelector("article")?.textContent?.trim() ||
       document.body.textContent.trim();
     content = content.replace(/\s+/g, " ").trim();
 
-    // タイトル
     const title =
       document.querySelector("title")?.textContent?.trim() ||
       document.querySelector("h1")?.textContent?.trim() ||
       "";
 
-    // カテゴリ
     const metaCategory =
       document.querySelector("meta[name='category']")?.getAttribute("content") || "";
     const categories = metaCategory.split(",").map(c => c.trim()).filter(Boolean);
 
-    // 画像URL
     const relativeImagePath =
       document.querySelector("main img, article img, body img")?.getAttribute("src") || "";
     let image = "";
@@ -151,9 +117,6 @@ async function getAllHtmlFiles(dir) {
       image = new URL(relativeImagePath, fileUrl).href;
     }
 
-    // ----------------------------
-    // 記事登録
-    // ----------------------------
     articleMap.set(normalizedPath, {
       title,
       category: categories,
@@ -166,10 +129,7 @@ async function getAllHtmlFiles(dir) {
 
     console.log(`✅ 記事データ更新: ${normalizedPath}`);
   }
-
-  // ------------------------------------------------
-  // 2. 日付順にソートして保存
-  // ------------------------------------------------
+  
   const articles = Array.from(articleMap.values()).sort((a, b) => {
     const dateA = new Date(a.datePublished || 0);
     const dateB = new Date(b.datePublished || 0);

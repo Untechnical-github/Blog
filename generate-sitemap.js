@@ -5,25 +5,18 @@ const path = require("path");
 const BASE_URL = "https://untechnical.info";
 const SITEMAP_FILE = "sitemap.xml";
 
-// JSTの日時を取得するヘルパー
 const getJSTDate = () => {
   const now = new Date();
-  // UTC時間をJST(UTC+9)に変換
   const jstOffset = 9 * 60;
   const jstDate = new Date(now.getTime() + (jstOffset + now.getTimezoneOffset()) * 60000);
   return jstDate;
 };
 
-const formatDateISO = (date) => {
-  return date.toISOString().split("T")[0]; // YYYY-MM-DD
-};
-
-const formatDateJapanese = (date) => {
-  return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
-};
+const formatDateISO = (date) => date.toISOString().split("T")[0]; // YYYY-MM-DD
+const formatDateJapanese = (date) =>
+  `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
 
 (async () => {
-  // ✅ 引数から変更されたファイルリストを取得 (GitHub Actionsから渡される)
   const changedFiles = process.argv
     .slice(2)
     .filter(f => f.endsWith(".html") && f !== "index.html" && f !== "policy.html");
@@ -34,7 +27,6 @@ const formatDateJapanese = (date) => {
     console.log(`🔍 変更ファイル: ${changedFiles.join(", ")}`);
   }
 
-  // 既存の sitemap.xml を読み込み
   let sitemap = { urlset: { url: [] } };
   try {
     const xml = await fs.readFile(SITEMAP_FILE, "utf-8");
@@ -45,16 +37,13 @@ const formatDateJapanese = (date) => {
   }
 
   const urlMap = new Map();
-  const existingUrls = sitemap.urlset?.url || [];
-  const urls = Array.isArray(existingUrls) ? existingUrls : [existingUrls];
+  const urls = Array.isArray(sitemap.urlset?.url) ? sitemap.urlset.url : [sitemap.urlset?.url].filter(Boolean);
   urls.forEach(entry => urlMap.set(entry.loc, entry));
 
-  // 現在時刻 (更新日とする)
   const nowJST = getJSTDate();
   const isoDate = formatDateISO(nowJST);
   const jpDate = formatDateJapanese(nowJST);
 
-  // ✅ 変更されたファイルをループ処理して HTML を書き換え
   for (const file of changedFiles) {
     const relativeUrl = "/" + file.replace(/index\.html$/, "").replace(/\.html$/, "");
     const fullUrl = `${BASE_URL}${relativeUrl}`;
@@ -62,63 +51,43 @@ const formatDateJapanese = (date) => {
     try {
       let html = await fs.readFile(file, "utf-8");
 
-      // ▼▼▼ 追加修正箇所：ドラフト（未完成の日付）チェック ▼▼▼
-      // 日付に "--" (例: 2025--) や "年月日" が含まれているかチェック
-      // これらが含まれている場合、このファイルはまだ公開準備ができていないと判断し、
-      // HTMLの日付更新も、sitemapへの追加も行わない。
-      const isDraft = 
-        /datetime="[\d-]*--/.test(html) ||          // <time datetime="2025--">
-        /"datePublished":\s*"[\d-]*--"/.test(html) || // JSON-LD datePublished
-        /"dateModified":\s*"[\d-]*--"/.test(html) ||  // JSON-LD dateModified
-        /datetime="[^"]*年月日"/.test(html) ||      // 日本語プレースホルダーの念のためチェック
-        html.includes("2025年月日");                // 本文中のプレースホルダー
+      const pubMatch = html.match(/<time[^>]*class="published"[^>]*datetime="([\d-]+)"[^>]*>/);
+      const publishedISO = pubMatch ? pubMatch[1] : null;
+
+      const isDraft =
+        !publishedISO ||
+        /--/.test(publishedISO) ||
+        publishedISO.length < 10;
 
       if (isDraft) {
-        console.log(`⛔ Skipping ${file}: 日付が未確定のため処理をスキップします。`);
-        // もし過去にsitemapに登録されていた場合は削除する
+        console.log(`⛔ Skipping ${file}: 公開日未確定のため sitemap 登録なし`);
         if (urlMap.has(fullUrl)) {
-            urlMap.delete(fullUrl);
-            console.log(`🗑️ ${file} を sitemap.xml から削除しました。`);
+          urlMap.delete(fullUrl);
+          console.log(`🗑️ ${file} を sitemap から削除しました。`);
         }
-        continue; // 次のループへ
-      }
-      // ▲▲▲ 追加修正箇所終わり ▲▲▲
-
-      // ---------------------------------------------------------
-      // 1. HTML内の <time> タグを更新
-      // ---------------------------------------------------------
-      const timeRegex = /(<time[^>]*datetime=")(\d{4}-\d{2}-\d{2})("[^>]*>)(.*?)(<\/time>)/s;
-      
-      if (timeRegex.test(html)) {
-        html = html.replace(timeRegex, `$1${isoDate}$3最終更新日：${jpDate}$5`);
-        console.log(`✅ HTML更新: ${file} (Timeタグ)`);
-      } else {
-        console.warn(`⚠️ ${file} に <time> タグが見つかりません。`);
+        continue;
       }
 
-      // ---------------------------------------------------------
-      // 2. JSON-LD ("dateModified": "YYYY-MM-DD") を更新
-      // ---------------------------------------------------------
-      const jsonLdRegex = /("dateModified"\s*:\s*")(\d{4}-\d{2}-\d{2})(")/;
+      html = html.replace(
+        /(<time[^>]*class="modified"[^>]*datetime=")([^"]*)("[^>]*>)(最終更新日：)?(.*?)(<\/time>)/s,
+        `$1${isoDate}$3最終更新日：${jpDate}$6`
+      );
+
+      const jsonLdRegex = /("dateModified"\s*:\s*")(\d{4}-\d{2}-\d{2}|[\d-]*--?)(")/;
       if (jsonLdRegex.test(html)) {
         html = html.replace(jsonLdRegex, `$1${isoDate}$3`);
-        console.log(`✅ HTML更新: ${file} (JSON-LD)`);
       }
 
-      // ファイルに書き込み (これで日付が更新された状態になる)
       await fs.writeFile(file, html, "utf-8");
+      console.log(`✏️ 更新完了: ${file}`);
 
-      // ---------------------------------------------------------
-      // 3. Sitemap データを更新
-      // ---------------------------------------------------------
       urlMap.set(fullUrl, { loc: fullUrl, lastmod: isoDate });
-      
+
     } catch (err) {
-      console.error(`❌ エラー: ${file} の処理中に問題が発生しました`, err);
+      console.error(`❌ エラー: ${file} 処理失敗`, err);
     }
   }
 
-  // Sitemap を書き出し
   const builder = new XMLBuilder({ ignoreAttributes: false, format: true });
   const updatedSitemap = builder.build({
     urlset: {
@@ -128,5 +97,5 @@ const formatDateJapanese = (date) => {
   });
 
   await fs.writeFile(SITEMAP_FILE, updatedSitemap, "utf-8");
-  console.log("✅ sitemap.xml を更新しました");
+  console.log("🚀 sitemap.xml 更新完了");
 })();
