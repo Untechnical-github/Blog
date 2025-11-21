@@ -325,22 +325,33 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0,0,0,0.8);
-        align-items: center;
-        justify-content: center;
         overflow: hidden;
+        /* flexの中央寄せは削除し、JSで完全制御します */
       }
 
       .modal-content {
-        max-width: 100%; 
+        /* 変更点: 絶対配置にしてJSで座標を完全支配します */
+        position: absolute;
+        top: 0;
+        left: 0;
+        
+        /* 初期サイズ制限 */
+        max-width: 100%;
         max-height: 100%;
-        transform-origin: 0 0; 
-        touch-action: none; 
-        cursor: grab; 
-        user-select: none; 
+        
+        /* 座標計算の基準を左上に固定 */
+        transform-origin: 0 0;
+        
+        touch-action: none;
+        cursor: grab;
+        user-select: none;
         -webkit-user-drag: none;
-        transition: transform 0.1s ease-out; 
+        
+        /* 重要: ホイール操作時の transition はJS側で制御するため、基本はスムーズにしておく */
+        transition: transform 0.1s ease-out;
+        will-change: transform;
       }
-      
+
       .modal-content:active {
         cursor: grabbing;
       }
@@ -736,135 +747,144 @@
     </main>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-
         const modal = document.getElementById("imgModal");
         const modalImg = document.getElementById("modalImage");
 
-        let scale = 1;
-        let pointX = 0;
-        let pointY = 0;
-        let isDragging = false;
-        let startX = 0;
-        let startY = 0;
-
-        let initialPinchDistance = 0;
-        let initialScale = 1;
-
-        const resetZoomState = () => {
-          scale = 1;
-          pointX = 0;
-          pointY = 0;
-          updateTransform();
-          modalImg.style.cursor = "grab";
-        };
+        let state = { x: 0, y: 0, scale: 1 };
 
         const updateTransform = () => {
-          modalImg.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+          modalImg.style.transform = `translate3d(${state.x}px, ${state.y}px, 0) scale(${state.scale})`;
         };
 
-        const clampPosition = () => {
-          const rect = modalImg.getBoundingClientRect();
+        const centerImage = () => {
           const winW = window.innerWidth;
           const winH = window.innerHeight;
+
+          const imgW = modalImg.offsetWidth;
+          const imgH = modalImg.offsetHeight;
+
+          state.scale = 1;
+          state.x = (winW - imgW) / 2;
+          state.y = (winH - imgH) / 2;
           
-          const limitX = rect.width * 0.8; 
-          const limitY = rect.height * 0.8;
-          
+          updateTransform();
+          modalImg.style.cursor = "grab";
         };
 
         document.querySelectorAll(".zoomable").forEach(img => {
           img.addEventListener("click", () => {
             modalImg.src = img.src;
-            modal.style.display = "flex";
+            modal.style.display = "block";
             document.body.style.overflow = "hidden";
-            
-            resetZoomState();
+          
+            modalImg.onload = () => {
+              centerImage();
+            };
 
+            if (modalImg.complete) {
+                centerImage();
+            }
           });
         });
 
         const closeModal = () => {
           modal.style.display = "none";
           document.body.style.overflow = "";
-          resetZoomState();
+          state = { x: 0, y: 0, scale: 1 };
         };
 
         document.querySelector(".close").addEventListener("click", closeModal);
-
         modal.addEventListener("click", e => {
-          if (e.target.id === "imgModal") {
-            closeModal();
+          if (e.target.id === "imgModal") closeModal();
+        });
+
+
+        window.addEventListener('resize', () => {
+          if (modal.style.display === "block" && state.scale === 1) {
+            centerImage();
           }
         });
-        
-        const zoomToPoint = (zoomFactor, centerX, centerY) => {
-          const rect = modalImg.getBoundingClientRect();
-          
-          const imgLeft = rect.left;
-          const imgTop = rect.top;
-
-          const offsetX = centerX - imgLeft;
-          const offsetY = centerY - imgTop;
-
-          let newScale = scale * zoomFactor;
-
-          if (newScale <= 1) {
-            resetZoomState();
-            return;
-          }
-
-          pointX -= offsetX * (zoomFactor - 1);
-          pointY -= offsetY * (zoomFactor - 1);
-          scale = newScale;
-
-          updateTransform();
-        };
 
         modalImg.addEventListener('wheel', (e) => {
           e.preventDefault();
 
-          const delta = e.deltaY * -1;
-          const factor = delta > 0 ? 1.1 : 0.9;
-
-          zoomToPoint(factor, e.clientX, e.clientY);
-        }, { passive: false });
-
-        const startDrag = (clientX, clientY) => {
-          if (scale <= 1) return;
-          isDragging = true;
-          startX = clientX - pointX;
-          startY = clientY - pointY;
-          modalImg.style.cursor = "grabbing";
-          modalImg.style.transition = "none";
-        };
-
-        const moveDrag = (clientX, clientY) => {
-          if (!isDragging) return;
-          e_preventDefault(event);
-
-          let newX = clientX - startX;
-          let newY = clientY - startY;
-
-          const rect = modalImg.getBoundingClientRect();
-
-          const winW = window.innerWidth;
-          const winH = window.innerHeight;
+          const direction = e.deltaY > 0 ? -1 : 1;
+          const factorStep = 0.15;
           
-          pointX = newX;
-          pointY = newY;
+          let newScale = state.scale * (1 + direction * factorStep);
+
+          if (newScale <= 1) {
+            centerImage();
+            return;
+          }
+
+          const mouseX = e.clientX;
+          const mouseY = e.clientY;
+
+          const currentOffsetX = mouseX - state.x;
+          const currentOffsetY = mouseY - state.y;
+
+          const imageInternalX = currentOffsetX / state.scale;
+          const imageInternalY = currentOffsetY / state.scale;
+
+          const newOffsetX = imageInternalX * newScale;
+          const newOffsetY = imageInternalY * newScale;
+
+          state.x = mouseX - newOffsetX;
+          state.y = mouseY - newOffsetY;
+          state.scale = newScale;
+
+          modalImg.style.transition = "transform 0.05s ease-out";
           
           updateTransform();
-        };
 
-        const endDrag = () => {
-          isDragging = false;
-          modalImg.style.cursor = "grab";
-          modalImg.style.transition = "transform 0.1s ease-out";
-        };
+        }, { passive: false });
 
-        modalImg.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
-        window.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
-        window.addEventListener('mouseup', endDrag);
+        let isDraggingPC = false;
+        let dragStartMouseX, dragStartMouseY;
+        let dragStartImageX, dragStartImageY;
+
+        modalImg.addEventListener('mousedown', e => {
+          if (state.scale <= 1) return;
+          e.preventDefault();
+          isDraggingPC = true;
+          
+          dragStartMouseX = e.clientX;
+          dragStartMouseY = e.clientY;
+          
+          dragStartImageX = state.x;
+          dragStartImageY = state.y;
+          
+          modalImg.style.cursor = "grabbing";
+          modalImg.style.transition = "none";
+        });
+
+        window.addEventListener('mousemove', e => {
+          if (!isDraggingPC) return;
+          e.preventDefault();
+          
+          const dx = e.clientX - dragStartMouseX;
+          const dy = e.clientY - dragStartMouseY;
+          
+          state.x = dragStartImageX + dx;
+          state.y = dragStartImageY + dy;
+          
+          updateTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (isDraggingPC) {
+            isDraggingPC = false;
+            modalImg.style.cursor = "grab";
+            modalImg.style.transition = "transform 0.1s ease-out";
+          }
+        });
+
+        let initialPinchDistance = 0;
+        let initialScale = 1;
+        let isPinching = false;
+        let lastTouchX = 0;
+        let lastTouchY = 0;
 
         const getDistance = (touches) => {
           const dx = touches[0].clientX - touches[1].clientX;
@@ -873,74 +893,79 @@
         };
 
         const getMidpoint = (touches) => {
-          return {
-            x: (touches[0].clientX + touches[1].clientX) / 2,
-            y: (touches[0].clientY + touches[1].clientY) / 2
-          };
-        };
-
-        const e_preventDefault = (e) => {
-          if (e.cancelable) e.preventDefault();
+            return {
+                x: (touches[0].clientX + touches[1].clientX) / 2,
+                y: (touches[0].clientY + touches[1].clientY) / 2
+            };
         };
 
         modalImg.addEventListener('touchstart', (e) => {
           if (e.touches.length === 1) {
-            startDrag(e.touches[0].clientX, e.touches[0].clientY);
+            if (state.scale > 1) {
+                lastTouchX = e.touches[0].clientX;
+                lastTouchY = e.touches[0].clientY;
+                modalImg.style.transition = "none";
+            }
           } else if (e.touches.length === 2) {
-
-            isDragging = false;
+            isPinching = true;
             initialPinchDistance = getDistance(e.touches);
-            initialScale = scale;
-          
+            initialScale = state.scale;
             modalImg.style.transition = "none";
           }
         }, { passive: false });
 
         modalImg.addEventListener('touchmove', (e) => {
-          if (e.touches.length === 1) {
+          if (e.cancelable) e.preventDefault();
 
-            moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+          if (e.touches.length === 1 && !isPinching) {
+            if (state.scale <= 1) return;
+            const dx = e.touches[0].clientX - lastTouchX;
+            const dy = e.touches[0].clientY - lastTouchY;
+            state.x += dx;
+            state.y += dy;
+            lastTouchX = e.touches[0].clientX;
+            lastTouchY = e.touches[0].clientY;
+            updateTransform();
+
           } else if (e.touches.length === 2) {
-
-            e_preventDefault(e);
-
             const currentDistance = getDistance(e.touches);
             if (initialPinchDistance === 0) return;
 
-            const zoomFactor = currentDistance / initialPinchDistance;
-            let newScale = initialScale * zoomFactor;
-
-            const center = getMidpoint(e.touches);
+            const factor = currentDistance / initialPinchDistance;
+            const newScale = initialScale * factor;
 
             if (newScale <= 1) {
-                resetZoomState();
+                centerImage();
                 return;
             }
 
-            const scaleRatio = newScale / scale;
+            const center = getMidpoint(e.touches);
             
-            const rect = modalImg.getBoundingClientRect();
-            const imgLeft = rect.left;
-            const imgTop = rect.top;
+            const currentOffsetX = center.x - state.x;
+            const currentOffsetY = center.y - state.y;
             
-            const offsetX = center.x - imgLeft;
-            const offsetY = center.y - imgTop;
+            const imageInternalX = currentOffsetX / state.scale;
+            const imageInternalY = currentOffsetY / state.scale;
 
-            pointX -= offsetX * (scaleRatio - 1);
-            pointY -= offsetY * (scaleRatio - 1);
-            scale = newScale;
-          
-            initialPinchDistance = currentDistance;
-            initialScale = newScale;
+            const newOffsetX = imageInternalX * newScale;
+            const newOffsetY = imageInternalY * newScale;
+
+            state.x = center.x - newOffsetX;
+            state.y = center.y - newOffsetY;
+            state.scale = newScale;
 
             updateTransform();
           }
         }, { passive: false });
 
         modalImg.addEventListener('touchend', (e) => {
-          endDrag();
           if (e.touches.length < 2) {
-            initialPinchDistance = 0;
+            isPinching = false;
+            modalImg.style.transition = "transform 0.1s ease-out";
+          }
+          if (e.touches.length === 1) {
+              lastTouchX = e.touches[0].clientX;
+              lastTouchY = e.touches[0].clientY;
           }
         });
 
@@ -973,9 +998,7 @@
             console.error("OGP情報の取得に失敗:", error); 
             }
         }
-
         document.querySelectorAll(".link-preview").forEach(async (anchor) => { await fetchOGData(anchor.href, anchor); });
-        
         document.querySelectorAll("pre code").forEach(codeBlock => {
             const pre = codeBlock.parentElement;
             const button = document.createElement("button");
