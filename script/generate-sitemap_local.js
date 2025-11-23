@@ -1,4 +1,5 @@
-const fs = require("fs/promises");
+const fs = require("fs");
+const fsPromises = fs.promises;
 const path = require("path");
 const glob = require("glob");
 const { JSDOM } = require("jsdom");
@@ -16,6 +17,31 @@ const getJSTDate = () => {
 const formatDateISO = (date) => date.toISOString().split("T")[0];
 const formatDateJapanese = (date) =>
   `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+
+const normalizePath = (p) =>
+  path.normalize(p).replace(/\\/g, "/").replace(/^\.\//, "");
+
+const getCleanUrl = (filePath) => {
+
+  let p = normalizePath(filePath);
+
+  p = p.replace(/^articles\//, '');
+
+  p = p.replace(/\/index\.html$/, '').replace(/\.html$/, '');
+
+  const parts = p.split('/');
+
+  if (parts.length >= 2) {
+    const fileName = parts[parts.length - 1];
+    const parentDir = parts[parts.length - 2];
+    if (fileName === parentDir) {
+      parts.pop();
+    }
+  }
+
+  const joined = parts.join('/');
+  return joined ? '/' + joined : '';
+};
 
 function getAllHtmlFiles() {
   return glob.sync("**/*.html").map(f => f.replace(/\\/g, "/"));
@@ -51,7 +77,7 @@ function hasMeaningfulChange(file) {
 }
 
 async function updateFileDates(file, isoDate, jpDate) {
-  let html = await fs.readFile(file, "utf-8");
+  let html = await fsPromises.readFile(file, "utf-8");
 
   html = html.replace(
     /(<time[^>]*class="modified"[^>]*datetime=")([^"]*)("[^>]*>)(最終更新日：)?(.*?)(<\/time>)/s,
@@ -63,7 +89,7 @@ async function updateFileDates(file, isoDate, jpDate) {
     html = html.replace(jsonLdRegex, `$1${isoDate}$3`);
   }
 
-  await fs.writeFile(file, html, "utf-8");
+  await fsPromises.writeFile(file, html, "utf-8");
 }
 
 async function updateSitemap(urlMap) {
@@ -74,7 +100,7 @@ async function updateSitemap(urlMap) {
       url: Array.from(urlMap.values())
     }
   });
-  await fs.writeFile(SITEMAP_FILE, updatedSitemap, "utf-8");
+  await fsPromises.writeFile(SITEMAP_FILE, updatedSitemap, "utf-8");
 }
 
 (async () => {
@@ -83,10 +109,12 @@ async function updateSitemap(urlMap) {
 
   let urlMap = new Map();
   try {
-    const xml = await fs.readFile(SITEMAP_FILE, "utf-8");
+    const xml = await fsPromises.readFile(SITEMAP_FILE, "utf-8");
     const parser = new XMLParser({ ignoreAttributes: false });
     const sitemap = parser.parse(xml);
-    const urls = Array.isArray(sitemap.urlset?.url) ? sitemap.urlset.url : [sitemap.urlset?.url].filter(Boolean);
+    const urls = sitemap.urlset && sitemap.urlset.url
+      ? (Array.isArray(sitemap.urlset.url) ? sitemap.urlset.url : [sitemap.urlset.url])
+      : [];
     urls.forEach(u => urlMap.set(u.loc, u));
     console.log("📄 既存 sitemap.xml をロードしました");
   } catch {
@@ -97,19 +125,21 @@ async function updateSitemap(urlMap) {
   const isoDate = formatDateISO(nowJST);
   const jpDate = formatDateJapanese(nowJST);
 
-  for (const file of htmlFiles) {
+  const targetFiles = htmlFiles.filter(f => f !== "index.html" && f !== "policy.html");
+
+  for (const file of targetFiles) {
 
     if (!hasMeaningfulChange(file)) {
       console.log(`⏩ 本文変更なし: ${file}`);
       continue;
     }
 
-    const relativeUrl = "/" + file.replace(/index\.html$/, "").replace(/\.html$/, "");
+    const relativeUrl = getCleanUrl(file);
     const fullUrl = `${BASE_URL}${relativeUrl}`;
 
     try {
       await updateFileDates(file, isoDate, jpDate);
-      console.log(`✏️ 更新完了: ${file}`);
+      console.log(`✏️ 更新完了: ${file} -> URL: ${fullUrl}`);
 
       urlMap.set(fullUrl, { loc: fullUrl, lastmod: isoDate });
     } catch (err) {
