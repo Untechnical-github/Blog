@@ -48,10 +48,30 @@
 /feather  /articles/feather/feather.html  200
 
 # ============================================================
-# 4. 汎用クリーニングルール (301 Redirects)
+# 4. 静的アセットの例外ルール (200 Rewrite)
+# ============================================================
+# 以下の拡張子は /articles/ 内にあってもリダイレクトせず、そのまま表示します。
+# これらを汎用ルール(A)より前に書くことが必須です。
+
+/articles/*.jpg   /articles/:splat.jpg  200
+/articles/*.jpeg  /articles/:splat.jpeg 200
+/articles/*.png   /articles/:splat.png  200
+/articles/*.gif   /articles/:splat.gif  200
+/articles/*.webp  /articles/:splat.webp 200
+/articles/*.svg   /articles/:splat.svg  200
+/articles/*.mp4   /articles/:splat.mp4  200
+/articles/*.webm  /articles/:splat.webm 200
+/articles/*.css   /articles/:splat.css  200
+/articles/*.js    /articles/:splat.js   200
+/articles/*.json  /articles/:splat.json 200
+/articles/*.ico   /articles/:splat.ico  200
+
+# ============================================================
+# 5. 汎用クリーニングルール (301 Redirects)
 # ============================================================
 
 # (A) /articles/ プレフィックスを削除
+# ※上記の画像以外（HTMLやディレクトリ、拡張子なしURL）がここで転送されます
 # https://untechnical.info/articles/slug -> /slug
 /articles/* /:splat       301
 
@@ -64,7 +84,7 @@
 /*/           /:splat       301
 
 # ============================================================
-# 5. 内部転送フォールバック (200 Rewrite)
+# 6. 内部転送フォールバック (200 Rewrite)
 # ============================================================
 # 自動生成された200ルールに漏れた場合の予備設定
 /:slug        /articles/:slug.html  200
