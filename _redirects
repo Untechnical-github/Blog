@@ -1,4 +1,70 @@
-/index.html        /        301
-/*/index.html      /:splat  301
-/*.html            /:splat  301
-/*/                /:splat  301
+# Auto-generated _redirects by generate-redirects.js
+
+# ============================================================
+# 1. 固定ページ / 例外ルール
+# ============================================================
+# index.html はルートにリダイレクト
+/index.html   /             301
+
+# policy.html は /policy にリダイレクト (拡張子なし)
+/policy.html  /policy       301
+/policy       /policy.html  200
+
+# ============================================================
+# 2. 重複URLの解消 (301 Redirects) - 自動生成部分
+# ============================================================
+# "フォルダ名/ファイル名" が重複している場合 (例: slug/slug) を
+# 強制的に短いURL (例: slug) へ転送します。
+/camera_sound/aquos/aquos  /camera_sound/aquos  301
+/camera_sound/camera_sound  /camera_sound  301
+/camera_sound/galaxy/galaxy  /camera_sound/galaxy  301
+/camera_sound/motorola/motorola  /camera_sound/motorola  301
+/camera_sound/nothing/nothing  /camera_sound/nothing  301
+/camera_sound/nubia/nubia  /camera_sound/nubia  301
+/camera_sound/pixel/pixel  /camera_sound/pixel  301
+/camera_sound/xiaomi/xiaomi  /camera_sound/xiaomi  301
+/camera_sound/xperia/xperia  /camera_sound/xperia  301
+/feather/feather  /feather  301
+/sidestore/sidestore  /sidestore  301
+/wear_os_adb/wear_os_adb  /wear_os_adb  301
+/xiaoxin_pad_pro/xiaoxin_pad_pro  /xiaoxin_pad_pro  301
+
+# ============================================================
+# 3. ファイルへの内部マッピング (200 Rewrite) - 自動生成部分
+# ============================================================
+# きれいなURLと実際のファイルパスを紐付けます。
+/camera_sound/motorola  /articles/camera_sound/motorola/motorola.html  200
+/camera_sound/nothing  /articles/camera_sound/nothing/nothing.html  200
+/xiaoxin_pad_pro  /articles/xiaoxin_pad_pro/xiaoxin_pad_pro.html  200
+/camera_sound/galaxy  /articles/camera_sound/galaxy/galaxy.html  200
+/camera_sound/xiaomi  /articles/camera_sound/xiaomi/xiaomi.html  200
+/camera_sound/xperia  /articles/camera_sound/xperia/xperia.html  200
+/camera_sound/aquos  /articles/camera_sound/aquos/aquos.html  200
+/camera_sound/nubia  /articles/camera_sound/nubia/nubia.html  200
+/camera_sound/pixel  /articles/camera_sound/pixel/pixel.html  200
+/camera_sound  /articles/camera_sound/camera_sound.html  200
+/wear_os_adb  /articles/wear_os_adb/wear_os_adb.html  200
+/sidestore  /articles/sidestore/sidestore.html  200
+/feather  /articles/feather/feather.html  200
+
+# ============================================================
+# 4. 汎用クリーニングルール (301 Redirects)
+# ============================================================
+
+# (A) /articles/ プレフィックスを削除
+# https://untechnical.info/articles/slug -> /slug
+/articles/* /:splat       301
+
+# (B) .html 拡張子を削除
+# https://untechnical.info/slug.html -> /slug
+/*.html       /:splat       301
+
+# (C) 末尾スラッシュを削除
+# https://untechnical.info/slug/ -> /slug
+/*/           /:splat       301
+
+# ============================================================
+# 5. 内部転送フォールバック (200 Rewrite)
+# ============================================================
+# 自動生成された200ルールに漏れた場合の予備設定
+/:slug        /articles/:slug.html  200
