@@ -25,10 +25,30 @@ const HEADER = `# Auto-generated _redirects by generate-redirects.js
 
 const FOOTER = `
 # ============================================================
-# 4. 汎用クリーニングルール (301 Redirects)
+# 4. 静的アセットの例外ルール (200 Rewrite)
+# ============================================================
+# 以下の拡張子は /articles/ 内にあってもリダイレクトせず、そのまま表示します。
+# これらを汎用ルール(A)より前に書くことが必須です。
+
+/articles/*.jpg   /articles/:splat.jpg  200
+/articles/*.jpeg  /articles/:splat.jpeg 200
+/articles/*.png   /articles/:splat.png  200
+/articles/*.gif   /articles/:splat.gif  200
+/articles/*.webp  /articles/:splat.webp 200
+/articles/*.svg   /articles/:splat.svg  200
+/articles/*.mp4   /articles/:splat.mp4  200
+/articles/*.webm  /articles/:splat.webm 200
+/articles/*.css   /articles/:splat.css  200
+/articles/*.js    /articles/:splat.js   200
+/articles/*.json  /articles/:splat.json 200
+/articles/*.ico   /articles/:splat.ico  200
+
+# ============================================================
+# 5. 汎用クリーニングルール (301 Redirects)
 # ============================================================
 
 # (A) /articles/ プレフィックスを削除
+# ※上記の画像以外（HTMLやディレクトリ、拡張子なしURL）がここで転送されます
 # https://untechnical.info/articles/slug -> /slug
 /articles/* /:splat       301
 
@@ -41,7 +61,7 @@ const FOOTER = `
 /*/           /:splat       301
 
 # ============================================================
-# 5. 内部転送フォールバック (200 Rewrite)
+# 6. 内部転送フォールバック (200 Rewrite)
 # ============================================================
 # 自動生成された200ルールに漏れた場合の予備設定
 /:slug        /articles/:slug.html  200
@@ -83,25 +103,22 @@ function generateRedirects() {
     const normalizedPath = filePath.replace(/\\/g, '/');
     
     const parts = normalizedPath.split('/');
-    const fileName = parts[parts.length - 1];
-    const fileNameNoExt = fileName.replace('.html', '');
-    const parentDir = parts.length > 1 ? parts[parts.length - 2] : '';
+    const fileName = parts[parts.length - 1]; 
+    const fileNameNoExt = fileName.replace('.html', ''); 
+    const parentDir = parts.length > 1 ? parts[parts.length - 2] : ''; 
 
     let urlParts = parts.slice(1); 
-    
     urlParts[urlParts.length - 1] = fileNameNoExt;
 
     if (parentDir === fileNameNoExt) {
-      urlParts.pop();
+      urlParts.pop(); 
     }
 
     const cleanUrl = '/' + urlParts.join('/');
 
     if (parentDir === fileNameNoExt) {
-
       const dirtyUrlParts = [...urlParts, fileNameNoExt]; 
       const dirtyUrl = '/' + dirtyUrlParts.join('/');
-      
       redirectRules301.push(`${dirtyUrl}  ${cleanUrl}  301`);
     }
 
