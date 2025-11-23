@@ -8,35 +8,14 @@ const BASE_URL = "https://untechnical.info/";
 const normalizePath = (p) =>
   path.normalize(p).replace(/\\/g, "/").replace(/^\.\//, "");
 
-const getCleanUrl = (filePath) => {
-
-  let p = normalizePath(filePath);
-
-  p = p.replace(/^articles\//, '');
-
-  p = p.replace(/\.html$/, '');
-
-  const parts = p.split('/');
-
-  if (parts.length >= 2) {
-    const fileName = parts[parts.length - 1];
-    const parentDir = parts[parts.length - 2];
-    if (fileName === parentDir) {
-      parts.pop();
-    }
-  }
-
-  return '/' + parts.join('/');
-};
-
 (async () => {
   let articleMap = new Map();
 
   try {
     const data = await fs.readFile(JSON_FILE, "utf-8");
     JSON.parse(data).forEach(article => {
-      const key = article.filePath || article.path; 
-      articleMap.set(key, article);
+      const key = normalizePath(article.path);
+      articleMap.set(key, { ...article, path: key });
     });
   } catch {}
 
@@ -46,8 +25,7 @@ const getCleanUrl = (filePath) => {
 
   for (const file of changedFiles) {
     const normalizedPath = normalizePath(file);
-    const cleanUrl = getCleanUrl(normalizedPath);
-
+    
     const newHtml = await fs.readFile(file, "utf-8");
     const dom = new JSDOM(newHtml);
     const document = dom.window.document;
@@ -92,23 +70,22 @@ const getCleanUrl = (filePath) => {
     };
 
     if (isInvalidDate(datePublished) || isInvalidDate(dateModified)) {
-        console.log(`⛔ ${normalizedPath} は日付が不完全なため articles.json から除外します`);
+        console.log(`⛔ ${normalizedPath} は日付が不完全なため articles.json から除外します (Pub: ${datePublished}, Mod: ${dateModified})`);
+
         articleMap.delete(normalizedPath);
         continue;
     }
-
     articleMap.set(normalizedPath, {
       title,
       category: categories,
-      path: cleanUrl,
-      filePath: normalizedPath,
+      path: normalizedPath,
       content,
       image,
       datePublished,
       dateModified
     });
 
-    console.log(`✅ ${normalizedPath} -> URL: ${cleanUrl} として登録`);
+    console.log(`✅ ${normalizedPath} を articles.json に更新登録 (Modified: ${dateModified})`);
   }
 
   const articles = Array.from(articleMap.values()).sort((a, b) => {

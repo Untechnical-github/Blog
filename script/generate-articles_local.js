@@ -10,27 +10,6 @@ const normalizePath = (p) =>
     .replace(/\\/g, "/")
     .replace(/^\.\//, "");
 
-const getCleanUrl = (filePath) => {
-
-  let p = normalizePath(filePath);
-
-  p = p.replace(/^articles\//, '');
-
-  p = p.replace(/\.html$/, '');
-
-  const parts = p.split('/');
-
-  if (parts.length >= 2) {
-    const fileName = parts[parts.length - 1];
-    const parentDir = parts[parts.length - 2];
-    if (fileName === parentDir) {
-      parts.pop();
-    }
-  }
-
-  return '/' + parts.join('/');
-};
-
 function isValidDate(dateStr) {
   if (!dateStr) return false;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
@@ -73,9 +52,8 @@ async function getAllHtmlFiles(dir) {
   try {
     const data = await fs.readFile(JSON_FILE, "utf-8");
     JSON.parse(data).forEach(article => {
-
-      const key = article.filePath || article.path;
-      articleMap.set(key, article);
+      const key = normalizePath(article.path);
+      articleMap.set(key, { ...article, path: key });
     });
   } catch {
     console.log("⚠️ articles.json が存在しないため、新規作成します");
@@ -86,9 +64,8 @@ async function getAllHtmlFiles(dir) {
 
   for (const file of htmlFiles) {
     const normalizedPath = normalizePath(file);
-    const cleanUrl = getCleanUrl(normalizedPath);
-
     const html = await fs.readFile(file, "utf-8");
+
     const dom = new JSDOM(html);
     const document = dom.window.document;
 
@@ -114,8 +91,6 @@ async function getAllHtmlFiles(dir) {
       !isValidDate(timeDate)
     ) {
       console.log(`⏩ 除外: ${normalizedPath}（日付が不完全）`);
-
-      articleMap.delete(normalizedPath);
       continue;
     }
 
@@ -145,15 +120,14 @@ async function getAllHtmlFiles(dir) {
     articleMap.set(normalizedPath, {
       title,
       category: categories,
-      path: cleanUrl,
-      filePath: normalizedPath,
+      path: normalizedPath,
       content,
       image,
       datePublished,
       dateModified
     });
 
-    console.log(`✅ 記事データ更新: ${normalizedPath} -> URL: ${cleanUrl}`);
+    console.log(`✅ 記事データ更新: ${normalizedPath}`);
   }
   
   const articles = Array.from(articleMap.values()).sort((a, b) => {
