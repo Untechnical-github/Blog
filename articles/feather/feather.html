@@ -75,6 +75,8 @@
             <time class="modified" datetime="2025-11-25">最終更新日：2025年11月25日</time>
           </div>
           <img src="feather.jpg" alt="イメージ" class="zoomable">
+        </div>
+        <div class="box-section1">
           <h2>サイドロードとは?</h2>
           <p>
             サイドロードとは、iOSならApp Store、AndroidならGoogle Play Store以外からアプリをインストールすることを指す。
@@ -85,6 +87,8 @@
             そこで、Apple Developper Programの証明書を複数人のユーザーで共有して使うことで年間およそ1,000円から3,000円と比較的安い金額で完全なサイドロードができるようにするというサービスがいくつかある。
             他にもDNSを用いて企業から流出した証明書を入手するという方法があるが、それらはAppleが失効させて使えなくなるリスクが大きいため、ここではよりリスクの少ない、AppTestersでの証明書の購入の手順とFeatherでIPAをサイドロードする方法まで解説する。
           </p>
+        </div>
+        <div class="box-section1">
           <h2>手順</h2>
           <nav>
             <ul>
@@ -93,6 +97,8 @@
             <li><a href="#feather">Featherを用いてサイドロードする</a></li>
             </ul>
           </nav>
+        </div>
+        <div class="box-section1">
           <section id="certificate">
             <h2>証明書を購入する</h2>
             <div class="reference">
@@ -183,24 +189,9 @@
             <img src="certificate3_2.PNG" class="image1 zoomable" alt="View">
             <h4>4.プランを選択して購入する</h4>
             <img src="certificate4_2.PNG" class="image1 zoomable" alt="購入">
-            <h3>証明書を失効させられた場合</h3>
-            <p>
-              証明書が無効になると、サイドロードしたアプリが起動できなくなる。
-              この場合、再び証明書を取得するには2周間から1ヶ月かかる。
-              すぐに証明書を得るには、新たに証明書を購入する必要がある。
-              以下では、証明書が失効させられた場合の割引証明書の購入手順を示す。
-            </p>
-            <h4>1.AppTestersのサイトを開く</h4>
-            <p>以下のリンクから、AppTestersのサイトを開く。</p>
-            <a href="https://apptesters.org/purchase-certificate" target="_blank" class="link-preview"></a>
-            <h4>2. "Got Revoked?" でUDIDを入力し、 "Check" をタップする</h4>
-            <p>開いたサイトの、プランの選択画面の下に "Got Revoked?" と表示がある。</p>
-            <img src="certificate2_2.PNG" class="image1 zoomable" alt="Got Revoked?">
-            <h4>3. "Discounted certificate" の右の "View" をタップする</h4>
-            <img src="certificate3_2.PNG" class="image1 zoomable" alt="View">
-            <h4>4.プランを選択して購入する</h4>
-            <img src="certificate4_2.PNG" class="image1 zoomable" alt="購入">
           </section>
+        </div>
+        <div class="box-section1">
           <section id="apptesters">
             <h2>AppTesters IPA Signerを用いてFeatherをサイドロードする</h2>
             <div class="reference">
@@ -233,6 +224,9 @@
             <img src="apptesters6.PNG" class="image1 zoomable" alt="Install">
             <h4>7. "インストール"  をタップする</h4>
             <img src="apptesters7.PNG" class="image1 zoomable" alt="インストール">
+          </section>
+        </div>
+        <div class="box-section1">
           <section id="feather">
             <h2>Featherを用いてサイドロードする</h2>
             <div class="reference">
@@ -312,6 +306,8 @@
             <h4>･Appleに証明書を失効させられるリスクがある</h4>
             <p>企業から流出した、無料で入手できる証明書よりは可能性が低いがもし失効させられた場合、新しい証明書が発行されるまでしばらくサイドロードはできなくなり、サイドロードしたアプリは使えなくなる。</p>
           </section>
+        </div>
+        <div class="box-section1">
           <h2>サイドロードの動き</h2>
           <p>
             先述のようにiOSでは厳しく制限されているサイドロードだが、これにはもちろんメリットがある。
