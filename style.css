@@ -225,7 +225,7 @@ pre {
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 40px 30px;
-  max-width: 600px;
+  max-width: 750px;
   margin: 40px auto;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
@@ -236,7 +236,7 @@ pre {
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 40px 30px;
-  max-width: 600px;
+  max-width: 750px;
   margin: 40px auto;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
@@ -367,4 +367,74 @@ pre {
 
 .copy-btn:hover {
   opacity: 1;
+}
+
+.ref-card-container {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 25px;
+  max-width: 750px;
+  margin: 40px auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 15px;
+  
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.ref-card-container:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  border-color: #0073e6;
+}
+
+.ref-visual {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.ref-visual img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 250px;
+  object-fit: contain;
+  border-radius: 6px;
+  margin: 0;
+}
+
+.ref-info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ref-title {
+  font-weight: 700;
+  font-size: 1.2em;
+  color: #333;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.doc-btn {
+  display: block;
+  background-color: #0073e6;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 1.0em;
+  text-align: center;
+  font-weight: bold;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
 }
