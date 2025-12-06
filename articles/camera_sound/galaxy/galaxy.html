@@ -95,44 +95,80 @@
           <p>
             Galaxyではかつて "SetEdit" というアプリを使ってシステム設定を変更することでシャッター音を消せたが、Android 14で塞がれてしまった。
             しかし、SetEditで適用していた変更をadbコマンドで実行するとシャッター音が消せるようになる。
-            adbコマンドはPCで実行する方法とスマホで実行する方法の2通りあるが、ここではPCを用いた方法を解説する。
+            adbコマンドはPCで実行する方法とスマホで実行する方法の2通りあるが、ここではスマホで実行する方法を解説する。
+            adbを導入したPCではGalaxyでUSBデバッグを有効化してUSBケーブルで接続後、ADB Shellの代わりにターミナルから29以降同じ方法で実行できる。
             この方法はSIMフリー版とキャリア版関係なく全モデルで使える。
           </p>
           <h3>方法</h3>
-          <h4>1.PCにadbを導入する</h4>
-          <p>以下は導入方法である。</p>
-          <a href="https://sp7pc.com/google/android/17843" target="_blank" class="link-preview"></a>
-          <a href="https://sp7pc.com/google/android/34263" target="_blank" class="link-preview"></a>
-          <h4>2.Galaxyで設定アプリを開く</h4>
-          <img src="galaxy2.jpg" class="image1 zoomable" alt="設定アプリ">
-          <h4>3. "端末情報" をタップする</h4>
-          <img src="galaxy3.jpg" class="image1 zoomable" alt="端末情報">
-          <h4>4. "ソフトウェア情報" をタップする</h4>
-          <img src="galaxy4.jpg" class="image1 zoomable" alt="ソフトウェア情報">
-          <h4>5. "ビルド番号" を7回タップし、パスワードを入力する</h4>
+          <h4>1.設定アプリを開く</h4>
+          <img src="galaxy1.jpg" class="image1 zoomable" alt="設定アプリ">
+          <h4>2. "端末情報" をタップする</h4>
+          <img src="galaxy2.jpg" class="image1 zoomable" alt="端末情報">
+          <h4>3. "ソフトウェア情報" をタップする</h4>
+          <img src="galaxy3.jpg" class="image1 zoomable" alt="ソフトウェア情報">
+          <h4>4. "ビルド番号" を7回タップし、パスワードを入力する</h4>
           <p>これにより、開発者オプションが有効になる。</p>
-          <img src="galaxy5.jpg" class="image1 zoomable" alt="ビルド番号">
-          <h4>6. "OK" をタップする</h4>
-          <img src="galaxy6.jpg" class="image1 zoomable" alt="OK">
-          <h4>7.設定アプリの "開発者向けオプション" をタップする</h4>
-          <img src="galaxy7.jpg" class="image1 zoomable" alt="開発者向けオプション">
-          <h4>8. "USBデバッグ" をオンにする</h4>
-          <img src="galaxy8.jpg" class="image1 zoomable" alt="adbデバッグ">
-          <h4>9. "OK" をタップする</h4>
-          <img src="galaxy9.jpg" class="image1 zoomable" alt="OK">
-          <h4>10.PCとGalaxyをUSBケーブルで接続する</h4>
-          <img src="galaxy10.jpg" class="image zoomable" alt="USBケーブル">
-          <h4>11. "許可" をタップする</h4>
-          <img src="galaxy11.jpg" class="image1 zoomable" alt="許可">
-          <h4>12.PCのターミナルでシャッター音の動作を海外仕様にするadbコマンドを実行する</h4>
-          <img src="galaxy12.png" class="image2 zoomable" alt="adbコマンド">
+          <img src="galaxy4.jpg" class="image1 zoomable" alt="ビルド番号">
+          <h4>5. "OK" をタップする</h4>
+          <img src="galaxy5.jpg" class="image1 zoomable" alt="OK">
+          <h4>6.ADB Shellをインストールする</h4>
+          <p>以下のリンクからADB Shellをインストールする</p>
+          <a href="https://play.google.com/store/apps/details?id=com.github.standardadb&pcampaignid=web_share" target="_blank" class="link-preview"></a>
+          <h4>7.ADB Shellを開き、"はい" をタップする</h4>
+          <img src="galaxy7.jpg" class="image1 zoomable" alt="はい">
+          <h4>8. "接続方法を選択" で "Shizuku(Android 11+)" をタップする</h4>
+          <img src="galaxy8.jpg" class="image1 zoomable" alt="Shizuku(Android 11+)">
+          <h4>9. "接続" をタップする</h4>
+          <img src="galaxy9.jpg" class="image1 zoomable" alt="接続">
+          <h4>10. "はい" をタップする</h4>
+          <img src="galaxy10.jpg" class="image1 zoomable" alt="はい">
+          <h4>11. "接続" をタップする</h4>
+          <img src="galaxy11.jpg" class="image1 zoomable" alt="接続">
+          <h4>12. "はい" をタップする</h4>
+          <img src="galaxy12.jpg" class="image1 zoomable" alt="はい">
+          <h4>13. "許可" をタップする</h4>
+          <img src="galaxy13.jpg" class="image1 zoomable" alt="許可">
+          <h4>14. "接続" をタップする</h4>
+          <img src="galaxy14.jpg" class="image1 zoomable" alt="接続">
+          <h4>15. "はい" をタップする</h4>
+          <p>ここで設定アプリの開発者向けオプションが開かれる。</p>
+          <img src="galaxy15.jpg" class="image1 zoomable" alt="はい">
+          <h4>16. "USBデバッグ" をオンにする</h4>
+          <img src="galaxy16.jpg" class="image1 zoomable" alt="USBデバッグ">
+          <h4>17. "OK" をタップする</h4>
+          <img src="galaxy17.jpg" class="image1 zoomable" alt="OK">
+          <h4>18. "ワイヤレスデバッグ" をオンにする</h4>
+          <img src="galaxy18.jpg" class="image1 zoomable" alt="ワイヤレスデバッグ">
+          <h4>19. "許可" をタップする</h4>
+          <img src="galaxy19.jpg" class="image1 zoomable" alt="許可">
+          <h4>20. "ワイヤレスデバッグ" をタップする</h4>
+          <img src="galaxy20.jpg" class="image1 zoomable" alt="ワイヤレスデバッグ">
+          <h4>21. "ペア設定コードによるデバイスのペア設定" をタップする</h4>
+          <img src="galaxy21.jpg" class="image1 zoomable" alt="ペア設定コードによるデバイスのペア設定">
+          <h4>22.画面上に表示されたADB Shellの通知の "∨" をタップする</h4>
+          <img src="galaxy22.jpg" class="image1 zoomable" alt="通知">
+          <h4>23.通知の "ペアリングコードを入力するにはクリックしてく..." をタップする</h4>
+          <img src="galaxy23.jpg" class="image1 zoomable" alt="ペアリングコードを入力するにはクリックしてく...">
+          <h4>24.Wi-Fiペア設定コードを通知に入力して送信する</h4>
+          <p>成功すると "ペアリング成功" と通知が来る</p>
+          <img src="galaxy24.jpg" class="image1 zoomable" alt="Wi-Fiペア設定コード">
+          <h4>25.ADB Shellを開き、 "はい" をタップする</h4>
+          <img src="galaxy25.jpg" class="image1 zoomable" alt="はい">
+          <h4>26.ターミナルタブの "ローカルターミナル" をタップする</h4>
+          <img src="galaxy26.jpg" class="image1 zoomable" alt="ローカルターミナル">
+          <h4>27. "はい" をタップする</h4>
+          <img src="galaxy27.jpg" class="image1 zoomable" alt="はい">
+          <h4>28.権限を許可する</h4>
+          <img src="galaxy28.jpg" class="image1 zoomable" alt="権限を許可">
+          <h4>29.シャッター音の動作を海外仕様にするadbコマンドを実行する</h4>
+          <img src="galaxy29.png" class="image2 zoomable" alt="adbコマンド">
           <p>
-            WindowsやMacのターミナルで以下のコマンドを実行する。
+            以下のコマンドを実行する。
             これにより、シャッター音の動作が海外仕様となる。
           </p>
           <pre><code>adb shell settings put system csc_pref_camera_forced_shuttersound_key 0</code></pre>
-          <h4>13.システム音の音量を0にする</h4>
-          <img src="galaxy13.jpg" class="image1 zoomable" alt="システム音設定">
+          <h4>30.システム音の音量を0にする</h4>
+          <img src="galaxy30.jpg" class="image1 zoomable" alt="システム音設定">
           <p>
             シャッター音の音量はシステム音の音量と同期される。
             充電時や画面ロックの解除、タッチ操作の際に鳴るシステム音の音量を0にすることでシャッター音が消える。
