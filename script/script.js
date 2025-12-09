@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
       modalImg.style.transition = "none";
     }
   }, { passive: false });
--
+
   modalImg.addEventListener('touchmove', (e) => {
     if (e.cancelable) e.preventDefault();
 
