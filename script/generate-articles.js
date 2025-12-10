@@ -30,10 +30,16 @@ const normalizePath = (p) =>
     const dom = new JSDOM(newHtml);
     const document = dom.window.document;
 
-    let content =
-      document.querySelector("main")?.textContent?.trim() ||
-      document.querySelector("article")?.textContent?.trim() ||
-      document.body.textContent.trim();
+    const targetElement = 
+      document.querySelector("main") ||
+      document.querySelector("article") ||
+      document.body;
+
+    const clone = targetElement.cloneNode(true);
+    clone.querySelectorAll("script, style, noscript, iframe").forEach(el => el.remove());
+
+    let content = clone.textContent?.trim() || "";
+    
     content = content.replace(/\s+/g, " ").trim();
 
     const title =
