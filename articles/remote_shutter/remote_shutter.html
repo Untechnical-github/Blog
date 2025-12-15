@@ -98,7 +98,7 @@
             Wear OS搭載のスマートウォッチにはGoogle カメラがインストールできるが、このアプリのリモートシャッター機能はPixel以外で使うことができない。
             非純正のアプリであればどの機種にも対応できるが、スマホ側にもそのアプリをインストールする必要があり、カメラアプリはメーカー純正のものを利用できない。
             そこで、MacroDroidを使ってWear OS搭載のスマートウォッチから接続したスマホのシャッターボタンを遠隔でクリックし、擬似的にリモートシャッターを実現するという方法がある。
-            ここではその手順を解説する。
+            ここではGalaxy Watchを用いているが、Pixel Watchなどの他のWear OS搭載スマートウォッチでも画面のUIは異なるものの、基本的には同じ操作を行う。
           </p>
         </div>
         <div style="text-align: center; margin: 30px 0;">
@@ -115,88 +115,7 @@
               (adsbygoogle = window.adsbygoogle || []).push({});
           </script>
         </div>
-        <div class="box-section1">
-          <h2>Galaxy Watchのアプリを無効化する</h2>
-          <p>
-            ここではWear OS搭載のGalaxy Watchを用いてアプリを無効化する手順を示す。
-            Pixel Watchなどでは画面のUIが異なるが、基本的には同じ操作を行う。
-          </p>
-          <h3>方法</h3>
-          <h4>1.Galaxy Watchの設定アプリを開く</h4>
-          <img src="wear_os_adb1.png" alt="設定アプリ" class="image zoomable">
-          <h4>2. "接続" をタップする</h4>
-          <img src="wear_os_adb2.png" alt="接続" class="image zoomable">
-          <h4>3. "Wi-Fi" をタップする</h4>
-          <img src="wear_os_adb3.png" alt="Wi-Fi" class="image zoomable">
-          <h4>4.Androidスマホと同じWi-Fiに接続する</h4>
-          <p>
-            ここで接続するWi-Fiは、adbコマンドを実行するAndroidスマホで接続しているWi-Fiと同じである必要がある。
-            Wi-Fi環境がない場合、adbコマンドを実行するAndroidスマホでテザリングをしてそのWi-Fiに接続することでも実行できる。
-          </p>
-          <img src="wear_os_adb4.png" alt="オン" class="image zoomable">
-          <h4>5.設定アプリの "時計について" をタップするく</h4>
-          <img src="wear_os_adb5.png" alt="時計について" class="image zoomable">
-          <h4>6. "ソフトウェア情報" をタップするく</h4>
-          <img src="wear_os_adb6.png" alt="ソフトウェア情報" class="image zoomable">
-          <h4>7. "ソフトウェアバージョン" を7回タップする</h4>
-          <p>これにより、開発者オプションが有効になる。</p>
-          <img src="wear_os_adb7.png" alt="ソフトウェアバージョン" class="image zoomable">
-          <h4>8.設定アプリの "開発者オプション" をタップする</h4>
-          <img src="wear_os_adb8.png" alt="開発者オプション" class="image zoomable">
-          <h4>9. "ADBデバッグ" をオンにする</h4>
-          <img src="wear_os_adb9-1.png" alt="ADBデバッグ" class="image zoomable">
-          <img src="wear_os_adb9-1.png" alt="ADBデバッグ" class="image zoomable">
-          <h4>10. "ワイヤレスのデバッグ" をタップするく</h4>
-          <img src="wear_os_adb10.png" alt="ワイヤレスのデバッグ" class="image zoomable">
-          <h4>11. "ワイヤレスのデバッグ" をオンにする</h4>
-          <p>ここで表示された "IPアドレスとポート" はAndroidスマホと接続する際に用いる。</p>
-          <img src="wear_os_adb11-1.png" alt="ワイヤレスのデバッグ" class="image zoomable">
-          <img src="wear_os_adb11-2.png" alt="ワイヤレスのデバッグ" class="image zoomable">
-          <h4>12. "新しいデバイスをペアリング" をタップする</h4>
-          <p>
-            ここで表示された "IPアドレスとポート" と "Wi-Fiペア設定コード" はAndroidスマホとペアリングする際に用いる。
-            ここでの "IPアドレスとポート" は11で表示されたものとは異なり、Androidスマホと接続する際には使えない。
-          </p>
-          <img src="wear_os_adb12-1.png" alt="新しいデバイスをペアリング" class="image zoomable">
-          <img src="wear_os_adb12-2.png" alt="新しいデバイスをペアリング" class="image zoomable">
-          <h4>13.AndoridスマホにADB Shellをインストールする</h4>
-          <p>以下のリンクからADB Shellをインストールする</p>
-          <a href="https://play.google.com/store/apps/details?id=com.github.standardadb&pcampaignid=web_share" target="_blank" class="link-preview"></a>
-          <h4>14.ADB Shellのアプリを開く</h4>
-          <img src="wear_os_adb14.jpg" alt="ADB Shell" class="image1 zoomable">
-          <h4>15. "ターミナル" タブの "ローカルターミナル" をタップする</h4>
-          <img src="wear_os_adb15.jpg" alt="ローカルターミナル" class="image1 zoomable">
-          <h4>16.Galaxy Watchとペアリングするadbコマンドを実行する</h4>
-          <p>以下のコマンドを実行する。</p>
-          <pre><code>adb pair [12で表示されたIPアドレスとポート]</code></pre>
-          <p>
-            このコマンド実行後、ペアリングが完了してGalaxy Watchに接続できるようになる。
-            一度ペアリングすれば、次回以降この手順は不要になる。
-          </p>
-          <img src="wear_os_adb16.jpg" alt="ペアリング" class="image1 zoomable">
-          <h4>17.12で表示されたWi-Fiペア設定コードを入力する</h4>
-          <img src="wear_os_adb17.jpg" alt="Wi-Fiペア設定コード" class="image1 zoomable">
-          <h4>18.Galaxy Watchと接続するadbコマンドを実行する</h4>
-          <p>以下のコマンドを実行する。</p>
-          <pre><code>adb connect [11で表示されたIPアドレスとポート]</code></pre>
-          <p>このコマンド実行後、接続が完了してGalaxy Watchにadbコマンドが実行できるようになる。</p>
-          <img src="wear_os_adb18.jpg" alt="接続" class="image1 zoomable">
-          <h4>19.Galaxy Watchのアプリのパッケージ名を表示するadbコマンドを実行する</h4>
-          <p>すべてのアプリを表示する場合、以下のコマンドを実行する。</p>
-          <pre><code>adb shell pm list packae</code></pre>
-          <p>サードパーティアプリのみ表示する場合、以下のコマンドを実行する。</p>
-          <pre><code>adb shell pm list packae -3</code></pre>
-          <p>システムアプリのみ表示する場合、以下のコマンドを実行する。</p>
-          <pre><code>adb shell pm list packae -s</code></pre>
-          <p>特定の文字がパッケージ名に含まれるアプリのみ表示する場合、以下のコマンドを実行する。</p>
-          <pre><code>adb shell pm list package | grep [特定の文字]</code></pre>
-          <img src="wear_os_adb19.jpg" alt="パッケージ名" class="image1 zoomable">
-          <h4>20.Galaxy Watchのアプリを無効化または削除するadbコマンドを実行する</h4>
-          <p>無効化する場合、以下のコマンドを実行する。</p>
-          <pre><code>adb shell pm disable-user --user 0 [無効化するアプリのパッケージ名]</code></pre>
-          <p>無効化されたアプリを有効化する場合、以下のコマンドを実行する。</p>
-          <pre><code>adb shell pm enable [無効化するアプリのパッケージ名]</code></pre>
-          <img src="wear_os_adb20.jpg" alt="無効化" class="image1 zoomable">
+        <div style="text-align: center; margin: 30px 0;">
           <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3996338946771353"
               crossorigin="anonymous"></script>
           <!-- スクエア -->
@@ -209,7 +128,145 @@
           <script>
               (adsbygoogle = window.adsbygoogle || []).push({});
           </script>
-          <h3>アプリを無効化するメリット</h2>
+        </div>
+        <div class="box-section1">
+          <h2>目次</h2>
+          <nav>
+            <ul>
+            <li><a href="#settings">リモートシャッターを設定する</a></li>
+            <li><a href="#how_to_use">リモートシャッターの使い方</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div style="text-align: center; margin: 30px 0;">
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3996338946771353"
+              crossorigin="anonymous"></script>
+          <!-- スクエア -->
+          <ins class="adsbygoogle"
+              style="display:block"
+              data-ad-client="ca-pub-3996338946771353"
+              data-ad-slot="7532383969"
+              data-ad-format="auto"
+              data-full-width-responsive="false"></ins>
+          <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+        <div class="box-section1">
+          <section id="settings">
+            <h2>リモートシャッターを設定する</h2>
+            <div class="reference">
+              <a href="https://play.google.com/store/apps/details?id=com.arlosoft.macrodroid&hl=ja" target="blank">
+                <img src="macrodroid.png" alt="MacroDroid" class="image zoomable">
+                Google Play Storeより引用
+              </a>
+            </div>
+            <p>
+              スマホとスマートウォッチにMacroDroidをインストールし、リモートシャッターを動作させられるようにする。
+            </p>
+            <h3>方法</h3>
+            <h4>1.AndroidスマホとWear OS搭載スマートウォッチにMacroDroidをインストールする</h4>
+            <a href="https://play.google.com/store/apps/details?id=com.arlosoft.macrodroid&hl=ja" target="_blank" class="link-preview"></a>
+            <h4>2. "時計について" をタップする</h4>
+            <img src="developper2.png" alt="時計について" class="image zoomable">
+            <h4>3. "ソフトウェア情報" をタップする</h4>
+            <img src="developper3.png" alt="ソフトウェア情報" class="image zoomable">
+            <h4>4. "ソフトウェアバージョン" を7回タップする</h4>
+            <p>これにより、開発者オプションが有効になる。</p>
+            <img src="developper4.png" alt="ソフトウェアバージョン" class="image zoomable">
+          </section>
+        </div>
+        <div style="text-align: center; margin: 30px 0;">
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3996338946771353"
+              crossorigin="anonymous"></script>
+          <!-- スクエア -->
+          <ins class="adsbygoogle"
+              style="display:block"
+              data-ad-client="ca-pub-3996338946771353"
+              data-ad-slot="7532383969"
+              data-ad-format="auto"
+              data-full-width-responsive="false"></ins>
+          <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+        <div class="box-section1">
+          <section id="how_to_use">
+            <h2>adbで接続する</h2>
+            <img src="connect.JPG" class="image2 zoomable" alt="接続">
+            <p>
+              adbのワイヤレスデバッグを用いて、スマホからGalaxy Watchにadbコマンドが実行できるようにする。
+              adbコマンドをPCで実行する場合は、Galaxy Watchで開発者オプションの "ワイヤレスデバッグ" を開き、PCのターミナルからペアリングと接続を行う。
+            </p>
+            <h3>方法</h3>
+            <h4>1.設定アプリの "接続" をタップする</h4>
+            <img src="developper1.png" alt="接続" class="image zoomable">
+            <h4>2. "Wi-Fi" をタップする</h4>
+            <img src="connect2.png" alt="Wi-Fi" class="image zoomable">
+            <h4>3.Androidスマホと同じWi-Fiに接続する</h4>
+            <p>
+              ここで接続するWi-Fiは、adbコマンドを実行するAndroidスマホで接続しているWi-Fiと同じである必要がある。
+              Wi-Fi環境がない場合、adbコマンドを実行するAndroidスマホでテザリングをしてそのWi-Fiに接続することでも実行できる。
+            </p>
+            <img src="connect3.png" alt="オン" class="image zoomable">
+            <h4>4.設定アプリの "開発者オプション" をタップする</h4>
+            <img src="connect4.png" alt="開発者オプション" class="image zoomable">
+            <h4>5. "ADBデバッグ" をオンにする</h4>
+            <img src="connect5-1.png" alt="ADBデバッグ" class="image zoomable">
+            <img src="connect5-2.png" alt="ADBデバッグ" class="image zoomable">
+            <h4>6. "ワイヤレスのデバッグ" をタップする</h4>
+            <img src="connect6.png" alt="ワイヤレスのデバッグ" class="image zoomable">
+            <h4>7. "ワイヤレスのデバッグ" をオンにする</h4>
+            <p>ここで表示された "IPアドレスとポート" はAndroidスマホと接続する際に用いる。</p>
+            <img src="connect7-1.png" alt="ワイヤレスのデバッグ" class="image zoomable">
+            <img src="connect7-2.png" alt="ワイヤレスのデバッグ" class="image zoomable">
+            <h4>8. "新しいデバイスをペアリング" をタップする</h4>
+            <p>
+              ここで表示された "IPアドレスとポート" と "Wi-Fiペア設定コード" はAndroidスマホとペアリングする際に用いる。
+              ここでの "IPアドレスとポート" は7で表示されたものとは異なり、Androidスマホと接続する際には使えない。
+            </p>
+            <img src="connect8-1.png" alt="新しいデバイスをペアリング" class="image zoomable">
+            <img src="connect8-2.png" alt="新しいデバイスをペアリング" class="image zoomable">
+            <h4>9.AndroidスマホにADB Shellをインストールする</h4>
+            <p>以下のリンクからADB Shellをインストールする</p>
+            <a href="https://play.google.com/store/apps/details?id=com.github.standardadb&pcampaignid=web_share" target="_blank" class="link-preview"></a>
+            <h4>10.ADB Shellを開く</h4>
+            <img src="connect10.jpg" alt="ADB Shell" class="image1 zoomable">
+            <h4>11. "ターミナル" タブの "ローカルターミナル" をタップする</h4>
+            <img src="connect11.jpg" alt="ローカルターミナル" class="image1 zoomable">
+            <h4>12.Galaxy Watchとペアリングするadbコマンドを実行する</h4>
+            <p>以下のコマンドを実行する。</p>
+            <pre><code>adb pair [8で表示されたIPアドレスとポート]</code></pre>
+            <p>
+              このコマンド実行後、ペアリングが完了してGalaxy Watchに接続できるようになる。
+              一度ペアリングすれば、Galaxy Watchを再起動するまでこのペアリングの手順は不要になる。
+            </p>
+            <img src="connect12.jpg" alt="ペアリング" class="image1 zoomable">
+            <h4>13.8で表示されたWi-Fiペア設定コードを入力する</h4>
+            <img src="connect13.jpg" alt="Wi-Fiペア設定コード" class="image1 zoomable">
+            <h4>14.Galaxy Watchと接続するadbコマンドを実行する</h4>
+            <p>以下のコマンドを実行する。</p>
+            <pre><code>adb connect [7で表示されたIPアドレスとポート]</code></pre>
+            <p>このコマンド実行後、接続が完了してGalaxy Watchにadbコマンドが実行できるようになる。</p>
+            <img src="connect14.jpg" alt="接続" class="image1 zoomable">
+          </section>
+        </div>
+        <div style="text-align: center; margin: 30px 0;">
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3996338946771353"
+              crossorigin="anonymous"></script>
+          <!-- スクエア -->
+          <ins class="adsbygoogle"
+              style="display:block"
+              data-ad-client="ca-pub-3996338946771353"
+              data-ad-slot="7532383969"
+              data-ad-format="auto"
+              data-full-width-responsive="false"></ins>
+          <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+        <div class="box-section1">
+          <h2>アプリを無効化するメリット</h2>
           <h4>1.バッテリー持ちが良くなる可能性がある</h4>
           <p>アプリを無効化するとそのアプリはバックグラウンドで動作できなくなるため、ものによるが多少なりともバッテリー持ちが良くなる可能性がある。</p>
           <h4>2.アプリ一覧に表示されなくなる</h4>
@@ -222,7 +279,7 @@
             使わない機能が表示または動作することがなくなる。
             オフや非表示にできない機能を無理やり無効化したいときはその機能を有するアプリを無効化することで無理やり解決できる。
           </p>
-          <h3>アプリを無効化するデメリット</h3>
+          <h2>アプリを無効化するデメリット</h2>
           <h4>1.もとに戻す際に再びadbコマンドが必要になることがある</h4>
           <p>一部は設定アプリから有効化できるものの、そうでない場合はadbコマンドを実行する必要がある。</p>
           <h4>2.意図せず特定の機能が使えなくなることがある</h4>
