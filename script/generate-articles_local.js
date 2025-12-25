@@ -90,10 +90,19 @@ async function getAllHtmlFiles(dir) {
     const dom = new JSDOM(html);
     const document = dom.window.document;
 
+    // ---------- visibility 判定 ----------
+    const robotsMeta = document.querySelector("meta[name='robots']");
+    const robotsContent =
+      robotsMeta?.getAttribute("content")?.toLowerCase() || "";
+    const visibility = robotsContent.includes("noindex")
+      ? "private"
+      : "public";
+
     let datePublished = "";
     let dateModified = "";
 
-    const ldJsonScript = document.querySelector("script[type='application/ld+json']");
+    const ldJsonScript =
+      document.querySelector("script[type='application/ld+json']");
     if (ldJsonScript) {
       try {
         const ldData = JSON.parse(ldJsonScript.textContent);
@@ -113,15 +122,16 @@ async function getAllHtmlFiles(dir) {
       continue;
     }
 
-    const targetContentElement = 
-      document.querySelector("main") || 
-      document.querySelector("article") || 
+    const targetContentElement =
+      document.querySelector("main") ||
+      document.querySelector("article") ||
       document.body;
 
     const clone = targetContentElement.cloneNode(true);
+    clone
+      .querySelectorAll("script, style, noscript, iframe")
+      .forEach(el => el.remove());
 
-    const junkElements = clone.querySelectorAll("script, style, noscript, iframe");
-    junkElements.forEach(el => el.remove());
     let content = clone.textContent || "";
     content = content.replace(/\s+/g, " ").trim();
 
@@ -131,11 +141,16 @@ async function getAllHtmlFiles(dir) {
       "";
 
     const metaCategory =
-      document.querySelector("meta[name='category']")?.getAttribute("content") || "";
-    const categories = metaCategory.split(",").map(c => c.trim()).filter(Boolean);
+      document.querySelector("meta[name='category']")
+        ?.getAttribute("content") || "";
+    const categories = metaCategory
+      .split(",")
+      .map(c => c.trim())
+      .filter(Boolean);
 
     const relativeImagePath =
-      document.querySelector("main img, article img, body img")?.getAttribute("src") || "";
+      document.querySelector("main img, article img, body img")
+        ?.getAttribute("src") || "";
     let image = "";
     if (relativeImagePath) {
       const fileUrl = new URL(normalizedPath, BASE_URL).href;
@@ -149,12 +164,15 @@ async function getAllHtmlFiles(dir) {
       content,
       image,
       datePublished,
-      dateModified
+      dateModified,
+      visibility
     });
-    
-    process.stdout.write("."); 
+
+    process.stdout.write(
+      visibility === "private" ? "🔒" : "."
+    );
   }
-  
+
   console.log("\n✅ 全ファイルの解析完了。JSONを生成します...");
 
   const articles = Array.from(articleMap.values()).sort((a, b) => {
@@ -163,6 +181,11 @@ async function getAllHtmlFiles(dir) {
     return dateB - dateA;
   });
 
-  await fs.writeFile(JSON_FILE, JSON.stringify(articles, null, 2), "utf-8");
+  await fs.writeFile(
+    JSON_FILE,
+    JSON.stringify(articles, null, 2),
+    "utf-8"
+  );
+
   console.log(`🎉 完了！ ${JSON_FILE} を更新 (${articles.length} 件)`);
 })();

@@ -8,11 +8,10 @@ const SITEMAP_FILE = "sitemap.xml";
 const getJSTDate = () => {
   const now = new Date();
   const jstOffset = 9 * 60;
-  const jstDate = new Date(now.getTime() + (jstOffset + now.getTimezoneOffset()) * 60000);
-  return jstDate;
+  return new Date(now.getTime() + (jstOffset + now.getTimezoneOffset()) * 60000);
 };
 
-const formatDateISO = (date) => date.toISOString().split("T")[0]; // YYYY-MM-DD
+const formatDateISO = (date) => date.toISOString().split("T")[0];
 const formatDateJapanese = (date) =>
   `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
 
@@ -37,7 +36,10 @@ const formatDateJapanese = (date) =>
   }
 
   const urlMap = new Map();
-  const urls = Array.isArray(sitemap.urlset?.url) ? sitemap.urlset.url : [sitemap.urlset?.url].filter(Boolean);
+  const urls = Array.isArray(sitemap.urlset?.url)
+    ? sitemap.urlset.url
+    : [sitemap.urlset?.url].filter(Boolean);
+
   urls.forEach(entry => urlMap.set(entry.loc, entry));
 
   const nowJST = getJSTDate();
@@ -51,7 +53,22 @@ const formatDateJapanese = (date) =>
     try {
       let html = await fs.readFile(file, "utf-8");
 
-      const pubMatch = html.match(/<time[^>]*class="published"[^>]*datetime="([\d-]+)"[^>]*>/);
+      const robotsMetaMatch = html.match(
+        /<meta\s+name=["']robots["']\s+content=["'][^"']*noindex[^"']*["']\s*\/?>/i
+      );
+
+      if (robotsMetaMatch) {
+        console.log(`🚫 Skipping ${file}: noindex 指定あり`);
+        if (urlMap.has(fullUrl)) {
+          urlMap.delete(fullUrl);
+          console.log(`🗑️ ${file} を sitemap から削除しました。`);
+        }
+        continue;
+      }
+
+      const pubMatch = html.match(
+        /<time[^>]*class="published"[^>]*datetime="([\d-]+)"[^>]*>/
+      );
       const publishedISO = pubMatch ? pubMatch[1] : null;
 
       const isDraft =
@@ -73,7 +90,9 @@ const formatDateJapanese = (date) =>
         `$1${isoDate}$3最終更新日：${jpDate}$6`
       );
 
-      const jsonLdRegex = /("dateModified"\s*:\s*")(\d{4}-\d{2}-\d{2}|[\d-]*--?)(")/;
+      const jsonLdRegex =
+        /("dateModified"\s*:\s*")(\d{4}-\d{2}-\d{2}|[\d-]*--?)(")/;
+
       if (jsonLdRegex.test(html)) {
         html = html.replace(jsonLdRegex, `$1${isoDate}$3`);
       }

@@ -331,7 +331,10 @@
       const searchInput = document.getElementById("searchBar");
       const categorySelect = document.getElementById("categoryFilter");
       const postSection = document.getElementById("postSection");
-      let allArticles = [];
+
+      const viewedPrivate = JSON.parse(
+        localStorage.getItem("viewedPrivateArticles") || "[]"
+      );
 
       function displayArticles(articles, keyword) {
         if (!articles || articles.length === 0) {
@@ -347,7 +350,6 @@
             const index = lowerContent.indexOf(keyword);
 
             if (index !== -1) {
-
               const startIndex = Math.max(0, index - 30);
               const endIndex = Math.min(article.content.length, index + keyword.length + 30);
               let snippet = article.content.substring(startIndex, endIndex);
@@ -357,13 +359,10 @@
 
               const regex = new RegExp(keyword, 'gi');
               contextHTML = snippet.replace(regex, '<strong>$&</strong>');
-
             } else {
-
               contextHTML = article.content.slice(0, 80) + '...';
             }
           } else {
-
             contextHTML = article.content.slice(0, 80) + '...';
           }
 
@@ -379,26 +378,32 @@
         }).join("");
       }
 
-
       fetch("articles.json")
         .then(res => res.json())
         .then(data => {
-          allArticles = data;
-  
-          displayArticles(allArticles, "");
-          worker.postMessage({ type: "load", payload: data });
+
+          worker.postMessage({
+            type: "load",
+            payload: {
+              articles: data,
+              viewedPrivate: viewedPrivate
+            }
+          });
+
+          worker.postMessage({
+            type: "search",
+            payload: { keyword: "", category: "" }
+          });
         });
 
       function performSearch() {
         const keyword = searchInput.value.trim().toLowerCase();
         const category = categorySelect.value;
 
-        if (keyword === "" && category === "") {
-
-          displayArticles(allArticles, "");
-        } else {
-          worker.postMessage({ type: "search", payload: { keyword, category } });
-        }
+        worker.postMessage({
+          type: "search",
+          payload: { keyword, category }
+        });
       }
 
       searchInput.addEventListener("input", performSearch);
@@ -407,7 +412,6 @@
       worker.onmessage = function (e) {
         const results = e.data;
         const keyword = searchInput.value.trim().toLowerCase();
-
         displayArticles(results, keyword);
       };
     </script>

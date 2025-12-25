@@ -25,21 +25,27 @@ const normalizePath = (p) =>
 
   for (const file of changedFiles) {
     const normalizedPath = normalizePath(file);
-    
+
     const newHtml = await fs.readFile(file, "utf-8");
     const dom = new JSDOM(newHtml);
     const document = dom.window.document;
 
-    const targetElement = 
+    const robotsMeta = document.querySelector("meta[name='robots']");
+    const robotsContent = robotsMeta?.getAttribute("content")?.toLowerCase() || "";
+    const visibility = robotsContent.includes("noindex")
+      ? "private"
+      : "public";
+
+    const targetElement =
       document.querySelector("main") ||
       document.querySelector("article") ||
       document.body;
 
     const clone = targetElement.cloneNode(true);
-    clone.querySelectorAll("script, style, noscript, iframe").forEach(el => el.remove());
+    clone.querySelectorAll("script, style, noscript, iframe")
+      .forEach(el => el.remove());
 
     let content = clone.textContent?.trim() || "";
-    
     content = content.replace(/\s+/g, " ").trim();
 
     const title =
@@ -47,11 +53,16 @@ const normalizePath = (p) =>
       document.querySelector("h1")?.textContent?.trim() || "";
 
     const metaCategory =
-      document.querySelector("meta[name='category']")?.getAttribute("content") || "";
-    const categories = metaCategory.split(",").map(c => c.trim()).filter(Boolean);
+      document.querySelector("meta[name='category']")
+        ?.getAttribute("content") || "";
+    const categories = metaCategory
+      .split(",")
+      .map(c => c.trim())
+      .filter(Boolean);
 
     const relativeImagePath =
-      document.querySelector("main img, article img, body img")?.getAttribute("src") || "";
+      document.querySelector("main img, article img, body img")
+        ?.getAttribute("src") || "";
     let image = "";
     if (relativeImagePath) {
       const fileUrl = new URL(normalizedPath, BASE_URL).href;
@@ -60,7 +71,8 @@ const normalizePath = (p) =>
 
     let datePublished = "";
     let dateModified = "";
-    const ldJsonScript = document.querySelector("script[type='application/ld+json']");
+    const ldJsonScript =
+      document.querySelector("script[type='application/ld+json']");
     if (ldJsonScript) {
       try {
         const ldData = JSON.parse(ldJsonScript.textContent);
@@ -71,16 +83,17 @@ const normalizePath = (p) =>
       }
     }
 
-    const isInvalidDate = (dateStr) => {
-        return !dateStr || dateStr.includes("--") || dateStr.includes("年月日");
-    };
+    const isInvalidDate = (dateStr) =>
+      !dateStr || dateStr.includes("--") || dateStr.includes("年月日");
 
     if (isInvalidDate(datePublished) || isInvalidDate(dateModified)) {
-        console.log(`⛔ ${normalizedPath} は日付が不完全なため articles.json から除外します (Pub: ${datePublished}, Mod: ${dateModified})`);
-
-        articleMap.delete(normalizedPath);
-        continue;
+      console.log(
+        `⛔ ${normalizedPath} は日付が不完全なため articles.json から除外します`
+      );
+      articleMap.delete(normalizedPath);
+      continue;
     }
+
     articleMap.set(normalizedPath, {
       title,
       category: categories,
@@ -88,10 +101,13 @@ const normalizePath = (p) =>
       content,
       image,
       datePublished,
-      dateModified
+      dateModified,
+      visibility
     });
 
-    console.log(`✅ ${normalizedPath} を articles.json に更新登録 (Modified: ${dateModified})`);
+    console.log(
+      `✅ ${normalizedPath} を articles.json に登録 (${visibility})`
+    );
   }
 
   const articles = Array.from(articleMap.values()).sort((a, b) => {
@@ -100,6 +116,11 @@ const normalizePath = (p) =>
     return dateB - dateA;
   });
 
-  await fs.writeFile(JSON_FILE, JSON.stringify(articles, null, 2), "utf-8");
+  await fs.writeFile(
+    JSON_FILE,
+    JSON.stringify(articles, null, 2),
+    "utf-8"
+  );
+
   console.log(`✅ articles.json updated (${articles.length} articles)`);
 })();
