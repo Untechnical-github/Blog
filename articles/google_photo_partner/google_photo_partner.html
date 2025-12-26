@@ -9,19 +9,23 @@
 
       gtag('config', 'G-D2R9D0M46Q');
     </script>
-    <script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3996338946771353"
+     crossorigin="anonymous"></script>
+        <script>
       (function () {
           const viewed = JSON.parse(localStorage.getItem("viewedPrivateArticles") || "[]");
-          const path = location.pathname;
+          
+          let path = location.pathname;
+          if (path.startsWith('/')) {
+            path = path.slice(1);
+          }
 
           if (!viewed.includes(path)) {
-          viewed.push(path);
-          localStorage.setItem("viewedPrivateArticles", JSON.stringify(viewed));
+            viewed.push(path);
+            localStorage.setItem("viewedPrivateArticles", JSON.stringify(viewed));
           }
       })();
     </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3996338946771353"
-     crossorigin="anonymous"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
