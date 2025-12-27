@@ -1,5 +1,3 @@
-// search-worker.js
-
 let articles = [];
 let viewedPrivate = [];
 
