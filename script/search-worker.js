@@ -1,3 +1,5 @@
+// search-worker.js
+
 let articles = [];
 let viewedPrivate = [];
 
@@ -16,11 +18,14 @@ self.onmessage = function (e) {
 
     const results = articles.filter(article => {
 
-      if (
-        article.visibility === "private" &&
-        !viewedPrivate.includes(article.path)
-      ) {
-        return false;
+      if (article.visibility === "private") {
+        const isViewed = viewedPrivate.some(vp => {
+            return article.path.includes(vp) || vp.includes(article.path);
+        });
+
+        if (!isViewed) {
+          return false;
+        }
       }
 
       const titleMatch = article.title.toLowerCase().includes(keyword);
