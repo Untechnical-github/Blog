@@ -220,6 +220,15 @@ html {
   margin-bottom: 5px;
 }
 
+.manual-link-img {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  display: block;
+}
+
 pre code {
   background-color: #1e1e1e;
   color: #f8f8f2;
