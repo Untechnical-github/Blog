@@ -195,7 +195,7 @@ html {
   line-height: 1.4;
 }
 
-.manual-link-card {
+.content-box {
   display: block;
   border: 1px solid #ccc;
   border-radius: 10px;
@@ -208,19 +208,25 @@ html {
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.manual-link-card:hover {
+.content-box:hover {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   border-color: #0073e6;
 }
 
-.manual-link-title {
+.content-title {
   font-weight: bold;
   font-size: 1.2em;
   color: #222;
   margin-bottom: 5px;
 }
 
-.manual-link-img {
+.content-desc {
+  font-size: 1.0em;
+  color: #555;
+  line-height: 1.4;
+}
+
+.content-visual {
   width: 100%;
   max-height: 250px;
   object-fit: cover;
