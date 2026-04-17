@@ -195,6 +195,31 @@ html {
   line-height: 1.4;
 }
 
+.manual-link-card {
+  display: block;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #ffffff;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.manual-link-card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  border-color: #0073e6;
+}
+
+.manual-link-title {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #222;
+  margin-bottom: 5px;
+}
+
 pre code {
   background-color: #1e1e1e;
   color: #f8f8f2;
