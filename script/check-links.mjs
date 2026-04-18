@@ -1,7 +1,6 @@
 import { Buffer } from 'node:buffer';
 import { JSDOM } from 'jsdom';
 
-// 設定
 const SITE_DOMAIN = 'https://untechnical.info';
 const ARTICLES_JSON_URL = `${SITE_DOMAIN}/articles.json`;
 
@@ -31,7 +30,6 @@ async function sendDiscordNotification(brokenLinks) {
 
 async function checkUrl(url) {
   try {
-    // 外部サイトのブロックを回避しやすくするため、一般的なUser-Agentを偽装します
     const res = await fetch(url, { 
       method: 'HEAD', 
       signal: AbortSignal.timeout(10000),
@@ -71,11 +69,10 @@ async function main() {
       const dom = new JSDOM(html);
       const document = dom.window.document;
       
-      // ===== 【1】画像のチェック =====
       const images = document.querySelectorAll('img');
       for (const img of images) {
         let src = img.getAttribute('src');
-        if (!src || src.startsWith('data:')) continue; // 空やBase64はスキップ
+        if (!src || src.startsWith('data:')) continue;
 
         const imgUrl = new URL(src, fullUrl).href;
         
@@ -90,23 +87,19 @@ async function main() {
         await sleep(500); 
       }
 
-      // ===== 【2】テキストリンクのチェック（今回追加） =====
       const links = document.querySelectorAll('a');
       for (const link of links) {
         let href = link.getAttribute('href');
         
-        // 空のリンク、ページ内リンク(#)、メール、電話、JS実行リンクは検証不要なのでスキップ
         if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) {
           continue;
         }
 
-        // 相対パスを絶対パスに変換
         const linkUrl = new URL(href, fullUrl).href;
         
         process.stdout.write(`  Checking Link: ${linkUrl} ... `);
         const linkStatus = await checkUrl(linkUrl);
         
-        // 200番台(成功)と、リダイレクト(300番台。特に301, 302)は正常とみなす
         if (typeof linkStatus === 'number' && linkStatus >= 200 && linkStatus < 400) {
           console.log(`✅ OK (${linkStatus})`);
         } else {

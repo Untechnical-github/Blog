@@ -2,9 +2,8 @@ name: Broken Link Checker
 
 on:
   schedule:
-    # 毎日 UTC 0:00 (日本時間 9:00) に実行
     - cron: '0 0 * * *'
-  workflow_dispatch: # 手動実行を可能にする
+  workflow_dispatch:
 
 jobs:
   check:
@@ -18,8 +17,6 @@ jobs:
         with:
           node-version: '20'
 
-      # 既存の package.json に従って、必要なパッケージがあればインストールする
-      # （今回は必須ではありませんが、今後jsdomなどを使う場合に備えて残しておくと安心です）
       - name: Install dependencies
         run: npm install
 
