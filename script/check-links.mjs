@@ -6,24 +6,27 @@ const ARTICLES_JSON_URL = `${SITE_DOMAIN}/articles.json`;
 const IFTTT_KEY = process.env.IFTTT_KEY;
 const IFTTT_EVENT = 'broken_link_alert';
 
-async function sendIftttNotification(brokenLinks) {
-  if (!IFTTT_KEY) {
-    console.error('Error: IFTTT_KEY is not set.');
+async function sendDiscordNotification(brokenLinks) {
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  if (!webhookUrl) {
+    console.error('Error: DISCORD_WEBHOOK_URL is not set.');
     return;
   }
 
-  const url = `https://maker.ifttt.com/trigger/${IFTTT_EVENT}/with/key/${IFTTT_KEY}`;
-  const message = brokenLinks.map(link => `${link.url} (Status: ${link.status}) in ${link.source}`).join('\n');
+  const message = brokenLinks.map(link => `- ${link.url} (Status: ${link.status})`).join('\n');
+  const payload = {
+    content: `⚠️ **リンク切れを検知しました**\n${message}`
+  };
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ value1: message })
+      body: JSON.stringify(payload)
     });
-    if (response.ok) console.log('Notification sent to IFTTT.');
+    if (response.ok) console.log('Notification sent to Discord.');
   } catch (err) {
-    console.error('Failed to send IFTTT notification:', err);
+    console.error('Failed to send Discord notification:', err);
   }
 }
 
