@@ -68,7 +68,7 @@ async function main() {
 
     // 3. リンク切れがあれば通知
     if (brokenLinks.length > 0) {
-      await sendIftttNotification(brokenLinks);
+      await sendDiscordNotification(brokenLinks);
     } else {
       console.log('No broken links found.');
     }
