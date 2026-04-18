@@ -54,7 +54,7 @@ async function main() {
     const articles = await res.json(); 
 
     for (const article of articles) {
-      const fullUrl = `${SITE_DOMAIN}${article.path}`;
+      const fullUrl = new URL(article.path, SITE_DOMAIN).href; 
       console.log(`\nChecking Page: ${fullUrl} ...`);
       
       const pageRes = await fetch(fullUrl);
