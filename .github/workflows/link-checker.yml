@@ -18,7 +18,13 @@ jobs:
         with:
           node-version: '20'
 
+      # 既存の package.json に従って、必要なパッケージがあればインストールする
+      # （今回は必須ではありませんが、今後jsdomなどを使う場合に備えて残しておくと安心です）
+      - name: Install dependencies
+        run: npm install
+
       - name: Run script
         env:
           IFTTT_KEY: ${{ secrets.IFTTT_KEY }}
-        run: node check-links.mjs
+        # ↓ここを変更しました！ ルートディレクトリからの相対パスを指定します
+        run: node script/link-checker.mjs
