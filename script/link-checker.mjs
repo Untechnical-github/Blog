@@ -11,9 +11,15 @@ async function sendDiscordNotification(brokenLinks) {
     return;
   }
 
-  const message = brokenLinks.map(link => `- [${link.type}] ${link.url} (Status: ${link.status})\n  Source: ${link.source}`).join('\n\n');
+  let message = brokenLinks.map(link => `- [${link.type}] ${link.url} (Status: ${link.status})\n  Source: ${link.source}`).join('\n\n');
+  const prefix = `⚠️ **リンク切れを検知しました**\n`;
+
+  if (prefix.length + message.length > 2000) {
+    message = message.substring(0, 1900) + '\n... (文字数制限のため以降は省略されました)';
+  }
+
   const payload = {
-    content: `⚠️ **リンク切れを検知しました**\n${message}`
+    content: prefix + message
   };
 
   try {
@@ -22,9 +28,15 @@ async function sendDiscordNotification(brokenLinks) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    if (response.ok) console.log('Notification sent to Discord.');
+    
+    if (response.ok) {
+      console.log('✅ Notification sent to Discord.');
+    } else {
+      console.error(`❌ Discord API Error: Status ${response.status}`);
+      console.error(await response.text());
+    }
   } catch (err) {
-    console.error('Failed to send Discord notification:', err);
+    console.error('❌ Network error when sending to Discord:', err);
   }
 }
 
@@ -59,8 +71,12 @@ async function main() {
       
       const pageRes = await fetch(fullUrl);
       if (!pageRes.ok) {
-        console.log(`❌ Page BROKEN: ${pageRes.status}`);
-        brokenLinks.push({ type: 'Page', url: fullUrl, status: pageRes.status, source: 'articles.json' });
+        if (pageRes.status === 404) {
+          console.log(`❌ Page BROKEN: ${pageRes.status}`);
+          brokenLinks.push({ type: 'Page', url: fullUrl, status: pageRes.status, source: 'articles.json' });
+        } else {
+          console.log(`⚠️ Page ERROR / IGNORED: ${pageRes.status}`);
+        }
         continue; 
       }
       console.log('✅ Page OK');
@@ -72,17 +88,18 @@ async function main() {
       const images = document.querySelectorAll('img');
       for (const img of images) {
         let src = img.getAttribute('src');
-        if (!src || src.startsWith('data:')) continue;
+        if (!src || src.startsWith('data:')) continue; 
 
         const imgUrl = new URL(src, fullUrl).href;
         
         process.stdout.write(`  Checking Image: ${imgUrl} ... `);
         const imgStatus = await checkUrl(imgUrl);
-        if (imgStatus !== 200) {
-          console.log(`❌ BROKEN`);
+        
+        if (imgStatus === 404) {
+          console.log(`❌ BROKEN (${imgStatus})`);
           brokenLinks.push({ type: 'Image', url: imgUrl, status: imgStatus, source: fullUrl });
         } else {
-          console.log(`✅ OK`);
+          console.log(`✅ OK / IGNORED (${imgStatus})`);
         }
         await sleep(500); 
       }
@@ -91,7 +108,7 @@ async function main() {
       for (const link of links) {
         let href = link.getAttribute('href');
         
-        if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) {
+        if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:') || href.includes('/cdn-cgi/l/email-protection')) {
           continue;
         }
 
@@ -100,11 +117,11 @@ async function main() {
         process.stdout.write(`  Checking Link: ${linkUrl} ... `);
         const linkStatus = await checkUrl(linkUrl);
         
-        if (typeof linkStatus === 'number' && linkStatus >= 200 && linkStatus < 400) {
-          console.log(`✅ OK (${linkStatus})`);
-        } else {
+        if (linkStatus === 404) {
           console.log(`❌ BROKEN (${linkStatus})`);
           brokenLinks.push({ type: 'TextLink', url: linkUrl, status: linkStatus, source: fullUrl });
+        } else {
+          console.log(`✅ OK / IGNORED (${linkStatus})`);
         }
         await sleep(500); 
       }
@@ -115,7 +132,7 @@ async function main() {
     if (brokenLinks.length > 0) {
       await sendDiscordNotification(brokenLinks);
     } else {
-      console.log('\nNo broken links found.');
+      console.log('\nNo 404 broken links found.');
     }
 
   } catch (err) {
