@@ -25,6 +25,5 @@ jobs:
 
       - name: Run script
         env:
-          IFTTT_KEY: ${{ secrets.IFTTT_KEY }}
-        # ↓ここを変更しました！ ルートディレクトリからの相対パスを指定します
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: node script/link-checker.mjs

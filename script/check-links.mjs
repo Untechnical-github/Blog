@@ -1,10 +1,9 @@
 import { Buffer } from 'node:buffer';
+import { JSDOM } from 'jsdom';
 
 // 設定
 const SITE_DOMAIN = 'https://untechnical.info';
 const ARTICLES_JSON_URL = `${SITE_DOMAIN}/articles.json`;
-const IFTTT_KEY = process.env.IFTTT_KEY;
-const IFTTT_EVENT = 'broken_link_alert';
 
 async function sendDiscordNotification(brokenLinks) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
@@ -13,7 +12,7 @@ async function sendDiscordNotification(brokenLinks) {
     return;
   }
 
-  const message = brokenLinks.map(link => `- ${link.url} (Status: ${link.status})`).join('\n');
+  const message = brokenLinks.map(link => `- [${link.type}] ${link.url} (Status: ${link.status})\n  Source: ${link.source}`).join('\n\n');
   const payload = {
     content: `⚠️ **リンク切れを検知しました**\n${message}`
   };
@@ -32,45 +31,98 @@ async function sendDiscordNotification(brokenLinks) {
 
 async function checkUrl(url) {
   try {
-    const res = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(10000) });
+    // 外部サイトのブロックを回避しやすくするため、一般的なUser-Agentを偽装します
+    const res = await fetch(url, { 
+      method: 'HEAD', 
+      signal: AbortSignal.timeout(10000),
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+    });
     return res.status;
   } catch (err) {
     return 'TIMEOUT/ERROR';
   }
 }
 
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 async function main() {
-  console.log('Starting link check...');
+  console.log('Starting link check (Pages, Images & Text Links)...');
   const brokenLinks = [];
 
   try {
-    // 1. 記事一覧を取得
     const res = await fetch(ARTICLES_JSON_URL);
-    const articles = await res.json(); // 形式は想定: [{ "path": "/posts/..." }, ...]
+    const articles = await res.json(); 
 
-    // 2. 各記事自体の存在チェック
     for (const article of articles) {
       const fullUrl = `${SITE_DOMAIN}${article.path}`;
-      process.stdout.write(`Checking: ${fullUrl} ... `);
+      console.log(`\nChecking Page: ${fullUrl} ...`);
       
-      const status = await checkUrl(fullUrl);
-      if (status !== 200) {
-        console.log('❌ BROKEN');
-        brokenLinks.push({ url: fullUrl, status, source: 'Article List' });
-      } else {
-        console.log('✅ OK');
+      const pageRes = await fetch(fullUrl);
+      if (!pageRes.ok) {
+        console.log(`❌ Page BROKEN: ${pageRes.status}`);
+        brokenLinks.push({ type: 'Page', url: fullUrl, status: pageRes.status, source: 'articles.json' });
+        continue; 
+      }
+      console.log('✅ Page OK');
+
+      const html = await pageRes.text();
+      const dom = new JSDOM(html);
+      const document = dom.window.document;
+      
+      // ===== 【1】画像のチェック =====
+      const images = document.querySelectorAll('img');
+      for (const img of images) {
+        let src = img.getAttribute('src');
+        if (!src || src.startsWith('data:')) continue; // 空やBase64はスキップ
+
+        const imgUrl = new URL(src, fullUrl).href;
+        
+        process.stdout.write(`  Checking Image: ${imgUrl} ... `);
+        const imgStatus = await checkUrl(imgUrl);
+        if (imgStatus !== 200) {
+          console.log(`❌ BROKEN`);
+          brokenLinks.push({ type: 'Image', url: imgUrl, status: imgStatus, source: fullUrl });
+        } else {
+          console.log(`✅ OK`);
+        }
+        await sleep(500); 
       }
 
-      // ※ 記事内部の外部リンクチェックを追加したい場合は、
-      // ここで fetch(fullUrl) して HTMLを取得し、正規表現で href="http..." を抽出してループします。
-      // 今回は基本のページ存在チェックのみとしています。
+      // ===== 【2】テキストリンクのチェック（今回追加） =====
+      const links = document.querySelectorAll('a');
+      for (const link of links) {
+        let href = link.getAttribute('href');
+        
+        // 空のリンク、ページ内リンク(#)、メール、電話、JS実行リンクは検証不要なのでスキップ
+        if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) {
+          continue;
+        }
+
+        // 相対パスを絶対パスに変換
+        const linkUrl = new URL(href, fullUrl).href;
+        
+        process.stdout.write(`  Checking Link: ${linkUrl} ... `);
+        const linkStatus = await checkUrl(linkUrl);
+        
+        // 200番台(成功)と、リダイレクト(300番台。特に301, 302)は正常とみなす
+        if (typeof linkStatus === 'number' && linkStatus >= 200 && linkStatus < 400) {
+          console.log(`✅ OK (${linkStatus})`);
+        } else {
+          console.log(`❌ BROKEN (${linkStatus})`);
+          brokenLinks.push({ type: 'TextLink', url: linkUrl, status: linkStatus, source: fullUrl });
+        }
+        await sleep(500); 
+      }
+      
+      await sleep(1000);
     }
 
-    // 3. リンク切れがあれば通知
     if (brokenLinks.length > 0) {
       await sendDiscordNotification(brokenLinks);
     } else {
-      console.log('No broken links found.');
+      console.log('\nNo broken links found.');
     }
 
   } catch (err) {
