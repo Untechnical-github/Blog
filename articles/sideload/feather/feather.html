@@ -97,9 +97,9 @@
             サイドロードとは、iOSならApp Store、AndroidならGoogle Play Store以外からアプリをインストールすることを指す。
             これにより、アプリを特定のバージョンに戻したり、正規のアプリストアで配信されていないようなアプリをインストールできる。
             Androidはapkと呼ばれるファイルを入手することで直接サイドロードできるが、iOSは制限が厳しく、一般的なユーザーはサイドロードできるアプリが3つに制限される、7日に1回再署名が必要、通知機能が使えないなど大きなデメリットを有する。
-            完全なサイドロードを利用するにはアプリ開発者向けのプログラムであるApple Developper Programに登録し、アプリを署名してサイドロードするのに必要な証明書を得るという方法があるが、これの年会費は99米ドル、2025年10月時点の日本円で約15,000円となっていて、安易にサイドロードのためだけに支払う金額ではないように感じられる。
+            完全なサイドロードを利用するにはアプリ開発者向けのプログラムであるApple Developer Programに登録し、アプリを署名してサイドロードするのに必要な証明書を得るという方法があるが、これの年会費は99米ドル、2025年10月時点の日本円で約15,000円となっていて、安易にサイドロードのためだけに支払う金額ではないように感じられる。
             証明書はアプリを開発する企業にも利用するため、企業から流出した証明書を入手し、アプリを署名してサイドロードするという方法があるが、その証明書はすぐにAppleが失効させて使えなくなることが多く、さらに法的にもリスクがある。
-            そこで、Apple Developper Programの証明書を複数人のユーザーで共有して使うことで年間およそ1,000円から3,000円と比較的安い金額で完全なサイドロードができるようにするというサービスがいくつかある。
+            そこで、Apple Developer Programの証明書を複数人のユーザーで共有して使うことで年間およそ1,000円から3,000円と比較的安い金額で完全なサイドロードができるようにするというサービスがいくつかある。
             ここではKravaSignおよびAppTestersでの証明書の購入の手順と、Featherでサイドロードする方法まで解説する。
           </p>
         </div>
@@ -145,12 +145,12 @@
           <div class="box-section1">
             <h2>証明書を購入する</h2>
             <div class="reference">
-              <a href="https://developer.apple.com/jp/programs" target="blank">
-                <img src="apple_developper_program.png" alt="Apple Developper Program" class="imagew zoomable">
+              <a href="https://developer.apple.com/jp/programs" target="_blank">
+                <img src="apple_Developer_program.png" alt="Apple Developer Program" class="imagew zoomable">
                 Appleより引用
               </a>
             </div>
-            <p>Apple Developper Programの証明書を購入できるサービスは複数あるが、ここではKravaSignとAppTestersのそれぞれで証明書を購入する方法を解説する。</p>
+            <p>Apple Developer Programの証明書を購入できるサービスは複数あるが、ここではKravaSignとAppTestersのそれぞれで証明書を購入する方法を解説する。</p>
           </div>
           <div style="text-align: center; margin: 30px 0;">
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3996338946771353"
@@ -354,7 +354,7 @@
           <section id="ipa_signer">
             <h2>AppTesters IPA Signerを用いてFeatherをサイドロードする</h2>
             <div class="reference">
-              <a href="https://apptesters.org/" target="blank">
+              <a href="https://apptesters.org/" target="_blank">
                 <img src="apptesters.webp" alt="AppTesters" class="image zoomable">
                 AppTestersより引用
               </a>
@@ -409,14 +409,14 @@
           <section id="feather">
             <h2>Featherを用いてサイドロードする</h2>
             <div class="reference">
-              <a href="https://feather-ios.com" target="blank">
+              <a href="https://feather-ios.com" target="_blank">
                 <img src="feather.webp" alt="Feather" class="image zoomable">
                 Featherより引用
               </a>
             </div>
             <p>
               ここではFeatherによるサイドロードの方法を解説する。
-              AppTesters IPA Signerだけでもアプリのサイドロードはできるが、Featherを使うとサイドロード毎のmovileprovisionファイルとp12ファイルのアップロード、p12ファイルのパスワードの入力が不要になり、さらに証明書やサイドロードしたアプリの管理が便利になる。
+              AppTesters IPA Signerだけでもアプリのサイドロードはできるが、Featherを使うとサイドロード毎のmobileprovisionファイルとp12ファイルのアップロード、p12ファイルのパスワードの入力が不要になり、さらに証明書やサイドロードしたアプリの管理が便利になる。
               Featherを含むサイドロードしたアプリをアップデートする際も11から同様の手順で行う。
             </p>
             <h3>方法</h3>
@@ -425,7 +425,7 @@
             <h4>2. "Import" をタップする</h4>
             <img src="feather2.PNG" class="imageh zoomable" alt="Import">
             <h4>3. "Import Certificate File" をタップする</h4>
-            <img src="feather3.PNG" class="imageh zoomable" alt="mport Certificate File">
+            <img src="feather3.PNG" class="imageh zoomable" alt="Import Certificate File">
             <h4>4.p12ファイルをインポートする</h4>
             <img src="feather4.PNG" class="imageh zoomable" alt="p12">
             <h4>5. "Import Provisioning File" をタップする</h4>
@@ -483,8 +483,8 @@
             </p>
             <h4>･サイドロードしたアプリで通知機能が使える</h4>
             <p>SideloadlyやAltStore、SideStoreと違い、サイドロードしたアプリの通知機能が使える。</p>
-            <h4>･Apple Developper Programよりも安い金額で証明書を入手できる</h4>
-            <p>年間およそ1,000円から3,000円とApple Developper Programよりも安い金額で証明書を入手できる。</p>
+            <h4>･Apple Developer Programよりも安い金額で証明書を入手できる</h4>
+            <p>年間およそ1,000円から3,000円とApple Developer Programよりも安い金額で証明書を入手できる。</p>
             <h4>･企業から流出した、無料で入手できる証明書よりもAppleに失効させられるリスクが小さい</h4>
             <p>企業から流出した、無料で入手できる証明書はすぐに使えなくなる可能性が高い。</p>
             <h3>Featherによるサイドロードのデメリット</h4>
