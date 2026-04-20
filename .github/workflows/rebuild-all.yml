@@ -1,0 +1,40 @@
+name: Full Rebuild Articles & Sitemap
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install jsdom fast-xml-parser
+
+      - name: Run Full Generation
+        run: |
+          # 1. JSONの再構築
+          node script/generate-articles_local.js
+          
+          # 2. サイトマップの再構築（追加！）
+          node script/generate-sitemap_local.js
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # jsonとxmlの両方をaddする
+          git add articles.json sitemap.xml
+          
+          git commit -m "🤖 サイト全体の articles.json と sitemap.xml を再構築" || echo "No changes to commit"
+          git push
