@@ -78,41 +78,45 @@ ${originalText}`;
        return;
     }
 
+        // --- (省略) AIによる校正処理の後 ---
+
+    // 1. ファイルを上書き保存
     await fs.writeFile(filePath, fixedText, 'utf-8');
 
-    // DiscordへBotとして通知を送信（要約とボタン付き）
+    // 2. ユニークな一時ブランチ名（ai-fix-1713... の形式）
+    const branchName = `ai-fix-${Date.now()}`;
+
+    // 3. Git操作（そのファイルだけをPush）
+    try {
+      execSync(`git config user.name "github-actions[bot]"`);
+      execSync(`git config user.email "github-actions[bot]@users.noreply.github.com"`);
+      execSync(`git checkout -b ${branchName}`);
+      execSync(`git add "${filePath}"`);
+      execSync(`git commit -m "🤖 AI校正案: ${filePath}"`);
+      execSync(`git push origin ${branchName}`);
+      
+      // 作業後はmainに戻り、ローカルのブランチは即座に消す（GitHub上のブランチはWorkerが消します）
+      execSync(`git checkout main`);
+      execSync(`git branch -D ${branchName}`);
+    } catch (gitError) {
+      console.error("Git failed:", gitError);
+      process.exit(0);
+    }
+
+    // 4. Discordへボタン付きで送信
     const payload = {
-      content: `🤖 **AI校正完了:** \`${filePath}\`\n\n**【修正の要約】**\n${summary}\n\nこの修正を本番に反映しますか？`,
+      content: `🤖 **AI校正完了:** \`${filePath}\`\n\n**【修正の要約】**\n${summary}\n\n反映しますか？`,
       components: [{
         type: 1, 
         components: [
-          { type: 2, style: 1, label: "修正を反映する", custom_id: "apply_fix" },
-          { type: 2, style: 4, label: "破棄する", custom_id: "reject_fix" }
+          { type: 2, style: 1, label: "反映する", custom_id: `apply:${branchName}` },
+          { type: 2, style: 4, label: "破棄する", custom_id: `reject:${branchName}` }
         ]
       }]
     };
 
-    const response = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+    await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bot ${botToken}` 
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bot ${botToken}` },
       body: JSON.stringify(payload)
     });
-
-    if (!response.ok) {
-      console.error(`❌ Discord API Error: Status ${response.status}`);
-      console.error(await response.text());
-    } else {
-      console.log('✅ Discord notification sent via Bot.');
-    }
-
-  } catch (error) {
-    // 予期せぬエラーでも全体の処理を止めないように process.exit(0) を使用
-    console.error(`Error during AI proofreading for ${filePath}:`, error);
-    process.exit(0); 
-  }
-}
-
-main();
