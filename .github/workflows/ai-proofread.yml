@@ -31,7 +31,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        # 確実に動くようにGeminiのパッケージをインストール
+
         run: |
           npm install
           npm install @google/generative-ai
@@ -50,11 +50,10 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          # AIの修正案を「ai-review-branch」という仮の場所に保存
+
           git checkout -b ai-review-branch
           git add .
           
-          # もしAIが修正を行っていれば保存（差分がなければ何もしない）
           if ! git diff --staged --quiet; then
             git commit -m "🤖 AIによる校正案の作成"
             git push -f origin ai-review-branch

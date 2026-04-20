@@ -2,7 +2,7 @@ name: Apply AI Fix
 
 on:
   repository_dispatch:
-    types: [apply_ai_fix] # Cloudflareからの「apply_ai_fix」という合言葉に反応する
+    types: [apply_ai_fix]
 
 jobs:
   apply:
@@ -18,7 +18,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # 仮保管庫（ai-review-branch）から本番（main）へ修正を合体させる
           git fetch origin ai-review-branch
           git merge origin/ai-review-branch --no-edit
           git push origin main
