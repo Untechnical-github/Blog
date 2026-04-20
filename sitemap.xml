@@ -1,54 +1,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://untechnical.info/policy</loc>
-    <lastmod>2025-11-23</lastmod>
-  </url>
-  <url>
-    <loc>https://untechnical.info/</loc>
-    <lastmod>2025-11-23</lastmod>
-  </url>
-  <url>
-    <loc>https://untechnical.info/articles/xiaoxin_pad_pro/xiaoxin_pad_pro</loc>
+    <loc>https://untechnical.info/articles/3ds_type-c/3ds_type-c</loc>
     <lastmod>2026-04-18</lastmod>
   </url>
   <url>
-    <loc>https://untechnical.info/articles/wear_os_adb/wear_os_adb</loc>
-    <lastmod>2026-04-19</lastmod>
-  </url>
-  <url>
-    <loc>https://untechnical.info/articles/sideload/feather/feather</loc>
-    <lastmod>2026-04-18</lastmod>
-  </url>
-  <url>
-    <loc>https://untechnical.info/articles/sideload/sidestore/sidestore</loc>
-    <lastmod>2026-04-18</lastmod>
+    <loc>https://untechnical.info/articles/camera_sound/aquos/aquos</loc>
+    <lastmod>2026-02-16</lastmod>
   </url>
   <url>
     <loc>https://untechnical.info/articles/camera_sound/camera_sound</loc>
-    <lastmod>2026-02-16</lastmod>
-  </url>
-  <url>
-    <loc>https://untechnical.info/articles/camera_sound/xperia/xperia</loc>
-    <lastmod>2026-02-16</lastmod>
-  </url>
-  <url>
-    <loc>https://untechnical.info/articles/camera_sound/xiaomi/xiaomi</loc>
-    <lastmod>2026-02-16</lastmod>
-  </url>
-  <url>
-    <loc>https://untechnical.info/articles/camera_sound/pixel/pixel</loc>
-    <lastmod>2026-02-16</lastmod>
-  </url>
-  <url>
-    <loc>https://untechnical.info/articles/camera_sound/nubia/nubia</loc>
-    <lastmod>2026-02-16</lastmod>
-  </url>
-  <url>
-    <loc>https://untechnical.info/articles/camera_sound/nothing/nothing</loc>
-    <lastmod>2026-02-16</lastmod>
-  </url>
-  <url>
-    <loc>https://untechnical.info/articles/camera_sound/motorola/motorola</loc>
     <lastmod>2026-02-16</lastmod>
   </url>
   <url>
@@ -56,7 +16,27 @@
     <lastmod>2026-02-16</lastmod>
   </url>
   <url>
-    <loc>https://untechnical.info/articles/camera_sound/aquos/aquos</loc>
+    <loc>https://untechnical.info/articles/camera_sound/motorola/motorola</loc>
+    <lastmod>2026-02-16</lastmod>
+  </url>
+  <url>
+    <loc>https://untechnical.info/articles/camera_sound/nothing/nothing</loc>
+    <lastmod>2026-02-16</lastmod>
+  </url>
+  <url>
+    <loc>https://untechnical.info/articles/camera_sound/nubia/nubia</loc>
+    <lastmod>2026-02-16</lastmod>
+  </url>
+  <url>
+    <loc>https://untechnical.info/articles/camera_sound/pixel/pixel</loc>
+    <lastmod>2026-02-16</lastmod>
+  </url>
+  <url>
+    <loc>https://untechnical.info/articles/camera_sound/xiaomi/xiaomi</loc>
+    <lastmod>2026-02-16</lastmod>
+  </url>
+  <url>
+    <loc>https://untechnical.info/articles/camera_sound/xperia/xperia</loc>
     <lastmod>2026-02-16</lastmod>
   </url>
   <url>
@@ -68,15 +48,27 @@
     <lastmod>2026-04-18</lastmod>
   </url>
   <url>
-    <loc>https://untechnical.info/articles/tweaked_app/x_login/x_login</loc>
-    <lastmod>2026-04-18</lastmod>
-  </url>
-  <url>
     <loc>https://untechnical.info/articles/sideload/epic/epic</loc>
     <lastmod>2026-04-18</lastmod>
   </url>
   <url>
-    <loc>https://untechnical.info/articles/3ds_type-c/3ds_type-c</loc>
+    <loc>https://untechnical.info/articles/sideload/feather/feather</loc>
+    <lastmod>2026-04-18</lastmod>
+  </url>
+  <url>
+    <loc>https://untechnical.info/articles/sideload/sidestore/sidestore</loc>
+    <lastmod>2026-04-18</lastmod>
+  </url>
+  <url>
+    <loc>https://untechnical.info/articles/tweaked_app/x_login/x_login</loc>
+    <lastmod>2026-04-18</lastmod>
+  </url>
+  <url>
+    <loc>https://untechnical.info/articles/wear_os_adb/wear_os_adb</loc>
+    <lastmod>2026-04-19</lastmod>
+  </url>
+  <url>
+    <loc>https://untechnical.info/articles/xiaoxin_pad_pro/xiaoxin_pad_pro</loc>
     <lastmod>2026-04-18</lastmod>
   </url>
 </urlset>
