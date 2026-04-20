@@ -23,7 +23,7 @@ async function main() {
 
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
     const prompt = `あなたはプロのWebライター兼プログラマーです。
 以下のHTMLまたはMarkdownの文章を読み、誤字脱字、文法エラー、不自然な表現を修正してください。
