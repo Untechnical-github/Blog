@@ -22,9 +22,8 @@ async function main() {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
-    // 厳格なプロンプト（コード構造は維持、句読点等のスタイル変更禁止）
-    const prompt = `あなたは厳格な校正アシスタント兼プログラマーです。
-以下の文章から【明らかなエラーのみ】を修正し、「修正内容の要約」と「修正後のテキスト全体」を出力してください。
+        const prompt = `あなたは厳格な校正アシスタント兼プログラマーです。
+以下の文章から【明らかなエラーのみ】を修正し、「修正内容の詳細」と「修正後のテキスト全体」を出力してください。
 
 【厳守するルール】
 1. HTMLの構造、コードブロック内の記述、インデントなどの「コードの書き方・構造」は絶対に改変しないでください。
@@ -34,7 +33,11 @@ async function main() {
 5. 修正箇所が一つもない場合は、要約に「修正なし」とだけ書いてください。
 
 ===SUMMARY===
-（ここに修正した箇所の箇条書き要約）
+（修正箇所ごとに、必ず以下の「Before ➡️ After」の形式で詳細にリストアップしてください。複数の同じ修正がある場合でも、「〇箇所」とまとめずに1つずつ分けて記載してください）
+例：
+・[Before] Andorid Wear ➡️ [After] Android Wear
+・[Before] ありがとございます ➡️ [After] ありがとうございます
+
 ===TEXT===
 （ここに修正後のテキスト全体）
 
@@ -42,7 +45,7 @@ async function main() {
 ${originalText}`;
 
     let result;
-    const maxRetries = 3;
+    const maxRetries = 5;
     for (let i = 0; i < maxRetries; i++) {
       try {
         console.log(`Waiting for Gemini API... (Attempt ${i + 1}/${maxRetries})`);
