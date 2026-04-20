@@ -1,0 +1,46 @@
+name: AI Proofreader (Search by Keyword)
+
+on:
+  workflow_dispatch:
+    inputs:
+      keyword:
+        description: '記事名の一部を入力'
+        required: true
+        type: string
+
+jobs:
+  proofread-selected:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install @google/generative-ai
+
+      - name: Run AI Proofreader on Found File
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
+        run: |
+          KEYWORD="${{ inputs.keyword }}"
+          echo "🔍 検索キーワード: $KEYWORD"
+          
+          FILE_PATH=$(find articles -type f \( -name "*.html" -o -name "*.md" \) | grep -i "$KEYWORD" | head -n 1)
+          
+          if [ -z "$FILE_PATH" ]; then
+            echo "❌ エラー: '$KEYWORD' を含むファイルが見つかりませんでした。"
+            exit 1
+          fi
+          
+          echo "✅ ファイルを発見しました: $FILE_PATH"
+          echo "Running AI..."
+          node script/ai-proofreader.mjs "$FILE_PATH"
