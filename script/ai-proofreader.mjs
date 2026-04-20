@@ -52,10 +52,13 @@ ${originalText}`;
         result = await model.generateContent(prompt);
         break;
       } catch (e) {
+        console.error(`⚠️ API Error on attempt ${i + 1}: ${e.message}`);
+        
         if (i === maxRetries - 1) {
           console.error(`❌ Max retries reached for ${filePath}.`);
           process.exit(0);
         }
+        console.log(`Retrying in 10 seconds...`);
         await sleep(10000);
       }
     }
