@@ -20,7 +20,7 @@ async function main() {
   try {
     const originalText = await fs.readFile(filePath, 'utf-8');
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash" });
 
     // 厳格なプロンプト（コード構造は維持、句読点等のスタイル変更禁止）
     const prompt = `あなたは厳格な校正アシスタント兼プログラマーです。
