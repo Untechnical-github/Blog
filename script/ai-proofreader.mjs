@@ -2,8 +2,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import fs from 'node:fs/promises';
 
 const apiKey = process.env.GEMINI_API_KEY;
-const botToken = process.env.DISCORD_BOT_TOKEN;     // 変更: WebhookからBotTokenへ
-const channelId = process.env.DISCORD_CHANNEL_ID;   // 変更: 送信先チャンネルID
+const botToken = process.env.DISCORD_BOT_TOKEN;     
+const channelId = process.env.DISCORD_CHANNEL_ID;   
 
 if (!apiKey || !botToken || !channelId) {
   console.error("Error: Missing credentials (API Key, Bot Token, or Channel ID).");
@@ -13,13 +13,15 @@ if (!apiKey || !botToken || !channelId) {
 const filePath = process.argv[2];
 if (!filePath) process.exit(1);
 
+// リトライ用の待機関数
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 async function main() {
   try {
     const originalText = await fs.readFile(filePath, 'utf-8');
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    // AIへ「要約」と「本文」を分けて出させるプロンプトに変更
     const prompt = `あなたはプロのWebライター兼プログラマーです。
 以下の文章を校正し、「修正内容の要約」と「修正後のテキスト全体」を必ず以下のフォーマットで出力してください。
 
@@ -36,10 +38,29 @@ async function main() {
 【元の文章】
 ${originalText}`;
 
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
+    let result;
+    const maxRetries = 3; // 最大3回まで再挑戦する
 
-    // AIの出力を「要約」と「本文」に分割
+    // Gemini API呼び出し（リトライ機能付き）
+    for (let i = 0; i < maxRetries; i++) {
+      try {
+        console.log(`Waiting for Gemini API... (Attempt ${i + 1}/${maxRetries})`);
+        result = await model.generateContent(prompt);
+        break; // 成功したらループを抜ける
+      } catch (e) {
+        console.warn(`⚠️ API Error: ${e.message}`);
+        if (i === maxRetries - 1) {
+          console.error(`❌ Max retries reached for ${filePath}. Skipping this file.`);
+          process.exit(0); // エラーで全体を止めないよう、正常終了扱いにして次のファイルへ進める
+        }
+        console.log(`Server busy. Retrying in 10 seconds...`);
+        await sleep(10000); // 10秒待ってから再挑戦
+      }
+    }
+
+    if (!result) return;
+
+    const responseText = result.response.text();
     const parts = responseText.split('===TEXT===');
     if (parts.length < 2) {
        console.log("AI format error, skipping.");
@@ -50,16 +71,14 @@ ${originalText}`;
     let fixedText = parts[1].trim();
     fixedText = fixedText.replace(/^```(html|md|markdown)?\n/i, '').replace(/\n```$/i, '');
 
-    // 修正が全くなければスキップする
     if (originalText === fixedText || summary.includes("修正なし")) {
        console.log(`No changes made by AI for ${filePath}.`);
        return;
     }
 
-    // ファイルを上書き保存
     await fs.writeFile(filePath, fixedText, 'utf-8');
 
-    // Webhookではなく、BotのAPIを使って直接送信する（これでボタンが表示されます）
+    // DiscordへBotとして通知を送信（要約とボタン付き）
     const payload = {
       content: `🤖 **AI校正完了:** \`${filePath}\`\n\n**【修正の要約】**\n${summary}\n\nこの修正を本番に反映しますか？`,
       components: [{
@@ -75,7 +94,7 @@ ${originalText}`;
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bot ${botToken}` // Botとして送信
+        'Authorization': `Bot ${botToken}` 
       },
       body: JSON.stringify(payload)
     });
@@ -83,11 +102,14 @@ ${originalText}`;
     if (!response.ok) {
       console.error(`❌ Discord API Error: Status ${response.status}`);
       console.error(await response.text());
+    } else {
+      console.log('✅ Discord notification sent via Bot.');
     }
 
   } catch (error) {
-    console.error("Error during AI proofreading:", error);
-    process.exit(1);
+    // 予期せぬエラーでも全体の処理を止めないように process.exit(0) を使用
+    console.error(`Error during AI proofreading for ${filePath}:`, error);
+    process.exit(0); 
   }
 }
 
