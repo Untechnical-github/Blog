@@ -1,0 +1,63 @@
+name: AI Proofreader
+
+on:
+  push:
+    paths:
+      - 'articles/**/*.html'
+      - 'articles/**/*.md'
+    branches:
+      - main
+
+jobs:
+  proofread:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            articles/**/*.html
+            articles/**/*.md
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        # 確実に動くようにGeminiのパッケージをインストール
+        run: |
+          npm install
+          npm install @google/generative-ai
+
+      - name: Run AI Proofreader
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "Running AI on $file..."
+            node script/ai-proofreader.mjs "$file"
+          done
+
+      - name: Save AI suggestion to temporary branch
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # AIの修正案を「ai-review-branch」という仮の場所に保存
+          git checkout -b ai-review-branch
+          git add .
+          
+          # もしAIが修正を行っていれば保存（差分がなければ何もしない）
+          if ! git diff --staged --quiet; then
+            git commit -m "🤖 AIによる校正案の作成"
+            git push -f origin ai-review-branch
+          else
+            echo "No changes needed by AI."
+          fi
