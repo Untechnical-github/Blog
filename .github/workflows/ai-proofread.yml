@@ -39,7 +39,8 @@ jobs:
       - name: Run AI Proofreader
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             echo "Running AI on $file..."
