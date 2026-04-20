@@ -1,10 +1,10 @@
-name: AI Proofreader (Search by Keyword)
+name: AI Proofreader (Search by Keywords)
 
 on:
   workflow_dispatch:
     inputs:
-      keyword:
-        description: '記事名の一部を入力'
+      keywords:
+        description: '記事名の一部をスペース区切りで入力'
         required: true
         type: string
 
@@ -25,22 +25,28 @@ jobs:
           npm install
           npm install @google/generative-ai
 
-      - name: Run AI Proofreader on Found File
+      - name: Run AI Proofreader on Found Files
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
           DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
         run: |
-          KEYWORD="${{ inputs.keyword }}"
-          echo "🔍 検索キーワード: $KEYWORD"
+          read -ra KEYWORD_ARRAY <<< "${{ inputs.keywords }}"
           
-          FILE_PATH=$(find articles -type f \( -name "*.html" -o -name "*.md" \) | grep -i "$KEYWORD" | head -n 1)
-          
-          if [ -z "$FILE_PATH" ]; then
-            echo "❌ エラー: '$KEYWORD' を含むファイルが見つかりませんでした。"
-            exit 1
-          fi
-          
-          echo "✅ ファイルを発見しました: $FILE_PATH"
-          echo "Running AI..."
-          node script/ai-proofreader.mjs "$FILE_PATH"
+          for KEYWORD in "${KEYWORD_ARRAY[@]}"; do
+            echo "-----------------------------------"
+            echo "🔍 検索キーワード: $KEYWORD"
+            
+            FILE_PATH=$(find articles -type f \( -name "*.html" -o -name "*.md" \) | grep -i "$KEYWORD" | head -n 1)
+            
+            if [ -z "$FILE_PATH" ]; then
+              echo "⚠️ 警告: '$KEYWORD' を含むファイルが見つかりませんでした。スキップします。"
+              continue
+            fi
+            
+            echo "✅ ファイルを発見しました: $FILE_PATH"
+            node script/ai-proofreader.mjs "$FILE_PATH"
+            
+            echo "⏳ 次のファイルの処理まで10秒待機します..."
+            sleep 10
+          done
