@@ -72,19 +72,15 @@ ${originalText}`;
     let fixedText = parts[1].trim();
     fixedText = fixedText.replace(/^```(html|md|markdown)?\n/i, '').replace(/\n```$/i, '');
 
-    // 修正がない場合は終了
     if (originalText === fixedText || summary.includes("修正なし")) {
        console.log(`No changes made by AI for ${filePath}.`);
        return;
     }
 
-    // 1. ファイルを上書き保存
     await fs.writeFile(filePath, fixedText, 'utf-8');
 
-    // 2. ユニークな一時ブランチ名（ai-fix-1713... の形式）を作成
     const branchName = `ai-fix-${Date.now()}`;
 
-    // 3. Git操作（そのファイルだけをPushして一時ブランチを作る）
     try {
       execSync(`git config user.name "github-actions[bot]"`);
       execSync(`git config user.email "github-actions[bot]@users.noreply.github.com"`);
@@ -93,15 +89,13 @@ ${originalText}`;
       execSync(`git commit -m "🤖 AI校正案: ${filePath}"`);
       execSync(`git push origin ${branchName}`);
       
-      // 作業後はmainに戻り、ローカルのブランチは即座に消す
       execSync(`git checkout main`);
       execSync(`git branch -D ${branchName}`);
     } catch (gitError) {
       console.error("Git failed:", gitError);
-      process.exit(0); // 失敗しても次のファイルの処理は続ける
+      process.exit(0);
     }
 
-    // 4. Discordへボタン付きで送信
     const payload = {
       content: `🤖 **AI校正完了:** \`${filePath}\`\n\n**【修正の要約】**\n${summary}\n\n反映しますか？`,
       components: [{
