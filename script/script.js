@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
   modalImg.style.transformOrigin = "0 0";
 
   let state = { x: 0, y: 0, scale: 1 };
-  
   let canMoveX = false;
   let canMoveY = false;
 
@@ -18,9 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const winH = window.innerHeight;
     const currentW = modalImg.offsetWidth * state.scale;
     const currentH = modalImg.offsetHeight * state.scale;
-
     canMoveX = currentW > winW + 1; 
-
     canMoveY = currentH > winH + 1;
   };
 
@@ -29,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const winH = window.innerHeight;
     const imgW = modalImg.offsetWidth;
     const imgH = modalImg.offsetHeight;
-
     const currentW = imgW * state.scale;
     const currentH = imgH * state.scale;
 
@@ -44,9 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (currentH <= winH) {
       state.y = (winH - currentH) / 2;
     } else {
-
       if (state.y > 0) state.y = 0;
-
       const minY = winH - currentH;
       if (state.y < minY) state.y = minY;
     }
@@ -155,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
     state.y = dragStartImageY + dy;
 
     clampState();
-
     updateTransform();
   });
 
@@ -169,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let lastTouchDistance = 0;
   let lastTouchCenter = { x: 0, y: 0 };
-  
   let isPinching = false;
   let lastTouchX = 0;
   let lastTouchY = 0;
@@ -191,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.touches.length === 1) {
       if (state.scale > 1) {
           checkMoveability();
-
           lastTouchX = e.touches[0].clientX;
           lastTouchY = e.touches[0].clientY;
           modalImg.style.transition = "none";
@@ -275,8 +266,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  async function fetchOGData(url, anchorElement) {
+  document.querySelectorAll("pre code").forEach(codeBlock => {
+      const pre = codeBlock.parentElement;
+      const button = document.createElement("button");
+      button.className = "copy-btn";
+      button.textContent = "Copy";
+      pre.appendChild(button);
+      button.addEventListener("click", async () => {
+      let text = codeBlock.textContent.replace(/\[.*?\]/g, "").trim();
+      try { await navigator.clipboard.writeText(text); button.textContent = "Copied!"; setTimeout(() => (button.textContent = "Copy"), 1500); } catch (err) { console.error(err); }
+      });
+  });
 
+  async function fetchOGData(url, anchorElement) {
       try {
       const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
       const { data, status } = await response.json();
@@ -306,16 +308,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll(".link-preview").forEach(async (anchor) => { await fetchOGData(anchor.href, anchor); });
 
-  document.querySelectorAll("pre code").forEach(codeBlock => {
+  async function loadDynamicRelatedArticles() {
+    const section = Array.from(document.querySelectorAll('.box-section1')).find(
+      sec => sec.querySelector('h2') && sec.querySelector('h2').textContent.includes('関連記事')
+    );
+    if (!section) return;
 
-      const pre = codeBlock.parentElement;
-      const button = document.createElement("button");
-      button.className = "copy-btn";
-      button.textContent = "Copy";
-      pre.appendChild(button);
-      button.addEventListener("click", async () => {
-      let text = codeBlock.textContent.replace(/\[.*?\]/g, "").trim();
-      try { await navigator.clipboard.writeText(text); button.textContent = "Copied!"; setTimeout(() => (button.textContent = "Copy"), 1500); } catch (err) { console.error(err); }
+    const metaCat = document.querySelector('meta[name="category"]');
+    if (!metaCat) return;
+    const currentCats = metaCat.content.split(',').map(c => c.trim()).filter(Boolean);
+    if (currentCats.length === 0) return;
+
+    try {
+
+      const res = await fetch('/articles.json');
+      if (!res.ok) return;
+      const articles = await res.json();
+
+      const currentPath = window.location.pathname;
+
+      const related = articles.filter(article => {
+
+        if (currentPath.includes(article.path)) return false;
+
+        if (article.visibility === "private") return false;
+
+        return article.category && article.category.some(c => currentCats.includes(c));
       });
-  });
+
+      const existingLinks = Array.from(section.querySelectorAll('.link-preview')).map(a => {
+        return new URL(a.getAttribute('href'), window.location.origin).href;
+      });
+
+      const MAX_ADD = 10;
+      let addedCount = 0;
+
+      for (const article of related) {
+        if (addedCount >= MAX_ADD) break;
+        
+        const articleUrl = new URL("/" + article.path, window.location.origin).href;
+
+        if (existingLinks.includes(articleUrl)) continue;
+
+        const a = document.createElement('a');
+        a.href = "/" + article.path;
+        a.target = "_blank";
+        a.className = "link-preview";
+        section.appendChild(a);
+
+        fetchOGData(a.href, a);
+        addedCount++;
+      }
+    } catch (err) {
+      console.error("関連記事の動的読み込みに失敗しました:", err);
+    }
+  }
+
+  loadDynamicRelatedArticles();
 });
