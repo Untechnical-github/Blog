@@ -20,7 +20,12 @@ async function main() {
   try {
     const originalText = await fs.readFile(filePath, 'utf-8');
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-flash-latest",
+      generationConfig: {
+        temperature: 0.0,
+      }
+    });
 
         const prompt = `あなたは厳格な校正アシスタント兼プログラマーです。
 以下の文章から【明らかなエラーのみ】を修正し、「修正内容の詳細」と「修正後のテキスト全体」を出力してください。
