@@ -20,39 +20,37 @@ async function main() {
   try {
     const originalText = await fs.readFile(filePath, 'utf-8');
     const genAI = new GoogleGenerativeAI(apiKey);
+    
+    // JSONのみを出力させる厳格なモデル設定
     const model = genAI.getGenerativeModel({ 
       model: "gemini-flash-latest",
-      // 👇 AIの人格・前提ルールを根底から固定するシステム命令を追加
-      systemInstruction: "あなたは一切の創作やアレンジ、文章の装飾をしない、機械的なテキスト校正マシーンです。指示された誤字脱字の修正箇所以外は、元のテキストの文字、記号、空白、改行にいたるまで、一字一句完全にそのまま出力しなければなりません。日本語の「の」を中国語の「的」に変えるような、多言語の混同や勝手な言い換え、リライトは絶対に禁止します。",
-      // 👇 確率のブレを徹底的に排除するパラメータ群
       generationConfig: {
         temperature: 0.0,
         topP: 0.1,
-        topK: 1
+        topK: 1,
+        responseMimeType: "application/json" // 完全にJSON形式で出力させる
       }
     });
 
-    const prompt = `あなたは厳格な校正アシスタント兼プログラマーです。
-    以下の文章から【明らかなエラーのみ】を修正し、「修正内容の詳細」と「修正後のテキスト全体」を出力してください。
+    const prompt = `あなたはコードを絶対に破壊しない、超精密な校正プログラムの一部です。
+与えられたHTML/Markdownファイルから、【明らかな誤字脱字、変換ミス、タグの致命的な構文エラー】のみを検出し、その修正前と修正後のペアを必ず以下のJSON配列形式【のみ】で返してください。
 
-    【厳守するルール】
-    1. HTMLの構造、コードブロック内の記述、インデントなどの「コードの書き方・構造」は絶対に改変しないでください。
-    2. コードに関して修正が許されるのは、「明らかなスペルミス」「タグやカッコの閉じ忘れ」といった致命的な構文エラーの補完のみです。
-    3. 日本語の文章において、句読点（、。）の追加・削除や、言い回しの変更といった「スタイルの修正」は一切行わないでください。
-    4. 明らかな「誤字脱字」「変換ミス」のみを修正対象としてください。修正すべき確証がない場合は絶対に元の文章を維持してください。
-    5. 修正箇所が一つもない場合は、要約に「修正なし」とだけ書いてください。
+【厳守ルール】
+1. 修正が必要な箇所「だけ」を抜き出してください。修正後の全文を出力してはいけません。
+2. スタイルの変更、言い回しの変更、より良い表現へのリライトは一切禁止します。
+3. 修正すべき確証がない場合は、その箇所をリストに含めないでください。
+4. 修正箇所が一切ない場合は、空の配列 [] を返してください。
 
-    ===SUMMARY===
-    （修正箇所ごとに、必ず以下の「Before ➡️ After」の形式で詳細にリストアップしてください。複数の同じ修正がある場合でも、「〇箇所」とまとめずに1つずつ分けて記載してください）
-    例：
-    ・[Before] Andorid Wear ➡️ [After] Android Wear
-    ・[Before] ありがとございます ➡️ [After] ありがとうございます
+【出力フォーマット】
+[
+  {
+    "before": "修正前の1行（または問題のフレーズ）",
+    "after": "修正後の1行（または修正後のフレーズ）"
+  }
+]
 
-    ===TEXT===
-    （ここに修正後のテキスト全体）
-
-    【元の文章】
-    ${originalText}`;
+【解析対象のファイル内容】
+${originalText}`;
 
     let result;
     const maxRetries = 5;
@@ -63,34 +61,58 @@ async function main() {
         break;
       } catch (e) {
         console.error(`⚠️ API Error on attempt ${i + 1}: ${e.message}`);
-        
-        if (i === maxRetries - 1) {
-          console.error(`❌ Max retries reached for ${filePath}.`);
-          process.exit(0);
-        }
-        console.log(`Retrying in 10 seconds...`);
+        if (i === maxRetries - 1) process.exit(0);
         await sleep(10000);
       }
     }
 
     if (!result) return;
-    const responseText = result.response.text();
-    const parts = responseText.split('===TEXT===');
-    if (parts.length < 2) return;
-
-    let summary = parts[0].replace('===SUMMARY===', '').trim();
-    let fixedText = parts[1].trim();
-    fixedText = fixedText.replace(/^```(html|md|markdown)?\n/i, '').replace(/\n```$/i, '');
-
-    if (originalText === fixedText || summary.includes("修正なし")) {
-       console.log(`No changes made by AI for ${filePath}.`);
-       return;
+    const responseText = result.response.text().trim();
+    
+    // AIからの出力をJSONとしてパース
+    let patches = [];
+    try {
+      patches = JSON.parse(responseText);
+    } catch (jsonErr) {
+      console.error("❌ AIの出力が正しいJSON形式ではありませんでした。処理を中断します。");
+      process.exit(0);
     }
 
+    // 修正箇所がゼロ、または空配列なら終了
+    if (!Array.isArray(patches) || patches.length === 0) {
+      console.log(`No changes made by AI for ${filePath}.`);
+      return;
+    }
+
+    // プログラム（Node.js）側で、安全にピンポイント置換を行う
+    let fixedText = originalText;
+    let summaryLines = [];
+    let actualChangeCount = 0;
+
+    for (const patch of patches) {
+      if (!patch.before || !patch.after) continue;
+      
+      // 元のファイルに対象の文字列が存在するかチェック
+      if (fixedText.includes(patch.before)) {
+        fixedText = fixedText.replaceAll(patch.before, patch.after);
+        summaryLines.push(`・[Before] \`${patch.before}\` ➡️ [After] \`${patch.after}\``);
+        actualChangeCount++;
+      } else {
+        console.warn(`⚠️ 警告: 修正対象が見つかりません（スキップ）: ${patch.before}`);
+      }
+    }
+
+    // 実際に適用された修正がゼロなら終了
+    if (actualChangeCount === 0) {
+      console.log(`No applicable changes for ${filePath}.`);
+      return;
+    }
+
+    // 変更されたテキストをファイルに書き込み
     await fs.writeFile(filePath, fixedText, 'utf-8');
 
+    // Gitブランチ作成とPush
     const branchName = `ai-fix-${Date.now()}`;
-
     try {
       execSync(`git config user.name "github-actions[bot]"`);
       execSync(`git config user.email "github-actions[bot]@users.noreply.github.com"`);
@@ -98,7 +120,6 @@ async function main() {
       execSync(`git add "${filePath}"`);
       execSync(`git commit -m "🤖 AI校正案: ${filePath}"`);
       execSync(`git push origin ${branchName}`);
-      
       execSync(`git checkout main`);
       execSync(`git branch -D ${branchName}`);
     } catch (gitError) {
@@ -106,6 +127,8 @@ async function main() {
       process.exit(0);
     }
 
+    // Discord通知
+    const summary = summaryLines.join('\n');
     const payload = {
       content: `🤖 **AI校正完了:** \`${filePath}\`\n\n**【修正の要約】**\n${summary}\n\n反映しますか？`,
       components: [{
