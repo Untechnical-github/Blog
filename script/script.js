@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   async function fetchOGData(url, anchorElement) {
-      const WORKER_URL = "https://untechnical-ai-bot.workers.dev";
+      const WORKER_URL = "untechnical-ai-bot.eusng90912.workers.dev";
 
       try {
           const response = await fetch(`${WORKER_URL}/?url=${encodeURIComponent(url)}`);
