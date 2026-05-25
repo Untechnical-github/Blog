@@ -195,24 +195,6 @@ html {
   line-height: 1.4;
 }
 
-.content-box {
-  display: block;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #ffffff;
-  padding: 15px 20px;
-  margin-bottom: 20px;
-  text-decoration: none;
-  color: inherit;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.content-box:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  border-color: #0073e6;
-}
-
 .content-title {
   font-weight: bold;
   font-size: 1.2em;
