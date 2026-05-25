@@ -279,31 +279,35 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   async function fetchOGData(url, anchorElement) {
+      const WORKER_URL = "https://untechnical-ai-bot.workers.dev";
+
       try {
-      const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
-      const { data, status } = await response.json();
-      if (status === "success") {
-          if (data.title) {
-          const titleElem = document.createElement("div");
-          titleElem.textContent = data.title;
-          titleElem.className = "preview-title";
-          anchorElement.appendChild(titleElem);
+          const response = await fetch(`${WORKER_URL}/?url=${encodeURIComponent(url)}`);
+          const { data, status } = await response.json();
+          if (status === "success") {
+              if (data.title) {
+                  const titleElem = document.createElement("div");
+                  titleElem.textContent = data.title;
+                  titleElem.className = "preview-title";
+                  anchorElement.appendChild(titleElem);
+              }
+              if (data.image?.url) {
+                  const img = document.createElement("img");
+                  img.src = data.image.url;
+                  img.alt = "Preview";
+                  img.width = 200;
+                  anchorElement.appendChild(img);
+              }
+              if (data.description) {
+                  const descElem = document.createElement("div");
+                  descElem.textContent = data.description;
+                  descElem.className = "preview-description";
+                  anchorElement.appendChild(descElem);
+              }
           }
-          if (data.image?.url) {
-          const img = document.createElement("img");
-          img.src = data.image.url;
-          img.alt = "Preview";
-          img.width = 200;
-          anchorElement.appendChild(img);
-          }
-          if (data.description) {
-          const descElem = document.createElement("div");
-          descElem.textContent = data.description;
-          descElem.className = "preview-description";
-          anchorElement.appendChild(descElem);
-          }
+      } catch (error) { 
+          console.error("OGP error:", error); 
       }
-      } catch (error) { console.error("OGP error:", error); }
   }
 
   document.querySelectorAll(".link-preview").forEach(async (anchor) => { await fetchOGData(anchor.href, anchor); });
