@@ -40,15 +40,12 @@ async function sendDiscordNotification(brokenLinks) {
   }
 }
 
-// 🌟 修正：サーバーの「嘘」を見破る、より強力なチェック関数
-// type引数 ('Image' または 'TextLink') を追加し、それぞれに最適なチェックを行います。
 async function checkUrl(url, type) {
   try {
     const options = {
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(10000), 
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        // 画像かテキストかで、要求するデータ形式（Accept）を変える
         'Accept': type === 'Image' ? 'image/webp,image/apng,image/*,*/*;q=0.8' : 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
       }
     };
@@ -56,25 +53,26 @@ async function checkUrl(url, type) {
     let res = await fetch(url, { ...options, method: 'HEAD' });
     let contentType = res.headers.get('content-type') || '';
     
-    // HEADが弾かれた場合、または「画像なのにHTMLが返ってきた場合」は、確実を期すためGETで再確認
     if (res.status === 403 || res.status === 405 || res.status === 500 || res.status === 503 || (type === 'Image' && contentType.includes('text/html'))) {
       res = await fetch(url, { ...options, method: 'GET' });
       contentType = res.headers.get('content-type') || '';
     }
 
-    // 💡 嘘の看破1：画像のパスが間違っていて、サーバーがカスタム404ページ（200 OKのHTML）を返した場合
     if (type === 'Image' && res.ok && contentType.includes('text/html')) {
-      return 'FAKE_200_HTML (パス間違い)'; // 画像が表示されない原因！
+      return 'FAKE_200_HTML (パス間違い)'; 
     }
 
-    // 💡 嘘の看破2：外部リンクへのアクセスが、Bot対策サーバーに弾かれた場合（実際は表示できる）
     const isExternal = !url.startsWith(SITE_DOMAIN);
     if (type === 'TextLink' && isExternal && (res.status === 403 || res.status === 503)) {
-      return 'BOT_PROTECTION_IGNORED'; // 403だけど無視する
+      return 'BOT_PROTECTION_IGNORED'; 
     }
     
     return res.status;
   } catch (err) {
+    const isExternal = !url.startsWith(SITE_DOMAIN);
+    if (type === 'TextLink' && isExternal) {
+      return 'EXTERNAL_TIMEOUT_IGNORED';
+    }
     return 'TIMEOUT/ERROR';
   }
 }
@@ -109,7 +107,6 @@ async function main() {
       const dom = new JSDOM(html);
       const document = dom.window.document;
       
-      // 画像のチェック
       const images = document.querySelectorAll('img');
       for (const img of images) {
         let src = img.getAttribute('src');
@@ -125,9 +122,8 @@ async function main() {
         }
         
         process.stdout.write(`  Checking Image: ${imgUrl} ... `);
-        const imgStatus = await checkUrl(imgUrl, 'Image'); // 👈 'Image' タイプを渡す
+        const imgStatus = await checkUrl(imgUrl, 'Image'); 
         
-        // FAKE_200_HTML（画像がない）もしっかりリンク切れとして検知！
         if (imgStatus === 'TIMEOUT/ERROR' || imgStatus === 'FAKE_200_HTML (パス間違い)' || (typeof imgStatus === 'number' && imgStatus >= 400)) {
           console.log(`❌ BROKEN (${imgStatus})`);
           brokenLinks.push({ type: 'Image', url: imgUrl, status: imgStatus, source: fullUrl });
@@ -137,7 +133,6 @@ async function main() {
         await sleep(500); 
       }
 
-      // テキストリンクのチェック
       const links = document.querySelectorAll('a');
       for (const link of links) {
         let href = link.getAttribute('href');
@@ -156,14 +151,13 @@ async function main() {
         }
         
         process.stdout.write(`  Checking Link: ${linkUrl} ... `);
-        const linkStatus = await checkUrl(linkUrl, 'TextLink'); // 👈 'TextLink' タイプを渡す
+        const linkStatus = await checkUrl(linkUrl, 'TextLink'); 
         
-        if (linkStatus === 'TIMEOUT/ERROR' || (typeof linkStatus === 'number' && linkStatus >= 400)) {
+        if (linkStatus === 'EXTERNAL_TIMEOUT_IGNORED' || linkStatus === 'BOT_PROTECTION_IGNORED') {
+          console.log(`✅ IGNORED (Bot Protection / Timeout)`);
+        } else if (linkStatus === 'TIMEOUT/ERROR' || (typeof linkStatus === 'number' && linkStatus >= 400)) {
           console.log(`❌ BROKEN (${linkStatus})`);
           brokenLinks.push({ type: 'TextLink', url: linkUrl, status: linkStatus, source: fullUrl });
-        } else if (linkStatus === 'BOT_PROTECTION_IGNORED') {
-          // 403だけど、Bot対策なのでエラーにせず無視！
-          console.log(`✅ IGNORED (Bot Protection 403)`);
         } else {
           console.log(`✅ OK (${linkStatus})`);
         }
