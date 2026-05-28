@@ -22,12 +22,12 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm install jsdom
 
-      - name: Get changed HTML files
+      - name: Get changed files
         id: changed_files
         run: |
-          CHANGED=$(git diff --name-only HEAD~1 HEAD -- '*.html' | tr '\n' ' ')
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- '*.html' '*.md' | tr '\n' ' ')
           echo "raw_files=$CHANGED" >> $GITHUB_ENV
           echo "📂 Raw changed files: $CHANGED"
 
@@ -39,22 +39,28 @@ jobs:
           const fs = require('fs');
           const { execSync } = require('child_process');
           const { JSDOM } = require('jsdom');
+          const path = require('path');
 
           const files = process.argv.slice(2);
           const meaningfulFiles = [];
 
-          const extractContent = (html) => {
-            if (!html) return "";
-            const dom = new JSDOM(html);
+          const extractContent = (content, ext) => {
+            if (!content) return "";
+            
+            if (ext === '.md') return content.trim();
+
+            const dom = new JSDOM(content);
             const doc = dom.window.document;
             
-            doc.querySelectorAll('script, style, link, noscript, iframe').forEach(el => el.remove());
+            doc.querySelectorAll('script, style, link, noscript, iframe, ins, svg').forEach(el => el.remove());
 
             const title = doc.querySelector('title')?.textContent?.trim() || "";
             const category = doc.querySelector('meta[name="category"]')?.getAttribute("content") || "";
             const bodyText = doc.body?.textContent?.replace(/\s+/g, " ").trim() || "";
 
-            const images = Array.from(doc.querySelectorAll('img')).map(img => img.getAttribute('src')).join(',');
+            const images = Array.from(doc.querySelectorAll('img'))
+              .map(img => `${img.getAttribute('src')}|${img.getAttribute('alt') || ''}`)
+              .join(',');
 
             const links = Array.from(doc.querySelectorAll('a')).map(a => a.getAttribute('href')).join(',');
 
@@ -64,22 +70,22 @@ jobs:
           files.forEach(file => {
             try {
               if (!fs.existsSync(file)) return;
-              const newHtml = fs.readFileSync(file, 'utf-8');
+              const ext = path.extname(file).toLowerCase();
+              const newContent = fs.readFileSync(file, 'utf-8');
               
-              let oldHtml = "";
+              let oldContent = "";
               try {
-                oldHtml = execSync(`git show HEAD~1:${file}`, { stdio: ['pipe', 'pipe', 'ignore'] }).toString();
+                oldContent = execSync(`git show HEAD~1:${file}`, { stdio: ['pipe', 'pipe', 'ignore'] }).toString();
               } catch (e) {
                 meaningfulFiles.push(file);
                 return;
               }
 
-              if (extractContent(newHtml) !== extractContent(oldHtml)) {
+              if (extractContent(newContent, ext) !== extractContent(oldContent, ext)) {
                 meaningfulFiles.push(file);
               }
             } catch (err) {
               console.error(`Error processing ${file}:`, err);
-
               meaningfulFiles.push(file);
             }
           });
@@ -89,7 +95,7 @@ jobs:
 
           FILTERED=$(node filter_diff.js ${{ env.raw_files }})
           echo "filtered_files=$FILTERED" >> $GITHUB_ENV
-          echo "🔍 Meaningful changes: $FILTERED"
+          echo "🔍 Meaningful changes (Sitemap/Articles): $FILTERED"
 
       - name: Generate sitemap.xml
         if: env.filtered_files != ''
@@ -107,5 +113,9 @@ jobs:
           
           git add sitemap.xml articles.json ${{ env.filtered_files }}
           
-          git commit -m "Auto-update Sitemap, Articles, and HTML dates" || echo "No changes to commit"
-          git push
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "Auto-update Sitemap, Articles, and HTML dates"
+            git push
+          else
+            echo "No changes to commit"
+          fi

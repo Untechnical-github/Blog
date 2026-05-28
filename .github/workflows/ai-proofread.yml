@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 2
 
       - name: Get changed files
         id: changed-files
@@ -31,31 +31,98 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-
         run: |
           npm install
-          npm install @google/generative-ai
+          npm install @google/generative-ai jsdom
+
+      - name: Filter meaningful changes
+        id: filter_changes
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          cat << 'EOF' > filter_diff.js
+          const fs = require('fs');
+          const { execSync } = require('child_process');
+          const { JSDOM } = require('jsdom');
+          const path = require('path');
+
+          const files = process.argv.slice(2);
+          const meaningfulFiles = [];
+
+          const extractContent = (content, ext) => {
+            if (!content) return "";
+            
+            if (ext === '.md') return content.trim();
+
+            const dom = new JSDOM(content);
+            const doc = dom.window.document;
+            
+            doc.querySelectorAll('script, style, link, noscript, iframe, ins, svg').forEach(el => el.remove());
+
+            const title = doc.querySelector('title')?.textContent?.trim() || "";
+            const category = doc.querySelector('meta[name="category"]')?.getAttribute("content") || "";
+            const bodyText = doc.body?.textContent?.replace(/\s+/g, " ").trim() || "";
+
+            const images = Array.from(doc.querySelectorAll('img'))
+              .map(img => `${img.getAttribute('src')}|${img.getAttribute('alt') || ''}`)
+              .join(',');
+
+            const links = Array.from(doc.querySelectorAll('a')).map(a => a.getAttribute('href')).join(',');
+
+            return JSON.stringify({ title, category, bodyText, images, links });
+          };
+
+          files.forEach(file => {
+            try {
+              if (!fs.existsSync(file)) return;
+              const ext = path.extname(file).toLowerCase();
+              const newContent = fs.readFileSync(file, 'utf-8');
+              
+              let oldContent = "";
+              try {
+                oldContent = execSync(`git show HEAD~1:${file}`, { stdio: ['pipe', 'pipe', 'ignore'] }).toString();
+              } catch (e) {
+                meaningfulFiles.push(file);
+                return;
+              }
+
+              if (extractContent(newContent, ext) !== extractContent(oldContent, ext)) {
+                meaningfulFiles.push(file);
+              }
+            } catch (err) {
+              console.error(`Error processing ${file}:`, err);
+              meaningfulFiles.push(file);
+            }
+          });
+
+          console.log(meaningfulFiles.join(' '));
+          EOF
+          
+          FILTERED=$(node filter_diff.js ${{ steps.changed-files.outputs.all_changed_files }})
+          echo "filtered_files=$FILTERED" >> $GITHUB_ENV
+          echo "🔍 Meaningful changes (AI): $FILTERED"
 
       - name: Run AI Proofreader
+        if: env.filtered_files != ''
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
           DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
         run: |
-          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+          for file in ${{ env.filtered_files }}; do
             echo "Running AI on $file..."
             node script/ai-proofreader.mjs "$file"
           done
 
       - name: Save AI suggestion to temporary branch
+        if: env.filtered_files != ''
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-          git checkout -b ai-review-branch
+          
           git add .
           
-          if ! git diff --staged --quiet; then
+          if [ -n "$(git status --porcelain)" ]; then
+            git checkout -b ai-review-branch
             git commit -m "🤖 AIによる校正案の作成"
             git push -f origin ai-review-branch
           else
