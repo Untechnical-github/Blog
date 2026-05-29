@@ -21,14 +21,13 @@ async function main() {
     const originalText = await fs.readFile(filePath, 'utf-8');
     const genAI = new GoogleGenerativeAI(apiKey);
     
-    // JSONのみを出力させる厳格なモデル設定
     const model = genAI.getGenerativeModel({ 
       model: "gemini-flash-latest",
       generationConfig: {
         temperature: 0.0,
         topP: 0.1,
         topK: 1,
-        responseMimeType: "application/json" // 完全にJSON形式で出力させる
+        responseMimeType: "application/json"
       }
     });
 
@@ -70,7 +69,6 @@ ${originalText}`;
     if (!result) return;
     const responseText = result.response.text().trim();
     
-    // AIからの出力をJSONとしてパース
     let patches = [];
     try {
       patches = JSON.parse(responseText);
@@ -79,13 +77,11 @@ ${originalText}`;
       process.exit(0);
     }
 
-    // 修正箇所がゼロ、または空配列なら終了
     if (!Array.isArray(patches) || patches.length === 0) {
       console.log(`No changes made by AI for ${filePath}.`);
       return;
     }
 
-    // プログラム（Node.js）側で、安全にピンポイント置換を行う
     let fixedText = originalText;
     let summaryLines = [];
     let actualChangeCount = 0;
@@ -93,7 +89,6 @@ ${originalText}`;
     for (const patch of patches) {
       if (!patch.before || !patch.after) continue;
       
-      // 元のファイルに対象の文字列が存在するかチェック
       if (fixedText.includes(patch.before)) {
         fixedText = fixedText.replaceAll(patch.before, patch.after);
         summaryLines.push(`・[Before] \`${patch.before}\` ➡️ [After] \`${patch.after}\``);
@@ -103,16 +98,13 @@ ${originalText}`;
       }
     }
 
-    // 実際に適用された修正がゼロなら終了
     if (actualChangeCount === 0) {
       console.log(`No applicable changes for ${filePath}.`);
       return;
     }
 
-    // 変更されたテキストをファイルに書き込み
     await fs.writeFile(filePath, fixedText, 'utf-8');
 
-    // Gitブランチ作成とPush
     const branchName = `ai-fix-${Date.now()}`;
     try {
       execSync(`git config user.name "github-actions[bot]"`);
@@ -128,7 +120,6 @@ ${originalText}`;
       process.exit(0);
     }
 
-    // Discord通知
     const summary = summaryLines.join('\n');
     const payload = {
       content: `🤖 **AI校正完了:** \`${filePath}\`\n\n**【修正の要約】**\n${summary}\n\n反映しますか？`,
