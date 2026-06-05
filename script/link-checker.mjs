@@ -40,40 +40,45 @@ async function sendDiscordNotification(brokenLinks) {
   }
 }
 
-async function checkUrl(url, type) {
-  try {
-    const options = {
-      signal: AbortSignal.timeout(10000), 
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': type === 'Image' ? 'image/webp,image/apng,image/*,*/*;q=0.8' : 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+async function checkUrl(url, type, retries = 2) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const options = {
+        signal: AbortSignal.timeout(15000),
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': type === 'Image' ? 'image/webp,image/apng,image/*,*/*;q=0.8' : 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+        }
+      };
+      
+      let res = await fetch(url, { ...options, method: 'HEAD' });
+      let contentType = res.headers.get('content-type') || '';
+      
+      if (res.status === 403 || res.status === 405 || res.status === 500 || res.status === 503 || (type === 'Image' && contentType.includes('text/html'))) {
+        res = await fetch(url, { ...options, method: 'GET' });
+        contentType = res.headers.get('content-type') || '';
       }
-    };
-    
-    let res = await fetch(url, { ...options, method: 'HEAD' });
-    let contentType = res.headers.get('content-type') || '';
-    
-    if (res.status === 403 || res.status === 405 || res.status === 500 || res.status === 503 || (type === 'Image' && contentType.includes('text/html'))) {
-      res = await fetch(url, { ...options, method: 'GET' });
-      contentType = res.headers.get('content-type') || '';
-    }
 
-    if (type === 'Image' && res.ok && contentType.includes('text/html')) {
-      return 'FAKE_200_HTML (パス間違い)'; 
-    }
+      if (type === 'Image' && res.ok && contentType.includes('text/html')) {
+        return 'FAKE_200_HTML (パス間違い)'; 
+      }
 
-    const isExternal = !url.startsWith(SITE_DOMAIN);
-    if (type === 'TextLink' && isExternal && (res.status === 403 || res.status === 503)) {
-      return 'BOT_PROTECTION_IGNORED'; 
+      const isExternal = !url.startsWith(SITE_DOMAIN);
+      if (type === 'TextLink' && isExternal && (res.status === 403 || res.status === 503)) {
+        return 'BOT_PROTECTION_IGNORED'; 
+      }
+      
+      return res.status;
+    } catch (err) {
+      if (attempt === retries) {
+        const isExternal = !url.startsWith(SITE_DOMAIN);
+        if (type === 'TextLink' && isExternal) {
+          return 'EXTERNAL_TIMEOUT_IGNORED';
+        }
+        return 'TIMEOUT/ERROR';
+      }
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
-    
-    return res.status;
-  } catch (err) {
-    const isExternal = !url.startsWith(SITE_DOMAIN);
-    if (type === 'TextLink' && isExternal) {
-      return 'EXTERNAL_TIMEOUT_IGNORED';
-    }
-    return 'TIMEOUT/ERROR';
   }
 }
 
