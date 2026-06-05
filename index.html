@@ -273,7 +273,7 @@
 </video>
     <header>
       <div class="logo">
-        <a href="index.html">Untechnical</a>
+        <a href="/index.html">Untechnical</a>
       </div>
     </header>
     <main>
@@ -346,6 +346,19 @@
         postSection.innerHTML = articles.map(article => {
           let contextHTML = '';
 
+          const absoluteArticlePath = article.path.startsWith('/') ? article.path : '/' + article.path;
+
+          let resolvedImageUrl = "";
+          if (article.image) {
+            try {
+              resolvedImageUrl = new URL(article.image, window.location.origin + absoluteArticlePath).href;
+            } catch (e) {
+              resolvedImageUrl = article.image;
+            }
+          } else {
+            resolvedImageUrl = "/images/profile.png"; 
+          }
+
           if (keyword && keyword.length > 0) {
             const lowerContent = article.content.toLowerCase();
             const index = lowerContent.indexOf(keyword);
@@ -369,8 +382,8 @@
 
           return `
             <div class="post">
-              <a href="${article.path}">
-                <img src="${article.image}" alt="${article.title}">
+              <a href="${absoluteArticlePath}">
+                <img src="${resolvedImageUrl}" alt="${article.title}">
                 <h3>${article.title}</h3>
                 <p class="context">${contextHTML}</p>
               </a>
@@ -391,9 +404,27 @@
             }
           });
 
+          let initialKeyword = "";
+          const pathName = window.location.pathname;
+          
+          if (pathName !== "/" && pathName !== "/index.html") {
+            const pathParts = pathName.split('/').filter(p => p && p !== 'articles' && !p.endsWith('.html'));
+            
+            if (pathParts.length > 0) {
+               initialKeyword = decodeURIComponent(pathParts[pathParts.length - 1]).toLowerCase();
+               
+               searchInput.value = initialKeyword;
+               
+               const resultsDiv = document.getElementById("searchResults");
+               if(resultsDiv) {
+                  resultsDiv.innerHTML = `<p style="text-align:center; color: #d9534f; font-weight:bold; margin: 20px 0;">お探しのページが見つかりませんでした。「${initialKeyword}」に関連する記事を表示しています。</p>`;
+               }
+            }
+          }
+
           worker.postMessage({
             type: "search",
-            payload: { keyword: "", category: "" }
+            payload: { keyword: initialKeyword, category: "" }
           });
         });
 
