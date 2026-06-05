@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D2R9D0M46Q"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-D2R9D0M46Q');
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3996338946771353"
+     crossorigin="anonymous"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="OPPOのホーム画面左端に表示されるGoogle Discoverフィードをadbでオフにする方法を解説">
+    <meta name="google-site-verification" content="0Lm3uRwedrKk66bbYr_2TmZNx986VFE1yXWuB2h1iAs" /> 
+    <meta property="og:type" content="website"> 
+    <meta property="og:site_name" content="Untechnical">
+    <meta property="og:title" content="【OPPO】adbでホーム画面のGoogle Discoverフィードを消す方法">
+    <meta property="og:description" content="ColorOS系統搭載端末のホーム画面左端に表示されるGoogle Discoverフィードをadbでオフにする方法を解説">
+    <meta property="og:url" content="https://untechnical.info/articles/oppo_home_screen.html">
+    <meta property="og:image" content="https://untechnical.info/articles/oppo_home_screen.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="【OPPO】adbでホーム画面のGoogle Discoverフィードを消す方法">
+    <meta name="twitter:description" content="OPPOのホーム画面左端に表示されるGoogle Discoverフィードをadbでオフにする方法を解説">
+    <meta name="twitter:image" content="https://untechnical.info/articles/oppo_home_screen.jpg">
+    <meta name="category" content="Android">
+    <title>【OPPO】adbでホーム画面のGoogle Discoverフィードを消す方法</title>
+    <link rel="icon" href="https://untechnical.info/images/profile.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="https://untechnical.info/images/profile.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="https://untechnical.info/images/profile.ico">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="canonical" href="https://untechnical.info/articles/oppo_home_screen.html">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://untechnical.info/articles/oppo_home_screen.html"
+        },
+        "headline": "【OPPO】adbでホーム画面のGoogle Discoverフィードを消す方法",
+        "description": "OPPOのホーム画面左端に表示されるGoogle Discoverフィードをadbでオフにする方法を解説",
+        "image": "https://untechnical.info/articles/oppo_home_screen.jpg",
+        "author": {
+          "@type": "Person",
+          "name": "Untechnical"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Untechnical",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://untechnical.info/images/profile.png"
+          }
+        },
+        "url": "https://untechnical.info/articles/oppo_home_screen.html",
+        "datePublished": "2026-06-05",
+        "dateModified": "2026-06-05"
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <a href="/index.html">Untechnical</a>
+      </div>
+    </header>
+    <main>
+      <section>
+        <div class="box-section1">
+          <h1>【OPPO】adbでホーム画面のGoogle Discoverフィードを消す方法</h1>
+          <div class="article-dates">
+            <time class="published" datetime="2026-06-05">公開日：2026年6月05日</time><br>
+            <time class="modified" datetime="2026-06-05">最終更新日：2026年6月05日</time>
+          </div>
+          <img src="oppo_home_screen.jpg" alt="OPPO" class="zoomable">
+        </div>
+        <div class="box-section1">
+          <h2>OPPOはホーム画面のGoogle Discoverフィードが設定で消せない</h2>
+          <p>
+            GMSが標準搭載されたほとんどのAndroid端末は、Google Discoverフィードというニュースや天気などが表示されるページがデフォルトでホーム画面の左端に配置されている。
+            これはほとんどの端末ではホーム画面の設定から非表示にできるが、OPPOやOnePlus、RealmeといったColorOS系統搭載端末では非表示にする設定が存在しない。
+            Googleアプリの設定でDiscoverをオフにしてニュースや天気を非表示にすることはできるが、ホーム画面からページが消えるわけではない。
+            Googleアプリを無効化することでも非表示にできるが、Gemini、Googleレンズ、音声検索といった、Googleに関連する一部の機能が使えなくなってしまう。
+            しかし、非表示の設定が表示されなくても設定自体は存在するので、adbコマンドで非表示にすることは可能である。
+            ここではその方法を解説する。
+          </p>
+        </div>
+        <div class="box-section1">
+          <h2>手順</h2>
+          <nav>
+            <ul>
+            <li><a href="#developer">開発者オプションを有効にする</a></li>
+            <li><a href="#connect">adbで接続する</a></li>
+            <li><a href="#run">adbコマンドを実行する</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div style="text-align: center; margin: 30px 0;">
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3996338946771353"
+              crossorigin="anonymous"></script>
+          <!-- スクエア -->
+          <ins class="adsbygoogle"
+              style="display:block"
+              data-ad-client="ca-pub-3996338946771353"
+              data-ad-slot="7532383969"
+              data-ad-format="auto"
+              data-full-width-responsive="false"></ins>
+          <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+        <div class="box-section1">
+          <h2>テスト環境</h2>
+          <p>以下ではOPPO Find X9 Ultraを用いてテストを行っている。</p>
+          <a href="https://amzn.to/43U1fHe" class="ref-card-container" target="_blank" rel="nofollow sponsored"> 
+            <div class="ref-visual">
+              <img src="https://m.media-amazon.com/images/I/61hycPiyHxL._AC_SL1500_.jpg" alt="OPPO Find X9" />
+            </div>
+            <div class="ref-info">
+              <div class="ref-title">OPPO Find X9</div>
+              <span class="doc-btn">Amazonで開く</span>
+            </div>
+          </a>
+        </div>
+        <div class="box-section1">
+          <section id="developer">
+            <h2>開発者オプションを有効にする</h2>
+            <img src="developer.png" alt="開発者オプション" class="image zoomable">
+            <p>
+              OPPOにadbで接続できるようにするために、開発者オプションを有効にする必要がある。
+              この手順はadbをOPPOで実行する場合もPCで実行する場合も同様である。
+            </p>
+            <h3>方法</h3>
+            <h4>1.設定アプリを開き、 "デバイスについて" をタップする</h4>
+            <img src="developer1.jpg" class="imageh zoomable" alt="デバイスについて">
+            <h4>2. "バージョン" をタップする</h4>
+            <img src="developer2.jpg" class="imageh zoomable" alt="バージョン">
+            <h4>3. "バージョン番号" を7回タップし、パスワードを入力する</h4>
+            <p>これにより、開発者オプションが有効になる。</p>
+            <img src="developer3.jpg" class="imageh zoomable" alt="バージョン番号">
+          </section>
+        </div>
+        <div style="text-align: center; margin: 30px 0;">
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3996338946771353"
+              crossorigin="anonymous"></script>
+          <!-- スクエア -->
+          <ins class="adsbygoogle"
+              style="display:block"
+              data-ad-client="ca-pub-3996338946771353"
+              data-ad-slot="7532383969"
+              data-ad-format="auto"
+              data-full-width-responsive="false"></ins>
+          <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+        <div class="box-section1">
+          <section id="connect">
+            <h2>adbで接続する</h2>
+            <img src="connect.jpg" alt="接続" class="imagew zoomable">
+            <p>
+              adbのワイヤレスデバッグを用いて、OPPOからそのスマホ自体にadbコマンドが実行できるようにする。
+              adbコマンドをPCで実行する場合はOPPOで設定アプリを開き、 "システムおよび更新" の "開発者オプション" の "USBデバッグ" をオンにして "USB デバッグを許可しますか?" に対して "OK" をタップし、PCとOPPOをUSBケーブルで接続して "USB デバッグを許可しますか?" に対して "OK" をタップする。
+            </p>
+            <h3>方法</h3>
+            <h4>1.ADB Shellをインストールする</h4>
+            <p>以下のリンクからADB Shellをインストールする</p>
+            <a href="https://play.google.com/store/apps/details?id=com.github.standardadb&pcampaignid=web_share" target="_blank" class="link-preview"></a>
+            <h4>2.ADB Shellを開き、"はい" をタップする</h4>
+            <img src="connect2.jpg" class="imageh zoomable" alt="はい">
+            <h4>3. "接続方法を選択" で "Shizuku(Android 11+)" をタップする</h4>
+            <img src="connect3.jpg" class="imageh zoomable" alt="Shizuku(Android 11+)">
+            <h4>4. "接続" をタップする</h4>
+            <img src="connect4.jpg" class="imageh zoomable" alt="接続">
+            <h4>5. "はい" をタップする</h4>
+            <img src="connect5.jpg" class="imageh zoomable" alt="はい">
+            <h4>6. "接続" をタップする</h4>
+            <img src="connect6.jpg" class="imageh zoomable" alt="接続">
+            <h4>7. "はい" をタップする</h4>
+            <img src="connect7.jpg" class="imageh zoomable" alt="はい">
+            <h4>8. "許可" をタップする</h4>
+            <img src="connect8.jpg" class="imageh zoomable" alt="許可">
+            <h4>9. "接続" をタップする</h4>
+            <img src="connect6.jpg" class="imageh zoomable" alt="接続">
+            <h4>10. "はい" をタップする</h4>
+            <p>ここで設定アプリの開発者向けオプションが開かれる。</p>
+            <img src="connect10.jpg" class="imageh zoomable" alt="はい">
+            <h4>11. "USBデバッグ" をオンにする</h4>
+            <img src="connect11.jpg" class="imageh zoomable" alt="USBデバッグ">
+            <h4>12. "OK" をタップする</h4>
+            <img src="connect12.jpg" class="imageh zoomable" alt="OK">
+            <h4>13. "ワイヤレスデバッグ" をオンにする</h4>
+            <img src="connect13.jpg" class="imageh zoomable" alt="ワイヤレスデバッグ">
+             <h4>14. "許可" をタップする</h4>
+            <img src="connect14.jpg" class="imageh zoomable" alt="許可">
+            <h4>15. "ワイヤレスデバッグ" をタップする</h4>
+            <img src="connect15.jpg" class="imageh zoomable" alt="ワイヤレスデバッグ">
+            <h4>16. "ペア設定コードによるデバイスのペア設定" をタップする</h4>
+            <img src="connect16.jpg" class="imageh zoomable" alt="ペア設定コードによるデバイスのペア設定">
+            <h4>17.通知の "ペアリングコードを入力するにはクリック..." をタップする</h4>
+            <img src="connect17.jpg" class="imageh zoomable" alt="ペアリングコードを入力するにはクリック...">
+            <h4>18.Wi-Fiペア設定コードを通知に入力して送信する</h4>
+            <p>成功すると "ペアリング成功" と通知が来る。</p>
+            <img src="connect18.jpg" class="imageh zoomable" alt="Wi-Fiペア設定コード">
+            <h4>19.ADB Shellを開き、 "はい" をタップする</h4>
+            <img src="connect19.jpg" class="imageh zoomable" alt="はい">
+            <h4>20. "ターミナル" タブの "ローカルターミナル" をタップする</h4>
+            <img src="connect20.jpg" class="imageh zoomable" alt="ローカルターミナル">
+          </section>
+        </div>
+        <div style="text-align: center; margin: 30px 0;">
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3996338946771353"
+              crossorigin="anonymous"></script>
+          <!-- スクエア -->
+          <ins class="adsbygoogle"
+              style="display:block"
+              data-ad-client="ca-pub-3996338946771353"
+              data-ad-slot="7532383969"
+              data-ad-format="auto"
+              data-full-width-responsive="false"></ins>
+          <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+        <div class="box-section1">
+          <section id="run">
+            <h2>adbコマンドを実行する</h2>
+            <img src="run.png" alt="adbコマンド" class="imagew zoomable">
+            <p>
+              ホーム画面の左端のページを非表示にするadbコマンドを実行する。
+              この手順はadbをOPPOで実行する場合もPCで実行する場合も同様である。
+            </p>
+            <h3>方法</h3>
+            <h4>1.ホーム画面の左端のページを非表示にするadbコマンドを実行する</h4>
+            <p>以下のコマンドを両方実行する。</p>
+            <pre><code>adb shell settings put secure assistant_screen_type 0</code></pre>
+            <pre><code>adb shell settings put secure assistant_screen_type_left_enable 0</code></pre>
+            <img src="run1-1.jpg" class="imagew zoomable" alt="adbコマンド">
+            <img src="run1-2.jpg" class="imagew zoomable" alt="adbコマンド">
+            <h4>2.ランチャーアプリを強制終了する</h4>
+            <p>
+              設定を反映するため、ランチャーの再起動が必要になる。
+              設定アプリを開き、 "アプリ" の "アプリ管理" を開いて "システムランチャー" をタップし、 "強制停止" をタップしてもいいし、端末を再起動してもいいが、以下のadbコマンドで強制終了したほうが速い。
+              これにより、画像2枚目から3枚目の変化のようにホーム画面の左端のGoogle Discoverフィードが非表示になる。
+            </p>
+            <pre><code>adb shell am force-stop com.android.launcher</code></pre>
+            <p>もとに戻したくなった場合、以下のadbコマンドを両方実行する。</p>
+            <pre><code>adb shell settings put secure assistant_screen_type 2</code></pre>
+            <pre><code>adb shell settings put secure assistant_screen_type_left_enable 1</code></pre>
+            <img src="run2-1.jpg" class="imagew zoomable" alt="adbコマンド">
+            <img src="run2-2.jpg" class="imagew zoomable" alt="ホーム画面">
+            <img src="run2-3.jpg" class="imagew zoomable" alt="ホーム画面">
+          </section>
+        </div>
+        <div class="box-section1">
+          <h2>メリット</h2>
+          <h4>･Googleアプリを無効化せずにGoogle Discoverフィードをオフにできる</h4>
+          <p>GeminiやGoogle レンズ、音声検索がそのまま利用できる。</p>
+          <h2>デメリット</h2>
+          <h4>･設定の変更に手間がかかる</h4>
+          <p>設定を変更する際、毎回adbコマンドを実行する必要がある。</p>
+        </div>
+        <div class="box-section1">
+          <h2>ColorOSのadbコマンド事情</h2>
+          <p>
+            今回のadbコマンドは他のスマホと同じように実行できたが、ColorOSの端末では一部のadbコマンドはシステム最適化を無効にしないと実行できない。
+            これはプリインストールアプリの無効化やアプリへの権限の付与などが対象であり、システム最適化が有効の状態で実行するとエラーになる。
+            システム最適化は開発者オプションから無効にできるが、2026年6月現在、ColorOS 16.07以降でシステムの言語を英語にしないとこの設定項目が表示されないバグが発生している。
+            また話は変わるが、過去には国内版のOPPO端末で再起動を連続で繰り返すとカメラアプリにシャッター音の項目が現れるというバグが発生していた。
+            ColorOSはこのように設定項目の表示に関わるバグが多いのかもしれない。
+          </p>
+        </div>
+        <div class="box-section1">
+          <h2>関連記事</h2>
+        </div>
+      </section>
+      <div style="text-align: center; margin: 30px 0;">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3996338946771353"
+            crossorigin="anonymous"></script>
+        <ins class="adsbygoogle"
+            style="display:block"
+            data-ad-format="autorelaxed"
+            data-ad-client="ca-pub-3996338946771353"
+            data-ad-slot="4906220620"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+      <section id="about">
+        <div class="box-section2">
+          <div class="profile-container">
+            <h2>プロフィール</h2>
+            <img src="/images/profile.png" alt="プロフィール画像" class="profile-image">
+            <div class="profile-text">
+              <p>高度情報社会の最先端を駆け抜ける</p>
+              <div class="social-links">
+                <a href="https://x.com/Untechnical_" target="_blank" rel="noopener noreferrer">
+                  <img src="/images/x.png" alt="X" class="social-icon">
+                </a>
+                <!--a href="https://www.instagram.com/untechnical.info?igsh=bWJwdXFkNW13dDI=" target="_blank" rel="noopener noreferrer">
+                  <img src="/images/instagram.png" alt="Instagram" class="social-icon">
+                </a>
+                <a href="https://www.tiktok.com/@untechnical.info?_t=ZS-8xVI3gsxlYI&_r=1" target="_blank" rel="noopener noreferrer">
+                  <img src="/images/tiktok.png" alt="TikTok" class="social-icon">
+                </a-->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box-section2">
+          <div class="contact-form">
+            <h2>問い合わせフォーム</h2>
+            <p>ご連絡は以下のメールアドレスまたはXのDMからお願いいたします。</p>
+            <a href="mailto:untechnical@untechnical.info" class="mail-button">メール︰untechnical@untechnical.info</a>
+            <a href="https://x.com/Untechnical_" class="mail-button">X︰Untechnical_</a>
+          </div>
+        </div>
+        <div class="box-section2">
+          <h2>プライバシーポリシー</h2>
+          <a href="/policy.html" class="mail-button">プライバシーポリシー</a>
+        </div>
+      </section>
+      <div id="imgModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+      </div>
+    </main>
+    <script src="/script/script.js" defer></script>
+  </body>
+</html>
