@@ -242,20 +242,20 @@
             </p>
             <h3>方法</h3>
             <h4>1.シャッター音の動作を海外仕様にするadbコマンドを実行する</h4>
-            <img src="run1.jpg" class="imagew zoomable" alt="adbコマンド">
             <p>
               以下のコマンドを実行する。
               これにより、シャッター音の動作が海外仕様となる。
               しかしシステムアップデート後はこの変更がリセットされ、さらに再起動後はペアリングもリセットされるため、ペアリングから同じ手順を実行する必要がある。
             </p>
             <pre><code>adb shell settings put system csc_pref_camera_forced_shuttersound_key 0</code></pre>
+            <img src="run1.jpg" class="imagew zoomable" alt="adbコマンド">
             <h4>2.システム音の音量を0にする</h4>
-            <img src="run2.jpg" class="imageh zoomable" alt="システム音設定">
             <p>
               シャッター音の音量はシステム音の音量と同期される。
               充電時や画面ロックの解除、タッチ操作の際に鳴るシステム音の音量を0にすることでシャッター音が消える。
               システム音の音量はマナーモードや "通知をミュート" をONにすることでも0になる。
             </p>
+            <img src="run2.jpg" class="imageh zoomable" alt="システム音設定">
           </section>
         </div>
         <div class="box-section1">
