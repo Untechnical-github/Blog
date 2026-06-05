@@ -94,11 +94,15 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin: 20px;
+        margin: 20px auto;
+        padding: 0 20px;
+        width: 100%;
+        box-sizing: border-box;
       }
-    
+
       .search-container input {
-        width: 330px;
+        width: 100%;
+        max-width: 330px;
         padding: 10px 15px;
         font-size: 18px;
         border: 1px solid #ddd;
@@ -106,15 +110,27 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         outline: none;
         margin-bottom: 40px;
+        box-sizing: border-box;
       }
-    
+
       .search-container select {
-        width: 360px;
-        padding: 10px 15px;
+        width: 100%;
+        max-width: 360px;
+        padding: 10px 40px 10px 15px;
         font-size: 16px;
         border: 1px solid #ddd;
         border-radius: 25px;
         outline: none;
+        box-sizing: border-box;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-color: #fff;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23555' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 24px;
+        cursor: pointer;
       }
     
       .posts {
