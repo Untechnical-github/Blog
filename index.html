@@ -424,12 +424,10 @@
           const pathName = window.location.pathname;
           let searchedByPath = false; 
 
-          // トップページ以外のアクセス（サーバー側で301転送されず、ここに到達した＝本当にページが無い404迷子）
           if (pathName !== "/" && pathName !== "/index.html") {
             const pathParts = pathName.split('/').filter(p => p && p !== 'articles' && !p.endsWith('.html'));
 
             if (pathParts.length > 0) {
-               // 最後のパスを検索キーワードとして抽出
                initialKeyword = decodeURIComponent(pathParts[pathParts.length - 1]).toLowerCase();
                searchInput.value = initialKeyword;
 

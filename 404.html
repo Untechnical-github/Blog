@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D2R9D0M46Q"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-D2R9D0M46Q');
+    </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="高度情報社会の最先端を駆け抜ける">
+    <meta name="google-site-verification" content="0Lm3uRwedrKk66bbYr_2TmZNx986VFE1yXWuB2h1iAs" />
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Untechnical">
+    <meta property="og:title" content="Untechnical">
+    <meta property="og:description" content="高度情報社会の最先端を駆け抜ける">
+    <meta property="og:url" content="https://untechnical.info">
+    <meta property="og:image" content="https://untechnical.info/images/profile.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Untechnical">
+    <meta name="twitter:description" content="高度情報社会の最先端を駆け抜ける">
+    <meta name="twitter:image" content="https://untechnical.info/images/profile.png">
+    <title>Untechnical</title>
+    <link rel="icon" href="https://untechnical.info/images/profile.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="https://untechnical.info/images/profile.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="https://untechnical.info/images/profile.ico">
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+      }
+    
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #fff;
+        color: #000;
+      }
+    
+      header {
+        background-color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 40px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+    
+      header a {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 700;
+        font-size: 1.6em;
+        color: black;
+        text-decoration: none;
+        letter-spacing: 0.5px;
+        transition: color 0.3s ease;
+      }
+
+      header a:hover {
+        color: #0073e6;
+      }
+    
+      main {
+        margin-top: 80px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+    
+      .hero {
+        width: 100%;
+        height: 80vh;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      }
+    
+      .hero h1 {
+        font-size: 48px;
+        margin: 0;
+        text-align: center;
+      }
+    
+      .search-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 20px auto;
+        padding: 0 20px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .search-container input {
+        width: 100%;
+        max-width: 330px;
+        padding: 10px 15px;
+        font-size: 18px;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        outline: none;
+        margin-bottom: 40px;
+        box-sizing: border-box;
+      }
+
+      .search-container select {
+        width: 100%;
+        max-width: 360px;
+        padding: 10px 40px 10px 15px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        outline: none;
+        box-sizing: border-box;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-color: #fff;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23555' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 24px;
+        cursor: pointer;
+      }
+    
+      .posts {
+        margin: 40px auto;
+        max-width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 0 20px;
+        justify-items: center;
+      }
+    
+      .post {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        background-color: white;
+        width: 100%;
+        max-width: 360px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+    
+      .post img {
+        width: 100%;
+        height: 270px;
+        object-fit: cover;
+      }
+    
+      .post a {
+        text-decoration: none;
+      }
+    
+      .post h3 {
+        margin: 5px 15px;
+        font-size: 30px;
+        color: black;
+        flex-grow: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    
+      .post .context {
+        margin: 10px 15px;
+        font-size: 14px;
+        color: #555;
+      }
+    
+      .background-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+        opacity: 0.5;
+      }
+
+      .box-section {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 40px 30px;
+        max-width: 300px;
+        margin: 40px auto;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .box-section h3{
+        text-align: center;
+      }
+
+      .box-section p{
+        text-align: center;
+      }
+
+      .profile-image {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+
+      .social-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 4px;
+        transition: opacity 0.3s ease;
+      }
+
+      .social-icon:hover {
+        opacity: 0.7;
+      }
+
+      .mail-button {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 12px 20px;
+        background-color: #0073e6;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 1em;
+        transition: background-color 0.3s ease;
+      }
+
+      .mail-button:hover {
+        background-color: #005bb5;
+      }
+    </style>  
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://untechnical.info"
+        },
+        "headline": "Untechnical",
+        "description": "高度情報社会の最先端を駆け抜ける",
+        "image": "https://untechnical.info/images/profile.png",
+        "author": {
+          "@type": "Person",
+          "name": "Untechnical"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Untechnical",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://untechnical.info/images/profile.png"
+          }
+        },
+        "url": "https://untechnical.info",
+        "datePublished": "2025-06-19",
+        "dateModified": "2025-11-02"
+      }
+    </script>
+  </head>
+  <body>
+    <video class="background-video" autoplay muted loop playsinline webkit-playsinline preload="auto">
+  <source src="/images/image.mp4" type="video/mp4">
+</video>
+    <header>
+      <div class="logo">
+        <a href="/index.html">Untechnical</a>
+      </div>
+    </header>
+    <main>
+      <div class="hero">
+        <h1>高度情報社会の最先端を駆け抜ける</h1>
+      </div>
+      <div class="search-container">
+        <input type="text" id="searchBar" placeholder="検索">
+        <select id="categoryFilter">
+          <option value="">全てのカテゴリ</option>
+          <option value="Android">Android</option>
+          <option value="iOS">iOS</option>
+          <option value="Wear OS">Wear OS</option>
+          <option value="Nintendo">Nintendo</option>
+        </select>
+      </div>
+      <section class="posts" id="postSection"></section>
+      <div id="searchResults"></div>
+      <section id="about">
+        <div class="box-section">
+          <div class="profile-container">
+            <h3>プロフィール</h3>
+            <img src="/images/profile.png" alt="プロフィール画像" class="profile-image">
+            <div class="profile-text">
+              <p>高度情報社会の最先端を駆け抜ける</p>
+              <div class="social-links">
+                <a href="https://x.com/Untechnical_" target="_blank" rel="noopener noreferrer">
+                  <img src="/images/x.png" alt="X" class="social-icon">
+                </a>
+                <!--a href="https://www.instagram.com/untechnical.info?igsh=bWJwdXFkNW13dDI=" target="_blank" rel="noopener noreferrer">
+                  <img src="/images/instagram.png" alt="Instagram" class="social-icon">
+                </a>
+                <a href="https://www.tiktok.com/@untechnical.info?_t=ZS-8xVI3gsxlYI&_r=1" target="_blank" rel="noopener noreferrer">
+                  <img src="/images/tiktok.png" alt="TikTok" class="social-icon">
+                </a-->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box-section">
+          <div class="contact-form">
+            <h3>問い合わせフォーム</h3>
+            <p>ご連絡は以下のメールアドレスまたはXのDMからお願いいたします。</p>
+            <a href="mailto:untechnical@untechnical.info" class="mail-button">メール︰untechnical@untechnical.info</a>
+            <a href="https://x.com/Untechnical_" class="mail-button">X︰Untechnical_</a>
+          </div>
+        </div>
+        <div class="box-section">
+          <h3>プライバシーポリシー</h3>
+          <a href="/policy.html" class="mail-button">プライバシーポリシー</a>
+        </div>
+      </section>
+    </main>
+    <script>
+            const worker = new Worker("/script/search-worker.js");
+      const searchInput = document.getElementById("searchBar");
+      const categorySelect = document.getElementById("categoryFilter");
+      const postSection = document.getElementById("postSection");
+
+      const viewedPrivate = JSON.parse(
+        localStorage.getItem("viewedPrivateArticles") || "[]"
+      );
+
+      function displayArticles(articles, keyword) {
+        if (!articles || articles.length === 0) {
+          postSection.innerHTML = "<p>該当する記事はありません。</p>";
+          return;
+        }
+
+        postSection.innerHTML = articles.map(article => {
+          let contextHTML = '';
+
+          const absoluteArticlePath = article.path.startsWith('/') ? article.path : '/' + article.path;
+
+          let resolvedImageUrl = "";
+          if (article.image) {
+            try {
+              resolvedImageUrl = new URL(article.image, window.location.origin + absoluteArticlePath).href;
+            } catch (e) {
+              resolvedImageUrl = article.image;
+            }
+          } else {
+            resolvedImageUrl = "/images/profile.png"; 
+          }
+
+          if (keyword && keyword.length > 0) {
+            const lowerContent = article.content.toLowerCase();
+            const index = lowerContent.indexOf(keyword);
+
+            if (index !== -1) {
+              const startIndex = Math.max(0, index - 30);
+              const endIndex = Math.min(article.content.length, index + keyword.length + 30);
+              let snippet = article.content.substring(startIndex, endIndex);
+
+              if (startIndex > 0) snippet = '...' + snippet;
+              if (endIndex < article.content.length) snippet = snippet + '...';
+
+              const regex = new RegExp(keyword, 'gi');
+              contextHTML = snippet.replace(regex, '<strong>$&</strong>');
+            } else {
+              contextHTML = article.content.slice(0, 80) + '...';
+            }
+          } else {
+            contextHTML = article.content.slice(0, 80) + '...';
+          }
+
+          return `
+            <div class="post">
+              <a href="${absoluteArticlePath}">
+                <img src="${resolvedImageUrl}" alt="${article.title}">
+                <h3>${article.title}</h3>
+                <p class="context">${contextHTML}</p>
+              </a>
+            </div>
+          `;
+        }).join("");
+      }
+
+      fetch("/articles.json")
+        .then(res => res.json())
+        .then(data => {
+
+          worker.postMessage({
+            type: "load",
+            payload: {
+              articles: data,
+              viewedPrivate: viewedPrivate
+            }
+          });
+
+          let initialKeyword = "";
+          const pathName = window.location.pathname;
+          let searchedByPath = false; 
+
+          if (pathName !== "/" && pathName !== "/index.html") {
+            const pathParts = pathName.split('/').filter(p => p && p !== 'articles' && !p.endsWith('.html'));
+
+            if (pathParts.length > 0) {
+               initialKeyword = decodeURIComponent(pathParts[pathParts.length - 1]).toLowerCase();
+               searchInput.value = initialKeyword;
+
+               const pathMatchedArticles = data.filter(article => 
+                 article.path.toLowerCase().includes(initialKeyword)
+               );
+
+               const resultsDiv = document.getElementById("searchResults");
+
+               if (pathMatchedArticles.length > 0) {
+                 if(resultsDiv) {
+                    resultsDiv.innerHTML = `<p style="text-align:center; color: #d9534f; font-weight:bold; margin: 20px 0;">お探しのページが見つかりませんでした。URLのパス（${initialKeyword}）に関連する記事を表示しています。</p>`;
+                 }
+                 displayArticles(pathMatchedArticles, initialKeyword);
+                 searchedByPath = true; 
+               } else {
+                 if(resultsDiv) {
+                    resultsDiv.innerHTML = `<p style="text-align:center; color: #d9534f; font-weight:bold; margin: 20px 0;">お探しのページが見つかりませんでした。「${initialKeyword}」に関連する記事を表示しています。</p>`;
+                 }
+               }
+            }
+          }
+
+          if (!searchedByPath) {
+            worker.postMessage({
+              type: "search",
+              payload: { keyword: initialKeyword, category: "" }
+            });
+          }
+        });
+
+      function performSearch() {
+        const resultsDiv = document.getElementById("searchResults");
+        if (resultsDiv) resultsDiv.innerHTML = "";
+
+        const keyword = searchInput.value.trim().toLowerCase();
+        const category = categorySelect.value;
+
+        worker.postMessage({
+          type: "search",
+          payload: { keyword, category }
+        });
+      }
+
+      searchInput.addEventListener("input", performSearch);
+      categorySelect.addEventListener("change", performSearch);
+
+      worker.onmessage = function (e) {
+        const results = e.data;
+        const keyword = searchInput.value.trim().toLowerCase();
+        displayArticles(results, keyword);
+      };
+    </script>
+  </body>
+</html>
