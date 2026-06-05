@@ -406,29 +406,47 @@
 
           let initialKeyword = "";
           const pathName = window.location.pathname;
+          let searchedByPath = false;
           
           if (pathName !== "/" && pathName !== "/index.html") {
             const pathParts = pathName.split('/').filter(p => p && p !== 'articles' && !p.endsWith('.html'));
             
             if (pathParts.length > 0) {
                initialKeyword = decodeURIComponent(pathParts[pathParts.length - 1]).toLowerCase();
-               
                searchInput.value = initialKeyword;
                
+               const pathMatchedArticles = data.filter(article => 
+                 article.path.toLowerCase().includes(initialKeyword)
+               );
+
                const resultsDiv = document.getElementById("searchResults");
-               if(resultsDiv) {
-                  resultsDiv.innerHTML = `<p style="text-align:center; color: #d9534f; font-weight:bold; margin: 20px 0;">お探しのページが見つかりませんでした。「${initialKeyword}」に関連する記事を表示しています。</p>`;
+
+               if (pathMatchedArticles.length > 0) {
+                 if(resultsDiv) {
+                    resultsDiv.innerHTML = `<p style="text-align:center; color: #d9534f; font-weight:bold; margin: 20px 0;">お探しのページが見つかりませんでした。URLのパス（${initialKeyword}）に一致する記事を表示しています。</p>`;
+                 }
+                 displayArticles(pathMatchedArticles, initialKeyword);
+                 searchedByPath = true;
+               } else {
+                 if(resultsDiv) {
+                    resultsDiv.innerHTML = `<p style="text-align:center; color: #d9534f; font-weight:bold; margin: 20px 0;">お探しのページが見つかりませんでした。「${initialKeyword}」に関連する記事を表示しています。</p>`;
+                 }
                }
             }
           }
 
-          worker.postMessage({
-            type: "search",
-            payload: { keyword: initialKeyword, category: "" }
-          });
+          if (!searchedByPath) {
+            worker.postMessage({
+              type: "search",
+              payload: { keyword: initialKeyword, category: "" }
+            });
+          }
         });
 
       function performSearch() {
+        const resultsDiv = document.getElementById("searchResults");
+        if (resultsDiv) resultsDiv.innerHTML = "";
+
         const keyword = searchInput.value.trim().toLowerCase();
         const category = categorySelect.value;
 
