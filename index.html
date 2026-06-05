@@ -344,7 +344,7 @@
       </section>
     </main>
     <script>
-      const worker = new Worker("/script/search-worker.js");
+            const worker = new Worker("/script/search-worker.js");
       const searchInput = document.getElementById("searchBar");
       const categorySelect = document.getElementById("categoryFilter");
       const postSection = document.getElementById("postSection");
@@ -408,7 +408,7 @@
         }).join("");
       }
 
-            fetch("/articles.json")
+      fetch("/articles.json")
         .then(res => res.json())
         .then(data => {
 
@@ -423,27 +423,35 @@
           let initialKeyword = "";
           const pathName = window.location.pathname;
           let searchedByPath = false; 
-          
+
           if (pathName !== "/" && pathName !== "/index.html") {
-            const requestedFileName = pathName.split('/').pop().replace('.html', '').toLowerCase();
-            
+            // 末尾のスラッシュを無視してファイル名を抽出
+            const cleanPathName = pathName.endsWith('/') ? pathName.slice(0, -1) : pathName;
+            const requestedFileName = cleanPathName.split('/').pop().replace('.html', '').toLowerCase();
+
             const exactMatchArticle = data.find(article => {
               const articleFileName = article.path.split('/').pop().replace('.html', '').toLowerCase();
               return articleFileName === requestedFileName;
             });
 
-            if (exactMatchArticle && !pathName.endsWith(exactMatchArticle.path)) {
+            // 🌟 無限ループ防止を強化したリダイレクト処理
+            if (exactMatchArticle) {
               const absoluteArticlePath = exactMatchArticle.path.startsWith('/') ? exactMatchArticle.path : '/' + exactMatchArticle.path;
-              window.location.replace(absoluteArticlePath);
-              return;
+              const absoluteArticlePathNoExt = absoluteArticlePath.replace('.html', '');
+              
+              // 現在のURLが、転送先のURL（.htmlあり・なし両方）と完全に一致しない場合のみ転送
+              if (cleanPathName !== absoluteArticlePath && cleanPathName !== absoluteArticlePathNoExt) {
+                window.location.replace(absoluteArticlePath);
+                return;
+              }
             }
 
             const pathParts = pathName.split('/').filter(p => p && p !== 'articles' && !p.endsWith('.html'));
-            
+
             if (pathParts.length > 0) {
                initialKeyword = decodeURIComponent(pathParts[pathParts.length - 1]).toLowerCase();
                searchInput.value = initialKeyword;
-               
+
                const pathMatchedArticles = data.filter(article => 
                  article.path.toLowerCase().includes(initialKeyword)
                );
