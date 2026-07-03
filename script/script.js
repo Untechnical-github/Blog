@@ -85,11 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === "imgModal") closeModal();
   });
 
-  let wheelSnapTimer = null;
-
   modalImg.addEventListener('wheel', (e) => {
     e.preventDefault();
-    if (wheelSnapTimer) { clearTimeout(wheelSnapTimer); wheelSnapTimer = null; }
 
     const direction = e.deltaY > 0 ? -1 : 1;
     const factorStep = 0.15;
@@ -113,14 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     modalImg.style.transition = "transform 0.05s ease-out";
     updateTransform();
-
-    // ホイール操作が止まってから範囲外の位置を補正する（操作中に補正するとカーソル位置がずれるため）
-    wheelSnapTimer = setTimeout(() => {
-      snapState();
-      modalImg.style.transition = "transform 0.1s ease-out";
-      updateTransform();
-      wheelSnapTimer = null;
-    }, 300);
   }, { passive: false });
 
   let isDraggingPC = false;
@@ -259,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: false });
 
   modalImg.addEventListener('touchend', (e) => {
+    const wasPinching = isPinching;
     if (e.touches.length < 2) {
       isPinching = false;
     }
@@ -270,8 +260,12 @@ document.addEventListener('DOMContentLoaded', () => {
       modalImg.style.transition = "none";
     }
     else if (e.touches.length === 0) {
-      snapState();
       modalImg.style.transition = "transform 0.1s ease-out";
+      // ピンチ（ズーム）直後は指の中心がずれてしまうため補正しない。
+      // ドラッグ（パン）終了時のみ範囲外を補正する。
+      if (!wasPinching) {
+        snapState();
+      }
       updateTransform();
     }
   });
