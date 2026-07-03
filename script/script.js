@@ -21,34 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     canMoveY = currentH > winH + 1;
   };
 
-  // ジェスチャー中は呼ばず、ドラッグ/ピンチ/ホイール操作が終わった後にのみ呼んで
-  // はみ出した位置を範囲内に補正する（ジェスチャー中に呼ぶとカーソル/指の位置が
-  // ズームの中心からずれてしまうため）
-  const snapState = () => {
-    const winW = window.innerWidth;
-    const winH = window.innerHeight;
-    const imgW = modalImg.offsetWidth;
-    const imgH = modalImg.offsetHeight;
-    const currentW = imgW * state.scale;
-    const currentH = imgH * state.scale;
-
-    if (currentW <= winW) {
-      state.x = (winW - currentW) / 2;
-    } else {
-      if (state.x > 0) state.x = 0;
-      const minX = winW - currentW;
-      if (state.x < minX) state.x = minX;
-    }
-
-    if (currentH <= winH) {
-      state.y = (winH - currentH) / 2;
-    } else {
-      if (state.y > 0) state.y = 0;
-      const minY = winH - currentH;
-      if (state.y < minY) state.y = minY;
-    }
-  };
-
   const centerImage = () => {
     const winW = window.innerWidth;
     const winH = window.innerHeight;
@@ -151,8 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
       isDraggingPC = false;
       modalImg.style.cursor = "grab";
       modalImg.style.transition = "transform 0.1s ease-out";
-      snapState();
-      updateTransform();
     }
   });
 
@@ -244,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: false });
 
   modalImg.addEventListener('touchend', (e) => {
-    const wasPinching = isPinching;
     if (e.touches.length < 2) {
       isPinching = false;
     }
@@ -257,12 +226,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     else if (e.touches.length === 0) {
       modalImg.style.transition = "transform 0.1s ease-out";
-      // ピンチ（ズーム）直後は指の中心がずれてしまうため補正しない。
-      // ドラッグ（パン）終了時のみ範囲外を補正する。
-      if (!wasPinching) {
-        snapState();
-      }
-      updateTransform();
     }
   });
 
