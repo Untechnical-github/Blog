@@ -21,9 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
     canMoveY = currentH > winH + 1;
   };
 
-  // ドラッグ/パン操作専用: 画像が画面より大きい辺だけ、動かした分だけ範囲内に収める壁として働く。
-  // ズーム(ホイール/ピンチ)には使わない — 毎回ポインタ基準で座標を再計算し直すため、
-  // ここで割り込むと端がまだ画面端に到達していなくても位置が飛んでしまう。
+  // 画像が画面より大きい辺だけ、その場で範囲内に収める壁として働く。
+  // ズーム・ドラッグ・ピンチのすべての操作の後に毎回呼び、位置を常に有効範囲内に保つ。
+  // （呼ばない箇所があると、その間に範囲外の状態が蓄積し、次にドラッグ等で
+  // 補正された瞬間に大きくジャンプ＝瞬間移動して見える）
   const clampToViewport = () => {
     const winW = window.innerWidth;
     const winH = window.innerHeight;
@@ -101,6 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
     state.x = mouseX - imageInternalX * newScale;
     state.y = mouseY - imageInternalY * newScale;
     state.scale = newScale;
+
+    clampToViewport();
 
     modalImg.style.transition = "transform 0.05s ease-out";
     updateTransform();
@@ -232,6 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
       state.x = currentCenter.x - pinchStartImageX * newScale;
       state.y = currentCenter.y - pinchStartImageY * newScale;
       state.scale = newScale;
+
+      clampToViewport();
 
       modalImg.style.transition = "none";
       updateTransform();
