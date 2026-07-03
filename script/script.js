@@ -17,8 +17,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const winH = window.innerHeight;
     const currentW = modalImg.offsetWidth * state.scale;
     const currentH = modalImg.offsetHeight * state.scale;
-    canMoveX = currentW > winW + 1; 
+    canMoveX = currentW > winW + 1;
     canMoveY = currentH > winH + 1;
+  };
+
+  // 画像が画面より大きい辺だけ、その場でリアルタイムに範囲内へ収める。
+  // 画面より小さい辺には一切触れない（カーソル/指を中心にしたズームの挙動を崩さないため）。
+  const clampToViewport = () => {
+    const winW = window.innerWidth;
+    const winH = window.innerHeight;
+    const currentW = modalImg.offsetWidth * state.scale;
+    const currentH = modalImg.offsetHeight * state.scale;
+
+    if (currentW > winW) {
+      const minX = winW - currentW;
+      if (state.x > 0) state.x = 0;
+      else if (state.x < minX) state.x = minX;
+    }
+
+    if (currentH > winH) {
+      const minY = winH - currentH;
+      if (state.y > 0) state.y = 0;
+      else if (state.y < minY) state.y = minY;
+    }
   };
 
   const centerImage = () => {
@@ -80,6 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
     state.y = mouseY - imageInternalY * newScale;
     state.scale = newScale;
 
+    clampToViewport();
+
     modalImg.style.transition = "transform 0.05s ease-out";
     updateTransform();
   }, { passive: false });
@@ -115,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     state.x = dragStartImageX + dx;
     state.y = dragStartImageY + dy;
 
+    clampToViewport();
     updateTransform();
   });
 
@@ -186,6 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
       lastTouchX = e.touches[0].clientX;
       lastTouchY = e.touches[0].clientY;
 
+      clampToViewport();
+
       modalImg.style.transition = "none";
       updateTransform();
 
@@ -207,6 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
       state.x = currentCenter.x - pinchStartImageX * newScale;
       state.y = currentCenter.y - pinchStartImageY * newScale;
       state.scale = newScale;
+
+      clampToViewport();
 
       modalImg.style.transition = "none";
       updateTransform();
