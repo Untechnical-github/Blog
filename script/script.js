@@ -21,7 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
     canMoveY = currentH > winH + 1;
   };
 
-  const clampState = () => {
+  // ジェスチャー中は呼ばず、ドラッグ/ピンチ/ホイール操作が終わった後にのみ呼んで
+  // はみ出した位置を範囲内に補正する（ジェスチャー中に呼ぶとカーソル/指の位置が
+  // ズームの中心からずれてしまうため）
+  const snapState = () => {
     const winW = window.innerWidth;
     const winH = window.innerHeight;
     const imgW = modalImg.offsetWidth;
@@ -55,8 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
     state.scale = 1;
     state.x = (winW - imgW) / 2;
     state.y = (winH - imgH) / 2;
-    
-    clampState();
 
     modalImg.style.transition = "transform 0.1s ease-out";
     updateTransform();
@@ -84,8 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === "imgModal") closeModal();
   });
 
+  let wheelSnapTimer = null;
+
   modalImg.addEventListener('wheel', (e) => {
     e.preventDefault();
+    if (wheelSnapTimer) { clearTimeout(wheelSnapTimer); wheelSnapTimer = null; }
+
     const direction = e.deltaY > 0 ? -1 : 1;
     const factorStep = 0.15;
     let newScale = state.scale * (1 + direction * factorStep);
@@ -97,24 +102,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const mouseX = e.clientX;
     const mouseY = e.clientY;
-    
-    const currentOffsetX = mouseX - state.x;
-    const currentOffsetY = mouseY - state.y;
-    
-    const imageInternalX = currentOffsetX / state.scale;
-    const imageInternalY = currentOffsetY / state.scale;
 
-    const newOffsetX = imageInternalX * newScale;
-    const newOffsetY = imageInternalY * newScale;
+    // クランプされていない現在位置を基準にカーソル位置を固定してズーム
+    const imageInternalX = (mouseX - state.x) / state.scale;
+    const imageInternalY = (mouseY - state.y) / state.scale;
 
-    state.x = mouseX - newOffsetX;
-    state.y = mouseY - newOffsetY;
+    state.x = mouseX - imageInternalX * newScale;
+    state.y = mouseY - imageInternalY * newScale;
     state.scale = newScale;
-
-    clampState();
 
     modalImg.style.transition = "transform 0.05s ease-out";
     updateTransform();
+
+    // ホイール操作が止まってから範囲外の位置を補正する（操作中に補正するとカーソル位置がずれるため）
+    wheelSnapTimer = setTimeout(() => {
+      snapState();
+      modalImg.style.transition = "transform 0.1s ease-out";
+      updateTransform();
+      wheelSnapTimer = null;
+    }, 300);
   }, { passive: false });
 
   let isDraggingPC = false;
@@ -124,8 +130,12 @@ document.addEventListener('DOMContentLoaded', () => {
   modalImg.addEventListener('mousedown', e => {
     if (state.scale <= 1) return;
     e.preventDefault();
+
+    // ドラッグ開始前に有効範囲へ補正しておく
+    snapState();
+    updateTransform();
+
     isDraggingPC = true;
-    
     checkMoveability();
 
     dragStartMouseX = e.clientX;
@@ -148,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
     state.x = dragStartImageX + dx;
     state.y = dragStartImageY + dy;
 
-    clampState();
     updateTransform();
   });
 
@@ -157,11 +166,15 @@ document.addEventListener('DOMContentLoaded', () => {
       isDraggingPC = false;
       modalImg.style.cursor = "grab";
       modalImg.style.transition = "transform 0.1s ease-out";
+      snapState();
+      updateTransform();
     }
   });
 
-  let lastTouchDistance = 0;
-  let lastTouchCenter = { x: 0, y: 0 };
+  let pinchStartDistance = 0;
+  let pinchStartScale = 1;
+  let pinchStartImageX = 0; // ピンチ開始時のズーム中心（画像内部座標、以後固定）
+  let pinchStartImageY = 0;
   let isPinching = false;
   let lastTouchX = 0;
   let lastTouchY = 0;
@@ -189,8 +202,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else if (e.touches.length === 2) {
       isPinching = true;
-      lastTouchDistance = getDistance(e.touches);
-      lastTouchCenter = getMidpoint(e.touches);
+      pinchStartDistance = getDistance(e.touches);
+      pinchStartScale = state.scale;
+      const mid = getMidpoint(e.touches);
+      // 基準点はジェスチャー開始時に1度だけ記録する（毎フレーム更新すると誤差が蓄積し、
+      // 指の中心がズームの中心からずれてしまうため）
+      pinchStartImageX = (mid.x - state.x) / state.scale;
+      pinchStartImageY = (mid.y - state.y) / state.scale;
       modalImg.style.transition = "none";
     }
   }, { passive: false });
@@ -209,41 +227,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
       state.x += dx;
       state.y += dy;
-      
+
       lastTouchX = e.touches[0].clientX;
       lastTouchY = e.touches[0].clientY;
-      
-      clampState();
 
       modalImg.style.transition = "none";
       updateTransform();
 
-    } 
+    }
     else if (e.touches.length === 2) {
       const currentDistance = getDistance(e.touches);
       const currentCenter = getMidpoint(e.touches);
 
-      if (lastTouchDistance === 0) return;
+      if (pinchStartDistance === 0) return;
 
-      const scaleRatio = currentDistance / lastTouchDistance;
-      let newScale = state.scale * scaleRatio;
+      const newScale = pinchStartScale * (currentDistance / pinchStartDistance);
 
       if (newScale <= 1) {
           centerImage();
           return;
       }
 
-      const relativeX = lastTouchCenter.x - state.x;
-      const relativeY = lastTouchCenter.y - state.y;
-      
-      state.x = currentCenter.x - (relativeX * scaleRatio);
-      state.y = currentCenter.y - (relativeY * scaleRatio);
+      // 開始時に固定した基準点から毎フレーム再計算することで、指の中心を維持する
+      state.x = currentCenter.x - pinchStartImageX * newScale;
+      state.y = currentCenter.y - pinchStartImageY * newScale;
       state.scale = newScale;
-
-      lastTouchDistance = currentDistance;
-      lastTouchCenter = currentCenter;
-
-      clampState();
 
       modalImg.style.transition = "none";
       updateTransform();
@@ -260,9 +268,11 @@ document.addEventListener('DOMContentLoaded', () => {
       lastTouchX = e.touches[0].clientX;
       lastTouchY = e.touches[0].clientY;
       modalImg.style.transition = "none";
-    } 
+    }
     else if (e.touches.length === 0) {
+      snapState();
       modalImg.style.transition = "transform 0.1s ease-out";
+      updateTransform();
     }
   });
 
