@@ -21,27 +21,16 @@ document.addEventListener('DOMContentLoaded', () => {
     canMoveY = currentH > winH + 1;
   };
 
-  // 画像が画面より大きい辺だけ、その場で範囲内に収める壁として働く。
-  // ズーム・ドラッグ・ピンチのすべての操作の後に毎回呼び、位置を常に有効範囲内に保つ。
-  // （呼ばない箇所があると、その間に範囲外の状態が蓄積し、次にドラッグ等で
-  // 補正された瞬間に大きくジャンプ＝瞬間移動して見える）
-  const clampToViewport = () => {
-    const winW = window.innerWidth;
-    const winH = window.innerHeight;
-    const currentW = modalImg.offsetWidth * state.scale;
-    const currentH = modalImg.offsetHeight * state.scale;
-
-    if (currentW > winW) {
-      const minX = winW - currentW;
-      if (state.x > 0) state.x = 0;
-      else if (state.x < minX) state.x = minX;
-    }
-
-    if (currentH > winH) {
-      const minY = winH - currentH;
-      if (state.y > 0) state.y = 0;
-      else if (state.y < minY) state.y = minY;
-    }
+  // 座標を強制的に書き換える(0やminXへスナップさせる)ことは一切しない。
+  // 「背景が見える量」が今より増える移動だけを拒否し、現在位置をそのまま保持する。
+  // 逆方向（背景が見える量を減らす移動）は常に自由に通す。
+  // これにより、達していない間は何も起こらず、達した瞬間もジャンプせず、
+  // その方向への移動だけが止まる。
+  const restrictOutward = (proposed, current, currentSize, winSize) => {
+    if (currentSize <= winSize) return proposed;
+    const gapBefore = Math.max(0, current) + Math.max(0, winSize - (current + currentSize));
+    const gapAfter = Math.max(0, proposed) + Math.max(0, winSize - (proposed + currentSize));
+    return gapAfter > gapBefore ? current : proposed;
   };
 
   const centerImage = () => {
@@ -99,11 +88,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageInternalX = (mouseX - state.x) / state.scale;
     const imageInternalY = (mouseY - state.y) / state.scale;
 
-    state.x = mouseX - imageInternalX * newScale;
-    state.y = mouseY - imageInternalY * newScale;
-    state.scale = newScale;
+    const proposedX = mouseX - imageInternalX * newScale;
+    const proposedY = mouseY - imageInternalY * newScale;
+    const winW = window.innerWidth;
+    const winH = window.innerHeight;
+    const newCurrentW = modalImg.offsetWidth * newScale;
+    const newCurrentH = modalImg.offsetHeight * newScale;
 
-    clampToViewport();
+    state.x = restrictOutward(proposedX, state.x, newCurrentW, winW);
+    state.y = restrictOutward(proposedY, state.y, newCurrentH, winH);
+    state.scale = newScale;
 
     modalImg.style.transition = "transform 0.05s ease-out";
     updateTransform();
@@ -137,10 +131,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!canMoveX) dx = 0;
     if (!canMoveY) dy = 0;
 
-    state.x = dragStartImageX + dx;
-    state.y = dragStartImageY + dy;
+    const proposedX = dragStartImageX + dx;
+    const proposedY = dragStartImageY + dy;
+    const winW = window.innerWidth;
+    const winH = window.innerHeight;
+    const currentW = modalImg.offsetWidth * state.scale;
+    const currentH = modalImg.offsetHeight * state.scale;
 
-    clampToViewport();
+    state.x = restrictOutward(proposedX, state.x, currentW, winW);
+    state.y = restrictOutward(proposedY, state.y, currentH, winH);
     updateTransform();
   });
 
@@ -206,13 +205,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!canMoveX) dx = 0;
       if (!canMoveY) dy = 0;
 
-      state.x += dx;
-      state.y += dy;
+      const proposedX = state.x + dx;
+      const proposedY = state.y + dy;
+      const winW = window.innerWidth;
+      const winH = window.innerHeight;
+      const currentW = modalImg.offsetWidth * state.scale;
+      const currentH = modalImg.offsetHeight * state.scale;
+
+      state.x = restrictOutward(proposedX, state.x, currentW, winW);
+      state.y = restrictOutward(proposedY, state.y, currentH, winH);
 
       lastTouchX = e.touches[0].clientX;
       lastTouchY = e.touches[0].clientY;
-
-      clampToViewport();
 
       modalImg.style.transition = "none";
       updateTransform();
@@ -232,11 +236,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 開始時に固定した基準点から毎フレーム再計算することで、指の中心を維持する
-      state.x = currentCenter.x - pinchStartImageX * newScale;
-      state.y = currentCenter.y - pinchStartImageY * newScale;
-      state.scale = newScale;
+      const proposedX = currentCenter.x - pinchStartImageX * newScale;
+      const proposedY = currentCenter.y - pinchStartImageY * newScale;
+      const winW = window.innerWidth;
+      const winH = window.innerHeight;
+      const newCurrentW = modalImg.offsetWidth * newScale;
+      const newCurrentH = modalImg.offsetHeight * newScale;
 
-      clampToViewport();
+      state.x = restrictOutward(proposedX, state.x, newCurrentW, winW);
+      state.y = restrictOutward(proposedY, state.y, newCurrentH, winH);
+      state.scale = newScale;
 
       modalImg.style.transition = "none";
       updateTransform();
