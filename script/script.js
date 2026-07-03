@@ -120,10 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.scale <= 1) return;
     e.preventDefault();
 
-    // ドラッグ開始前に有効範囲へ補正しておく
-    snapState();
-    updateTransform();
-
     isDraggingPC = true;
     checkMoveability();
 
