@@ -4,268 +4,225 @@ document.addEventListener('DOMContentLoaded', () => {
 
   modalImg.style.transformOrigin = "0 0";
 
-  let state = { x: 0, y: 0, scale: 1 };
-  let canMoveX = false;
-  let canMoveY = false;
+  let cleanupZoomPan = null;
 
-  const updateTransform = () => {
-    modalImg.style.transform = `translate3d(${state.x}px, ${state.y}px, 0) scale(${state.scale})`;
-  };
+  const setupZoomPan = () => {
+    if (cleanupZoomPan) { cleanupZoomPan(); cleanupZoomPan = null; }
 
-  const checkMoveability = () => {
-    const winW = window.innerWidth;
-    const winH = window.innerHeight;
-    const currentW = modalImg.offsetWidth * state.scale;
-    const currentH = modalImg.offsetHeight * state.scale;
-    canMoveX = currentW > winW + 1;
-    canMoveY = currentH > winH + 1;
-  };
+    const container = modal;
+    const img = modalImg;
 
-  // 座標を強制的に書き換える(0やminXへスナップさせる)ことは一切しない。
-  // 「背景が見える量」が今より増える移動だけを拒否し、現在位置をそのまま保持する。
-  // 逆方向（背景が見える量を減らす移動）は常に自由に通す。
-  // これにより、達していない間は何も起こらず、達した瞬間もジャンプせず、
-  // その方向への移動だけが止まる。
-  const restrictOutward = (proposed, current, currentSize, winSize) => {
-    if (currentSize <= winSize) return proposed;
-    const gapBefore = Math.max(0, current) + Math.max(0, winSize - (current + currentSize));
-    const gapAfter = Math.max(0, proposed) + Math.max(0, winSize - (proposed + currentSize));
-    return gapAfter > gapBefore ? current : proposed;
-  };
+    const cW = container.clientWidth;
+    const cH = container.clientHeight;
+    const imgW = img.offsetWidth;
+    const imgH = img.offsetHeight;
 
-  const centerImage = () => {
-    const winW = window.innerWidth;
-    const winH = window.innerHeight;
-    const imgW = modalImg.offsetWidth;
-    const imgH = modalImg.offsetHeight;
+    let scale = 1;
+    let x = (cW - imgW) / 2;
+    let y = (cH - imgH) / 2;
 
-    state.scale = 1;
-    state.x = (winW - imgW) / 2;
-    state.y = (winH - imgH) / 2;
+    // x,y,scale をそのまま適用 — ジェスチャー中は一切クランプしない（基準点のずれを防ぐ）
+    const setTransform = (transition = 'none') => {
+      img.style.transition = transition;
+      img.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
+    };
 
-    modalImg.style.transition = "transform 0.1s ease-out";
-    updateTransform();
-    modalImg.style.cursor = "grab";
+    // 位置の補正 — ジェスチャーが終わった後にのみ呼ぶ
+    const snap = (transition = 'transform 0.2s ease-out') => {
+      const vW = imgW * scale;
+      const vH = imgH * scale;
+      if (scale <= 1) {
+        scale = 1; x = (cW - imgW) / 2; y = (cH - imgH) / 2;
+      } else {
+        x = vW <= cW ? (cW - vW) / 2 : Math.max(cW - vW, Math.min(0, x));
+        y = vH <= cH ? (cH - vH) / 2 : Math.max(cH - vH, Math.min(0, y));
+      }
+      img.style.transition = transition;
+      img.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
+    };
+
+    const centerImage = (animated = true) => {
+      scale = 1; x = (cW - imgW) / 2; y = (cH - imgH) / 2;
+      setTransform(animated ? 'transform 0.2s ease-out' : 'none');
+      img.style.cursor = 'grab';
+    };
+
+    centerImage(false);
+    img.style.opacity = '1';
+
+    // ホイールズーム: クランプされていない x,y を基準にする → ドリフトなし
+    let wheelSnapTimer = null;
+    const onWheel = (e) => {
+      e.preventDefault();
+      if (wheelSnapTimer) { clearTimeout(wheelSnapTimer); wheelSnapTimer = null; }
+      const newScale = scale * (1 + (e.deltaY > 0 ? -1 : 1) * 0.15);
+      if (newScale <= 1) { centerImage(); return; }
+      const rect = container.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      const bx = (mx - x) / scale;
+      const by = (my - y) / scale;
+      x = mx - bx * newScale;
+      y = my - by * newScale;
+      scale = newScale;
+      setTransform('transform 0.05s ease-out');
+      wheelSnapTimer = setTimeout(() => { snap(); wheelSnapTimer = null; }, 300);
+    };
+
+    // マウスドラッグ
+    let isDragging = false;
+    let dragStartMouseX = 0, dragStartMouseY = 0, dragStartImageX = 0, dragStartImageY = 0;
+    let canMoveX = false, canMoveY = false;
+
+    const checkMovability = () => {
+      canMoveX = imgW * scale > cW + 1;
+      canMoveY = imgH * scale > cH + 1;
+    };
+
+    const onMouseDown = (e) => {
+      if (scale <= 1) return;
+      e.preventDefault();
+      snap('none'); // ドラッグ開始前に有効な位置へ同期
+      isDragging = true;
+      checkMovability();
+      dragStartMouseX = e.clientX; dragStartMouseY = e.clientY;
+      dragStartImageX = x; dragStartImageY = y;
+      img.style.cursor = 'grabbing';
+      img.style.transition = 'none';
+    };
+    const onMouseMove = (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      let dx = e.clientX - dragStartMouseX;
+      let dy = e.clientY - dragStartMouseY;
+      if (!canMoveX) dx = 0;
+      if (!canMoveY) dy = 0;
+      x = dragStartImageX + dx;
+      y = dragStartImageY + dy;
+      setTransform();
+    };
+    const onMouseUp = () => {
+      if (isDragging) {
+        isDragging = false;
+        img.style.cursor = 'grab';
+        snap('transform 0.1s ease-out');
+      }
+    };
+
+    // タッチ: ピンチは絶対基準点（ドリフトなし）、単指パンは差分方式
+    let isPinching = false;
+    let pinchStartDist = 0, pinchStartScale = 1;
+    let pinchStartBodyX = 0, pinchStartBodyY = 0;
+    let singleTouching = false;
+    let lastTouchX = 0, lastTouchY = 0;
+
+    const getTouchDist = (t) => {
+      const dx = t[0].clientX - t[1].clientX; const dy = t[0].clientY - t[1].clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
+    const getTouchMid = (t) => ({
+      x: (t[0].clientX + t[1].clientX) / 2,
+      y: (t[0].clientY + t[1].clientY) / 2,
+    });
+
+    const onTouchStart = (e) => {
+      e.preventDefault();
+      if (e.touches.length === 2) {
+        isPinching = true; singleTouching = false;
+        const mid = getTouchMid(e.touches);
+        pinchStartDist = getTouchDist(e.touches);
+        pinchStartScale = scale;
+        // 絶対基準点はクランプされていない x,y から1度だけ記録する
+        pinchStartBodyX = (mid.x - x) / scale;
+        pinchStartBodyY = (mid.y - y) / scale;
+        img.style.transition = 'none';
+      } else if (e.touches.length === 1 && !isPinching) {
+        singleTouching = true;
+        if (scale > 1) {
+          checkMovability();
+          lastTouchX = e.touches[0].clientX; lastTouchY = e.touches[0].clientY;
+          img.style.transition = 'none';
+        }
+      }
+    };
+
+    const onTouchMove = (e) => {
+      if (e.cancelable) e.preventDefault();
+      if (e.touches.length === 2 && isPinching) {
+        const currentDist = getTouchDist(e.touches);
+        const currentMid = getTouchMid(e.touches);
+        const newScale = pinchStartScale * currentDist / pinchStartDist;
+        if (newScale <= 1) { centerImage(); return; }
+        // 絶対基準点から毎フレーム再計算 — 誤差の蓄積なし
+        scale = newScale;
+        x = currentMid.x - pinchStartBodyX * newScale;
+        y = currentMid.y - pinchStartBodyY * newScale;
+        img.style.transition = 'none';
+        setTransform();
+      } else if (e.touches.length === 1 && singleTouching && !isPinching && scale > 1) {
+        let dx = e.touches[0].clientX - lastTouchX;
+        let dy = e.touches[0].clientY - lastTouchY;
+        if (!canMoveX) dx = 0;
+        if (!canMoveY) dy = 0;
+        x += dx; y += dy;
+        lastTouchX = e.touches[0].clientX; lastTouchY = e.touches[0].clientY;
+        img.style.transition = 'none';
+        setTransform();
+      }
+    };
+
+    const onTouchEnd = (e) => {
+      if (e.touches.length < 2) { isPinching = false; }
+      if (e.touches.length === 1 && !isPinching) {
+        singleTouching = true; checkMovability();
+        lastTouchX = e.touches[0].clientX; lastTouchY = e.touches[0].clientY;
+        img.style.transition = 'none';
+      } else if (e.touches.length === 0) {
+        singleTouching = false;
+        snap();
+      }
+    };
+
+    img.addEventListener('wheel', onWheel, { passive: false });
+    img.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    img.addEventListener('touchstart', onTouchStart, { passive: false });
+    img.addEventListener('touchmove', onTouchMove, { passive: false });
+    img.addEventListener('touchend', onTouchEnd);
+
+    cleanupZoomPan = () => {
+      if (wheelSnapTimer) { clearTimeout(wheelSnapTimer); wheelSnapTimer = null; }
+      img.removeEventListener('wheel', onWheel);
+      img.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      img.removeEventListener('touchstart', onTouchStart);
+      img.removeEventListener('touchmove', onTouchMove);
+      img.removeEventListener('touchend', onTouchEnd);
+    };
   };
 
   document.querySelectorAll(".zoomable").forEach(img => {
     img.addEventListener("click", () => {
+      modalImg.style.opacity = '0';
       modalImg.src = img.src;
       modal.style.display = "block";
       document.body.style.overflow = "hidden";
-      modalImg.onload = () => centerImage();
-      if (modalImg.complete) centerImage();
+      modalImg.onload = () => setupZoomPan();
+      if (modalImg.complete) setupZoomPan();
     });
   });
 
   const closeModal = () => {
     modal.style.display = "none";
     document.body.style.overflow = "";
-    state = { x: 0, y: 0, scale: 1 };
+    if (cleanupZoomPan) { cleanupZoomPan(); cleanupZoomPan = null; }
   };
 
   document.querySelector(".close").addEventListener("click", closeModal);
   modal.addEventListener("click", e => {
     if (e.target.id === "imgModal") closeModal();
-  });
-
-  modalImg.addEventListener('wheel', (e) => {
-    e.preventDefault();
-
-    const direction = e.deltaY > 0 ? -1 : 1;
-    const factorStep = 0.15;
-    let newScale = state.scale * (1 + direction * factorStep);
-
-    if (newScale <= 1) {
-      centerImage();
-      return;
-    }
-
-    const mouseX = e.clientX;
-    const mouseY = e.clientY;
-
-    // クランプされていない現在位置を基準にカーソル位置を固定してズーム
-    const imageInternalX = (mouseX - state.x) / state.scale;
-    const imageInternalY = (mouseY - state.y) / state.scale;
-
-    const proposedX = mouseX - imageInternalX * newScale;
-    const proposedY = mouseY - imageInternalY * newScale;
-    const winW = window.innerWidth;
-    const winH = window.innerHeight;
-    const newCurrentW = modalImg.offsetWidth * newScale;
-    const newCurrentH = modalImg.offsetHeight * newScale;
-
-    state.x = restrictOutward(proposedX, state.x, newCurrentW, winW);
-    state.y = restrictOutward(proposedY, state.y, newCurrentH, winH);
-    state.scale = newScale;
-
-    modalImg.style.transition = "transform 0.05s ease-out";
-    updateTransform();
-  }, { passive: false });
-
-  let isDraggingPC = false;
-  let dragStartMouseX, dragStartMouseY;
-  let dragStartImageX, dragStartImageY;
-
-  modalImg.addEventListener('mousedown', e => {
-    if (state.scale <= 1) return;
-    e.preventDefault();
-
-    isDraggingPC = true;
-    checkMoveability();
-
-    dragStartMouseX = e.clientX;
-    dragStartMouseY = e.clientY;
-    dragStartImageX = state.x;
-    dragStartImageY = state.y;
-    modalImg.style.cursor = "grabbing";
-    modalImg.style.transition = "none";
-  });
-
-  window.addEventListener('mousemove', e => {
-    if (!isDraggingPC) return;
-    e.preventDefault();
-    let dx = e.clientX - dragStartMouseX;
-    let dy = e.clientY - dragStartMouseY;
-
-    if (!canMoveX) dx = 0;
-    if (!canMoveY) dy = 0;
-
-    const proposedX = dragStartImageX + dx;
-    const proposedY = dragStartImageY + dy;
-    const winW = window.innerWidth;
-    const winH = window.innerHeight;
-    const currentW = modalImg.offsetWidth * state.scale;
-    const currentH = modalImg.offsetHeight * state.scale;
-
-    state.x = restrictOutward(proposedX, state.x, currentW, winW);
-    state.y = restrictOutward(proposedY, state.y, currentH, winH);
-    updateTransform();
-  });
-
-  window.addEventListener('mouseup', () => {
-    if (isDraggingPC) {
-      isDraggingPC = false;
-      modalImg.style.cursor = "grab";
-      modalImg.style.transition = "transform 0.1s ease-out";
-    }
-  });
-
-  let pinchStartDistance = 0;
-  let pinchStartScale = 1;
-  let pinchStartImageX = 0; // ピンチ開始時のズーム中心（画像内部座標、以後固定）
-  let pinchStartImageY = 0;
-  let isPinching = false;
-  let lastTouchX = 0;
-  let lastTouchY = 0;
-
-  const getDistance = (touches) => {
-    const dx = touches[0].clientX - touches[1].clientX;
-    const dy = touches[0].clientY - touches[1].clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-  };
-
-  const getMidpoint = (touches) => {
-      return {
-          x: (touches[0].clientX + touches[1].clientX) / 2,
-          y: (touches[0].clientY + touches[1].clientY) / 2
-      };
-  };
-
-  modalImg.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
-      if (state.scale > 1) {
-          checkMoveability();
-          lastTouchX = e.touches[0].clientX;
-          lastTouchY = e.touches[0].clientY;
-          modalImg.style.transition = "none";
-      }
-    } else if (e.touches.length === 2) {
-      isPinching = true;
-      pinchStartDistance = getDistance(e.touches);
-      pinchStartScale = state.scale;
-      const mid = getMidpoint(e.touches);
-      // 基準点はジェスチャー開始時に1度だけ記録する（毎フレーム更新すると誤差が蓄積し、
-      // 指の中心がズームの中心からずれてしまうため）
-      pinchStartImageX = (mid.x - state.x) / state.scale;
-      pinchStartImageY = (mid.y - state.y) / state.scale;
-      modalImg.style.transition = "none";
-    }
-  }, { passive: false });
-
-  modalImg.addEventListener('touchmove', (e) => {
-    if (e.cancelable) e.preventDefault();
-
-    if (e.touches.length === 1 && !isPinching) {
-      if (state.scale <= 1) return;
-
-      let dx = e.touches[0].clientX - lastTouchX;
-      let dy = e.touches[0].clientY - lastTouchY;
-      
-      if (!canMoveX) dx = 0;
-      if (!canMoveY) dy = 0;
-
-      const proposedX = state.x + dx;
-      const proposedY = state.y + dy;
-      const winW = window.innerWidth;
-      const winH = window.innerHeight;
-      const currentW = modalImg.offsetWidth * state.scale;
-      const currentH = modalImg.offsetHeight * state.scale;
-
-      state.x = restrictOutward(proposedX, state.x, currentW, winW);
-      state.y = restrictOutward(proposedY, state.y, currentH, winH);
-
-      lastTouchX = e.touches[0].clientX;
-      lastTouchY = e.touches[0].clientY;
-
-      modalImg.style.transition = "none";
-      updateTransform();
-
-    }
-    else if (e.touches.length === 2) {
-      const currentDistance = getDistance(e.touches);
-      const currentCenter = getMidpoint(e.touches);
-
-      if (pinchStartDistance === 0) return;
-
-      const newScale = pinchStartScale * (currentDistance / pinchStartDistance);
-
-      if (newScale <= 1) {
-          centerImage();
-          return;
-      }
-
-      // 開始時に固定した基準点から毎フレーム再計算することで、指の中心を維持する
-      const proposedX = currentCenter.x - pinchStartImageX * newScale;
-      const proposedY = currentCenter.y - pinchStartImageY * newScale;
-      const winW = window.innerWidth;
-      const winH = window.innerHeight;
-      const newCurrentW = modalImg.offsetWidth * newScale;
-      const newCurrentH = modalImg.offsetHeight * newScale;
-
-      state.x = restrictOutward(proposedX, state.x, newCurrentW, winW);
-      state.y = restrictOutward(proposedY, state.y, newCurrentH, winH);
-      state.scale = newScale;
-
-      modalImg.style.transition = "none";
-      updateTransform();
-    }
-  }, { passive: false });
-
-  modalImg.addEventListener('touchend', (e) => {
-    if (e.touches.length < 2) {
-      isPinching = false;
-    }
-
-    if (e.touches.length === 1) {
-      checkMoveability();
-      lastTouchX = e.touches[0].clientX;
-      lastTouchY = e.touches[0].clientY;
-      modalImg.style.transition = "none";
-    }
-    else if (e.touches.length === 0) {
-      modalImg.style.transition = "transform 0.1s ease-out";
-    }
   });
 
   document.querySelectorAll("pre code").forEach(codeBlock => {
