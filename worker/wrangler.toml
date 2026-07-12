@@ -1,0 +1,7 @@
+name = "untechnical"
+main = "src/index.js"
+compatibility_date = "2026-07-12"
+
+# Secrets (DISCORD_PUBLIC_KEY, GITHUB_PAT) are NOT set here.
+# Set them once via: npx wrangler secret put DISCORD_PUBLIC_KEY
+#                     npx wrangler secret put GITHUB_PAT
