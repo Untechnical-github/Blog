@@ -4,11 +4,14 @@ const {
   SEARCH_INDEX_FILE,
   normalizePath,
   parseArticle,
+  isSuspiciousArticleCountDrop,
   writeArticleOutputs
 } = require("./lib/article-parser");
 
 // 既存の articles.json（メタ情報）と search-index.json（本文）を突き合わせて
 // 変更されていない記事の完全なレコード（本文つき）を復元する。
+// どちらかの読み込みに失敗した場合は articleMap が空（または不完全）のまま返ることがあるため、
+// 呼び出し側で previousCount（= articles.json から読めた件数）を使って安全性を検証すること。
 async function loadExistingArticles() {
   const articleMap = new Map();
 
@@ -18,7 +21,9 @@ async function loadExistingArticles() {
     JSON.parse(data).forEach(article => {
       metaByPath.set(normalizePath(article.path), article);
     });
-  } catch {}
+  } catch (err) {
+    console.warn(`⚠️ ${ARTICLES_JSON_FILE} を読めませんでした（既存メタ情報の復元をスキップします）: ${err.message}`);
+  }
 
   try {
     const data = await fs.readFile(SEARCH_INDEX_FILE, "utf-8");
@@ -37,13 +42,15 @@ async function loadExistingArticles() {
         visibility: entry.visibility
       });
     });
-  } catch {}
+  } catch (err) {
+    console.warn(`⚠️ ${SEARCH_INDEX_FILE} を読めませんでした（既存記事の復元をスキップします）: ${err.message}`);
+  }
 
-  return articleMap;
+  return { articleMap, previousCount: metaByPath.size };
 }
 
 (async () => {
-  const articleMap = await loadExistingArticles();
+  const { articleMap, previousCount } = await loadExistingArticles();
 
   const changedFiles = process.argv
     .slice(2)
@@ -62,6 +69,17 @@ async function loadExistingArticles() {
 
     articleMap.set(normalizedPath, article);
     console.log(`✅ ${normalizedPath} を articles.json に登録 (${article.visibility})`);
+  }
+
+  // 差分ビルドで正当に減るのは、今回変更されたファイルが日付不完全で除外された場合のみ。
+  // それ以上の減少は既存インデックスの読み込み失敗が疑われるため、サイト全体のインデックスを
+  // 静かに1〜数件へ上書きしてコミットしてしまう前にビルドを止める。
+  if (isSuspiciousArticleCountDrop(previousCount, articleMap.size, changedFiles.length)) {
+    console.error(
+      `❌ 記事数が ${previousCount} → ${articleMap.size} に減少しました（今回の変更ファイル数: ${changedFiles.length}）。` +
+      `既存インデックス（${ARTICLES_JSON_FILE} / ${SEARCH_INDEX_FILE}）の読み込みに失敗した可能性があります。書き込みを中止します。`
+    );
+    process.exit(1);
   }
 
   const count = await writeArticleOutputs(articleMap);

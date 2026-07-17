@@ -145,6 +145,16 @@ function buildRedirectMap(articlesSortedByDateDesc) {
   return map;
 }
 
+// 差分ビルド（generate-articles.js）で正当に articleMap が減るのは、今回渡された
+// changedFiles のうち日付不完全で除外されたものだけ（最大 changedFilesCount 件）。
+// それ以上に大きく減っている場合は、既存の articles.json / search-index.json の読み込みに
+// 失敗して空のまま上書きしようとしている可能性が高い（「静かに壊れる」バグの検知用）。
+// previousCount が 0 の場合（初回ビルド等、比較対象がない）は常に false を返す。
+function isSuspiciousArticleCountDrop(previousCount, newCount, changedFilesCount) {
+  if (previousCount <= 0) return false;
+  return newCount < previousCount - changedFilesCount;
+}
+
 // articleMap (Map<path, article-with-content>) から articles.json / search-index.json /
 // redirect-map.json の3ファイルを生成して書き出す。
 async function writeArticleOutputs(articleMap) {
@@ -174,5 +184,6 @@ module.exports = {
   toMeta,
   toSearchEntry,
   buildRedirectMap,
+  isSuspiciousArticleCountDrop,
   writeArticleOutputs
 };
