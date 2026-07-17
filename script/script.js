@@ -1,3 +1,5 @@
+const OGP_WORKER_URL = "https://untechnical.eusng90912.workers.dev";
+
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById("imgModal");
   const modalImg = document.getElementById("modalImage");
@@ -237,41 +239,89 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
-  async function fetchOGData(url, anchorElement) {
-      const WORKER_URL = "https://untechnical.eusng90912.workers.dev/";
-
-      try {
-          const response = await fetch(`${WORKER_URL}/?url=${encodeURIComponent(url)}`);
-          const { data, status } = await response.json();
-          if (status === "success") {
-              if (data.title) {
-                  const titleElem = document.createElement("div");
-                  titleElem.textContent = data.title;
-                  titleElem.className = "preview-title";
-                  anchorElement.appendChild(titleElem);
-              }
-              if (data.image?.url) {
-                  const img = document.createElement("img");
-                  img.src = data.image.url;
-                  img.alt = "Preview";
-                  img.width = 200;
-                  anchorElement.appendChild(img);
-              }
-              if (data.description) {
-                  const descElem = document.createElement("div");
-                  descElem.textContent = data.description;
-                  descElem.className = "preview-description";
-                  anchorElement.appendChild(descElem);
-              }
-          }
-      } catch (error) { 
-          console.error("OGP error:", error); 
+  function renderPreview(anchorElement, { title, image, description }) {
+      const imageUrl = (image && typeof image === "object") ? image.url : image;
+      if (title) {
+          const titleElem = document.createElement("div");
+          titleElem.textContent = title;
+          titleElem.className = "preview-title";
+          anchorElement.appendChild(titleElem);
+      }
+      if (imageUrl) {
+          const img = document.createElement("img");
+          img.src = imageUrl;
+          img.alt = "Preview";
+          img.width = 200;
+          anchorElement.appendChild(img);
+      }
+      if (description) {
+          const descElem = document.createElement("div");
+          descElem.textContent = description;
+          descElem.className = "preview-description";
+          anchorElement.appendChild(descElem);
       }
   }
 
-  document.querySelectorAll(".link-preview").forEach(async (anchor) => { await fetchOGData(anchor.href, anchor); });
+  async function fetchOGData(url, anchorElement) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-  async function loadDynamicRelatedArticles() {
+      try {
+          const response = await fetch(`${OGP_WORKER_URL}/?url=${encodeURIComponent(url)}`, {
+              signal: controller.signal
+          });
+          const { data, status } = await response.json();
+          if (status === "success") {
+              renderPreview(anchorElement, data);
+          }
+      } catch (error) {
+          console.error("OGP error:", error);
+      } finally {
+          clearTimeout(timeoutId);
+      }
+  }
+
+  // 記事一覧（title/path/category/image）を取得。内部リンクのプレビューと関連記事の両方で使い回す。
+  async function getArticleIndex() {
+      try {
+          const res = await fetch('/articles.json');
+          if (!res.ok) return [];
+          return await res.json();
+      } catch (err) {
+          console.error("articles.json の取得に失敗しました:", err);
+          return [];
+      }
+  }
+
+  function findInternalArticle(articlesByPath, href) {
+      try {
+          const url = new URL(href, window.location.href);
+          if (url.origin !== window.location.origin) return null;
+          return articlesByPath.get(url.pathname.replace(/^\//, "")) || null;
+      } catch {
+          return null;
+      }
+  }
+
+  // 外部リンクのOGP取得のみ、可視領域に入ってから遅延実行する（内部リンクは即座にローカルデータで描画）
+  const externalPreviewObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          observer.unobserve(entry.target);
+          fetchOGData(entry.target.href, entry.target);
+      });
+  }, { rootMargin: "200px" });
+
+  function setupLinkPreview(anchor, articlesByPath) {
+      const article = findInternalArticle(articlesByPath, anchor.getAttribute('href'));
+      if (article) {
+          renderPreview(anchor, { title: article.title, image: article.image, description: null });
+      } else {
+          externalPreviewObserver.observe(anchor);
+      }
+  }
+
+  async function loadDynamicRelatedArticles(articles, articlesByPath) {
     const section = Array.from(document.querySelectorAll('.box-section1')).find(
       sec => sec.querySelector('h2') && sec.querySelector('h2').textContent.includes('関連記事')
     );
@@ -282,50 +332,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentCats = metaCat.content.split(',').map(c => c.trim()).filter(Boolean);
     if (currentCats.length === 0) return;
 
-    try {
+    const currentPath = window.location.pathname;
 
-      const res = await fetch('/articles.json');
-      if (!res.ok) return;
-      const articles = await res.json();
+    const related = articles.filter(article => {
 
-      const currentPath = window.location.pathname;
+      if (currentPath.includes(article.path)) return false;
 
-      const related = articles.filter(article => {
+      if (article.visibility === "private") return false;
 
-        if (currentPath.includes(article.path)) return false;
+      return article.category && article.category.some(c => currentCats.includes(c));
+    });
 
-        if (article.visibility === "private") return false;
+    const existingLinks = Array.from(section.querySelectorAll('.link-preview')).map(a => {
+      return new URL(a.getAttribute('href'), window.location.origin).href;
+    });
 
-        return article.category && article.category.some(c => currentCats.includes(c));
-      });
+    const MAX_ADD = 10;
+    let addedCount = 0;
 
-      const existingLinks = Array.from(section.querySelectorAll('.link-preview')).map(a => {
-        return new URL(a.getAttribute('href'), window.location.origin).href;
-      });
+    for (const article of related) {
+      if (addedCount >= MAX_ADD) break;
 
-      const MAX_ADD = 10;
-      let addedCount = 0;
+      const articleUrl = new URL("/" + article.path, window.location.origin).href;
 
-      for (const article of related) {
-        if (addedCount >= MAX_ADD) break;
-        
-        const articleUrl = new URL("/" + article.path, window.location.origin).href;
+      if (existingLinks.includes(articleUrl)) continue;
 
-        if (existingLinks.includes(articleUrl)) continue;
+      const a = document.createElement('a');
+      a.href = "/" + article.path;
+      a.target = "_blank";
+      a.className = "link-preview";
+      section.appendChild(a);
 
-        const a = document.createElement('a');
-        a.href = "/" + article.path;
-        a.target = "_blank";
-        a.className = "link-preview";
-        section.appendChild(a);
-
-        fetchOGData(a.href, a);
-        addedCount++;
-      }
-    } catch (err) {
-      console.error("関連記事の動的読み込みに失敗しました:", err);
+      setupLinkPreview(a, articlesByPath);
+      addedCount++;
     }
   }
 
-  loadDynamicRelatedArticles();
+  (async () => {
+      const articles = await getArticleIndex();
+      const articlesByPath = new Map(articles.map(a => [a.path, a]));
+
+      document.querySelectorAll(".link-preview").forEach(anchor => setupLinkPreview(anchor, articlesByPath));
+
+      await loadDynamicRelatedArticles(articles, articlesByPath);
+  })();
 });

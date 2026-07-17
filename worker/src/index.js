@@ -43,6 +43,45 @@ function resolveUrl(urlStr, baseStr) {
   try { return new URL(urlStr, baseStr).href; } catch { return urlStr; }
 }
 
+// レスポンスの Content-Type / <meta charset> から文字コードを判定し、
+// TextDecoder が受理できる名称に正規化する（切り出すことで単体テスト可能にしている）
+function detectCharset(buffer, contentTypeHeader) {
+  let charset = 'utf-8';
+
+  const matchHeader = (contentTypeHeader || '').match(/charset=([\w\-]+)/i);
+  if (matchHeader) {
+    charset = matchHeader[1].toLowerCase();
+  } else {
+    const peekStr = new TextDecoder('ascii').decode(buffer.slice(0, 2000));
+    const metaCharset = peekStr.match(/<meta[^>]*charset=["']?([\w\-]+)["']?/i) || peekStr.match(/<meta[^>]*http-equiv=["']?content-type["']?[^>]*content=["']?[^>]*charset=([\w\-]+)["']?/i);
+    if (metaCharset) charset = metaCharset[1].toLowerCase();
+  }
+
+  if (charset === 'shift_jis' || charset === 'sjis' || charset === 'x-sjis') charset = 'shift-jis';
+  if (charset === 'euc_jp') charset = 'euc-jp';
+
+  return charset;
+}
+
+// OGP APIは任意URLをスクレイピングできてしまうため、自サイトからの呼び出し以外は拒否し、
+// 第三者に踏み台（無料の公開スクレイピングプロキシ）として使われるのを防ぐ
+const ALLOWED_ORIGIN = 'https://untechnical.info';
+
+function isAllowedCaller(request) {
+  const origin = request.headers.get('Origin');
+  if (origin) return origin === ALLOWED_ORIGIN;
+
+  const referer = request.headers.get('Referer');
+  if (referer) {
+    try { return new URL(referer).origin === ALLOWED_ORIGIN; } catch { return false; }
+  }
+
+  return false;
+}
+
+// 単体テスト用（Worker本体の挙動には影響しない）
+export { unescapeHTML, extractMeta, resolveUrl, detectCharset, isAllowedCaller, ALLOWED_ORIGIN };
+
 export default {
   async fetch(request, env, ctx) {
     // ──────────────────────────────────────────
@@ -51,14 +90,26 @@ export default {
     if (request.method === 'GET') {
       const corsHeaders = {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Cache-Control': 'public, max-age=86400',
       };
+
+      if (!isAllowedCaller(request)) {
+        return new Response(JSON.stringify({ status: 'error', message: 'Forbidden' }), { headers: corsHeaders, status: 403 });
+      }
 
       const urlStr = new URL(request.url).searchParams.get('url');
       if (!urlStr) {
         return new Response(JSON.stringify({ status: 'error', message: 'Missing url parameter' }), { headers: corsHeaders, status: 400 });
       }
+
+      // 外部サイトのOGPは1日単位でしか変わらないため、Cloudflareのエッジキャッシュに載せて
+      // 同じURLへの再スクレイピングを避ける（自サイトのオートコンプリートと同じ手法）
+      const cache = caches.default;
+      const cacheKey = new Request(request.url, request);
+      const cachedResponse = await cache.match(cacheKey);
+      if (cachedResponse) return cachedResponse;
 
       try {
         // [強化4] 一般的なブラウザ（Chrome）に偽装してアクセス拒否を回避
@@ -73,23 +124,8 @@ export default {
 
         // [強化5] Shift_JISやEUC-JPなどの文字化けを防ぐため、バイナリで取得
         const buffer = await res.arrayBuffer();
-        let charset = 'utf-8';
-
-        // HTTPヘッダーから文字コードを取得
         const contentType = res.headers.get('content-type') || '';
-        const matchHeader = contentType.match(/charset=([\w\-]+)/i);
-        if (matchHeader) {
-          charset = matchHeader[1].toLowerCase();
-        } else {
-          // ヘッダーに無い場合、最初の2000バイトだけ読んでHTMLの<meta charset>を探す
-          const peekStr = new TextDecoder('ascii').decode(buffer.slice(0, 2000));
-          const metaCharset = peekStr.match(/<meta[^>]*charset=["']?([\w\-]+)["']?/i) || peekStr.match(/<meta[^>]*http-equiv=["']?content-type["']?[^>]*content=["']?[^>]*charset=([\w\-]+)["']?/i);
-          if (metaCharset) charset = metaCharset[1].toLowerCase();
-        }
-
-        // JSのTextDecoderが読める形式に文字コード名を正規化
-        if (charset === 'shift_jis' || charset === 'sjis' || charset === 'x-sjis') charset = 'shift-jis';
-        if (charset === 'euc_jp') charset = 'euc-jp';
+        const charset = detectCharset(buffer, contentType);
 
         let html = '';
         try {
@@ -116,7 +152,7 @@ export default {
         // URLの正規化（相対パスを絶対URLに直す）
         const absoluteImageUrl = resolveUrl(image, urlStr);
 
-        return new Response(JSON.stringify({
+        const ogResponse = new Response(JSON.stringify({
           status: 'success',
           data: {
             title: title || new URL(urlStr).hostname, // タイトルが無い場合はドメイン名を表示
@@ -125,13 +161,16 @@ export default {
           }
         }), { headers: corsHeaders });
 
+        ctx.waitUntil(cache.put(cacheKey, ogResponse.clone()));
+        return ogResponse;
+
       } catch (err) {
         return new Response(JSON.stringify({ status: 'error', message: err.message }), { headers: corsHeaders, status: 500 });
       }
     }
 
     if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' } });
+      return new Response(null, { headers: { 'Access-Control-Allow-Origin': ALLOWED_ORIGIN, 'Access-Control-Allow-Methods': 'GET, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' } });
     }
 
     // ──────────────────────────────────────────

@@ -1,34 +1,11 @@
 const fs = require("fs/promises");
 const path = require("path");
-const { JSDOM } = require("jsdom");
-
-const JSON_FILE = "articles.json";
-const BASE_URL = "https://untechnical.info/";
+const { normalizePath, parseArticle, writeArticleOutputs } = require("./lib/article-parser");
 
 const BLOG_ROOT = path.resolve(__dirname, "../");
 const TARGET_DIR = path.join(BLOG_ROOT, "articles");
 
 const IGNORE_DIRS = ["node_modules", ".git", ".vscode", "script", "public"];
-
-const normalizePath = (p) => {
-  const relative = path.relative(BLOG_ROOT, p);
-  return relative.replace(/\\/g, "/");
-};
-
-function isValidDate(dateStr) {
-  if (!dateStr) return false;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
-  if (dateStr.includes("--")) return false;
-  return true;
-}
-
-function getTimeTagDate(document) {
-  const t = document.querySelector("time[datetime]");
-  if (!t) return "";
-  const dt = t.getAttribute("datetime");
-  if (!dt || dt.includes("--") || !/^\d{4}-\d{2}-\d{2}$/.test(dt)) return "";
-  return dt;
-}
 
 async function getAllHtmlFiles(dir) {
   let results = [];
@@ -63,17 +40,7 @@ async function getAllHtmlFiles(dir) {
   console.log("🚀 スクリプトを開始しました...");
   console.log(`📂 探索対象ディレクトリ: ${TARGET_DIR}`);
 
-  let articleMap = new Map();
-
-  try {
-    const data = await fs.readFile(JSON_FILE, "utf-8");
-    JSON.parse(data).forEach(article => {
-      const key = normalizePath(article.path || article.url || "");
-      articleMap.set(key, { ...article, path: key });
-    });
-  } catch {
-    console.log("⚠️ articles.json を新規作成します");
-  }
+  const articleMap = new Map();
 
   console.log("⏳ HTMLファイルを検索中...");
   const htmlFiles = await getAllHtmlFiles(TARGET_DIR);
@@ -85,107 +52,21 @@ async function getAllHtmlFiles(dir) {
   }
 
   for (const file of htmlFiles) {
-    const normalizedPath = normalizePath(file);
+    const normalizedPath = normalizePath(path.relative(BLOG_ROOT, file));
     const html = await fs.readFile(file, "utf-8");
-    const dom = new JSDOM(html);
-    const document = dom.window.document;
+    const article = parseArticle(html, normalizedPath);
 
-    // ---------- visibility 判定 ----------
-    const robotsMeta = document.querySelector("meta[name='robots']");
-    const robotsContent =
-      robotsMeta?.getAttribute("content")?.toLowerCase() || "";
-    const visibility = robotsContent.includes("noindex")
-      ? "private"
-      : "public";
-
-    let datePublished = "";
-    let dateModified = "";
-
-    const ldJsonScript =
-      document.querySelector("script[type='application/ld+json']");
-    if (ldJsonScript) {
-      try {
-        const ldData = JSON.parse(ldJsonScript.textContent);
-        datePublished = ldData.datePublished || "";
-        dateModified = ldData.dateModified || "";
-      } catch {}
-    }
-
-    const timeDate = getTimeTagDate(document);
-
-    if (
-      !isValidDate(datePublished) ||
-      !isValidDate(dateModified) ||
-      !isValidDate(timeDate)
-    ) {
+    if (!article.valid) {
       console.log(`⏩ 除外: ${normalizedPath}（日付不完全）`);
       continue;
     }
 
-    const targetContentElement =
-      document.querySelector("main") ||
-      document.querySelector("article") ||
-      document.body;
-
-    const clone = targetContentElement.cloneNode(true);
-    clone
-      .querySelectorAll("script, style, noscript, iframe")
-      .forEach(el => el.remove());
-
-    let content = clone.textContent || "";
-    content = content.replace(/\s+/g, " ").trim();
-
-    const title =
-      document.querySelector("title")?.textContent?.trim() ||
-      document.querySelector("h1")?.textContent?.trim() ||
-      "";
-
-    const metaCategory =
-      document.querySelector("meta[name='category']")
-        ?.getAttribute("content") || "";
-    const categories = metaCategory
-      .split(",")
-      .map(c => c.trim())
-      .filter(Boolean);
-
-    const relativeImagePath =
-      document.querySelector("main img, article img, body img")
-        ?.getAttribute("src") || "";
-    let image = "";
-    if (relativeImagePath) {
-      const fileUrl = new URL(normalizedPath, BASE_URL).href;
-      image = new URL(relativeImagePath, fileUrl).href;
-    }
-
-    articleMap.set(normalizedPath, {
-      title,
-      category: categories,
-      path: normalizedPath,
-      content,
-      image,
-      datePublished,
-      dateModified,
-      visibility
-    });
-
-    process.stdout.write(
-      visibility === "private" ? "🔒" : "."
-    );
+    articleMap.set(normalizedPath, article);
+    process.stdout.write(article.visibility === "private" ? "🔒" : ".");
   }
 
   console.log("\n✅ 全ファイルの解析完了。JSONを生成します...");
 
-  const articles = Array.from(articleMap.values()).sort((a, b) => {
-    const dateA = new Date(a.datePublished || 0);
-    const dateB = new Date(b.datePublished || 0);
-    return dateB - dateA;
-  });
-
-  await fs.writeFile(
-    JSON_FILE,
-    JSON.stringify(articles, null, 2),
-    "utf-8"
-  );
-
-  console.log(`🎉 完了！ ${JSON_FILE} を更新 (${articles.length} 件)`);
+  const count = await writeArticleOutputs(articleMap);
+  console.log(`🎉 完了！ articles.json / search-index.json / redirect-map.json を更新 (${count} 件)`);
 })();

@@ -88,14 +88,25 @@ ${originalText}`;
 
     for (const patch of patches) {
       if (!patch.before || !patch.after) continue;
-      
-      if (fixedText.includes(patch.before)) {
-        fixedText = fixedText.replaceAll(patch.before, patch.after);
-        summaryLines.push(`・[Before] \`${patch.before}\` ➡️ [After] \`${patch.after}\``);
-        actualChangeCount++;
-      } else {
+
+      const occurrenceCount = fixedText.split(patch.before).length - 1;
+
+      if (occurrenceCount === 0) {
         console.warn(`⚠️ 警告: 修正対象が見つかりません（スキップ）: ${patch.before}`);
+        continue;
       }
+
+      // before が短い/曖昧なフレーズで意図せず多数の箇所にマッチした場合、
+      // 記事内の無関係な箇所まで一括置換してしまうリスクがあるため自動適用しない
+      const isRiskyMatch = occurrenceCount > 1 && (patch.before.length < 4 || occurrenceCount > 5);
+      if (isRiskyMatch) {
+        console.warn(`⚠️ 警告: "${patch.before}" が ${occurrenceCount} 箇所に一致したため、意図しない置換を避けてスキップします（手動確認が必要）。`);
+        continue;
+      }
+
+      fixedText = fixedText.replaceAll(patch.before, patch.after);
+      summaryLines.push(`・[Before] \`${patch.before}\` ➡️ [After] \`${patch.after}\``);
+      actualChangeCount++;
     }
 
     if (actualChangeCount === 0) {

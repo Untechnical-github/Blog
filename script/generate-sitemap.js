@@ -1,9 +1,12 @@
 const fs = require("fs/promises");
-const { XMLParser, XMLBuilder } = require("fast-xml-parser");
-const path = require("path");
-
-const BASE_URL = "https://untechnical.info";
-const SITEMAP_FILE = "sitemap.xml";
+const {
+  isNoindex,
+  isDraftDate,
+  extractPublishedDate,
+  urlFromFile,
+  loadSitemapUrlMap,
+  writeSitemapUrlMap
+} = require("./lib/sitemap-lib");
 
 const getJSTDate = () => {
   const now = new Date();
@@ -26,38 +29,19 @@ const formatDateJapanese = (date) =>
     console.log(`🔍 変更ファイル: ${changedFiles.join(", ")}`);
   }
 
-  let sitemap = { urlset: { url: [] } };
-  try {
-    const xml = await fs.readFile(SITEMAP_FILE, "utf-8");
-    const parser = new XMLParser({ ignoreAttributes: false });
-    sitemap = parser.parse(xml);
-  } catch {
-    console.log("⚠️ 既存 sitemap.xml が見つかりません。新規作成します。");
-  }
-
-  const urlMap = new Map();
-  const urls = Array.isArray(sitemap.urlset?.url)
-    ? sitemap.urlset.url
-    : [sitemap.urlset?.url].filter(Boolean);
-
-  urls.forEach(entry => urlMap.set(entry.loc, entry));
+  const urlMap = await loadSitemapUrlMap();
 
   const nowJST = getJSTDate();
   const isoDate = formatDateISO(nowJST);
   const jpDate = formatDateJapanese(nowJST);
 
   for (const file of changedFiles) {
-    const relativeUrl = "/" + file.replace(/index\.html$/, "").replace(/\.html$/, "");
-    const fullUrl = `${BASE_URL}${relativeUrl}`;
+    const fullUrl = urlFromFile(file);
 
     try {
       let html = await fs.readFile(file, "utf-8");
 
-      const robotsMetaMatch = html.match(
-        /<meta\s+name=["']robots["']\s+content=["'][^"']*noindex[^"']*["']\s*\/?>/i
-      );
-
-      if (robotsMetaMatch) {
+      if (isNoindex(html)) {
         console.log(`🚫 Skipping ${file}: noindex 指定あり`);
         if (urlMap.has(fullUrl)) {
           urlMap.delete(fullUrl);
@@ -66,17 +50,9 @@ const formatDateJapanese = (date) =>
         continue;
       }
 
-      const pubMatch = html.match(
-        /<time[^>]*class="published"[^>]*datetime="([\d-]+)"[^>]*>/
-      );
-      const publishedISO = pubMatch ? pubMatch[1] : null;
+      const publishedISO = extractPublishedDate(html);
 
-      const isDraft =
-        !publishedISO ||
-        /--/.test(publishedISO) ||
-        publishedISO.length < 10;
-
-      if (isDraft) {
+      if (isDraftDate(publishedISO)) {
         console.log(`⛔ Skipping ${file}: 公開日未確定のため sitemap 登録なし`);
         if (urlMap.has(fullUrl)) {
           urlMap.delete(fullUrl);
@@ -107,14 +83,6 @@ const formatDateJapanese = (date) =>
     }
   }
 
-  const builder = new XMLBuilder({ ignoreAttributes: false, format: true });
-  const updatedSitemap = builder.build({
-    urlset: {
-      "@_xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9",
-      url: Array.from(urlMap.values())
-    }
-  });
-
-  await fs.writeFile(SITEMAP_FILE, updatedSitemap, "utf-8");
+  await writeSitemapUrlMap(urlMap);
   console.log("🚀 sitemap.xml 更新完了");
 })();

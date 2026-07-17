@@ -37,16 +37,24 @@ jobs:
             echo "-----------------------------------"
             echo "🔍 検索キーワード: $KEYWORD"
             
-            FILE_PATH=$(find articles -type f \( -name "*.html" -o -name "*.md" \) | grep -i "$KEYWORD" | head -n 1)
-            
-            if [ -z "$FILE_PATH" ]; then
+            MATCHES=$(find articles -type f \( -name "*.html" -o -name "*.md" \) | grep -i "$KEYWORD" || true)
+            MATCH_COUNT=$(echo "$MATCHES" | grep -c . || true)
+
+            if [ -z "$MATCHES" ]; then
               echo "⚠️ 警告: '$KEYWORD' を含むファイルが見つかりませんでした。スキップします。"
               continue
             fi
-            
+
+            FILE_PATH=$(echo "$MATCHES" | head -n 1)
+
+            if [ "$MATCH_COUNT" -gt 1 ]; then
+              echo "⚠️ 警告: '$KEYWORD' に複数のファイルが一致しました（先頭の1件のみ処理します）:"
+              echo "$MATCHES" | sed 's/^/    /'
+            fi
+
             echo "✅ ファイルを発見しました: $FILE_PATH"
             node script/ai-proofreader.mjs "$FILE_PATH"
             
-            echo "⏳ 次のファイルの処理まで10秒待機します..."
-            sleep 10
+            echo "⏳ 次のファイルの処理まで3秒待機します..."
+            sleep 3
           done
