@@ -53,6 +53,10 @@ async function loadExistingArticles() {
 (async () => {
   const { articleMap, previousCount } = await loadExistingArticles();
 
+  // changedFiles をマージすると articleMap.size は増減してしまう。ベースライン欠損の判定に
+  // 必要なのは「search-index.json から復元できた件数」そのものなので、マージ前に確定させる。
+  const restoredCount = articleMap.size;
+
   const changedFiles = process.argv
     .slice(2)
     .filter(f => f.endsWith(".html") && f !== "index.html" && f !== "policy.html");
@@ -87,9 +91,11 @@ async function loadExistingArticles() {
   // 場合（previousCount === 0）は上のチェックを素通りしてしまう。search-index.json だけから
   // articleMap を復元できてしまっている状態は、それ自体が異常（日付・descriptionが全記事分
   // 失われたまま articles.json が上書きされる）なので別途検知する。
-  if (isMissingArticlesJsonBaseline(previousCount, articleMap.size)) {
+  // ここは restoredCount（マージ前の値）を見る必要がある — articleMap.size だと changedFiles を
+  // マージした後の値になり、初回ビルド（0件）でも changedFiles があると 0 より大きくなってしまう。
+  if (isMissingArticlesJsonBaseline(previousCount, restoredCount)) {
     console.error(
-      `❌ ${ARTICLES_JSON_FILE} が読めないまま ${articleMap.size} 件を復元しようとしています` +
+      `❌ ${ARTICLES_JSON_FILE} が読めないまま ${restoredCount} 件を復元しようとしています` +
       `（日付・descriptionが全て失われます）。書き込みを中止します。`
     );
     process.exit(1);
