@@ -41,12 +41,14 @@ function sampleHtml({
   dateModified = '2026-06-05',
   timeDate = '2026-06-05',
   robots = '',
-  category = 'Android,Tips'
+  category = 'Android,Tips',
+  description = 'テスト記事の説明文'
 } = {}) {
   return `<!DOCTYPE html><html><head>
     <title>テスト記事</title>
     ${robots ? `<meta name="robots" content="${robots}">` : ''}
     <meta name="category" content="${category}">
+    ${description ? `<meta name="description" content="${description}">` : ''}
     <script type="application/ld+json">${JSON.stringify({ datePublished, dateModified })}</script>
   </head><body>
     <main>
@@ -57,14 +59,29 @@ function sampleHtml({
   </body></html>`;
 }
 
-test('parseArticle extracts title/category/image/visibility for a well-formed article', () => {
+test('parseArticle extracts title/category/image/description/visibility for a well-formed article', () => {
   const article = parseArticle(sampleHtml(), 'articles/foo/foo.html');
   assert.equal(article.valid, true);
   assert.equal(article.title, 'テスト記事');
   assert.deepEqual(article.category, ['Android', 'Tips']);
   assert.equal(article.visibility, 'public');
   assert.equal(article.image, 'https://untechnical.info/articles/foo/hero.jpg');
+  assert.equal(article.description, 'テスト記事の説明文');
   assert.match(article.content, /本文テキストです/);
+});
+
+test('parseArticle falls back to og:description when meta description is absent', () => {
+  const html = sampleHtml({ description: '' }).replace(
+    '</head>',
+    '<meta property="og:description" content="OG説明文"></head>'
+  );
+  const article = parseArticle(html, 'articles/foo/foo.html');
+  assert.equal(article.description, 'OG説明文');
+});
+
+test('toMeta keeps description alongside the other meta fields', () => {
+  const meta = toMeta(parseArticle(sampleHtml(), 'articles/foo/foo.html'));
+  assert.equal(meta.description, 'テスト記事の説明文');
 });
 
 test('parseArticle marks noindex articles as private', () => {

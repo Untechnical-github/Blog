@@ -30,6 +30,7 @@ async function loadExistingArticles() {
         category: entry.category,
         path: key,
         content: entry.content,
+        description: meta.description || "",
         image: entry.image,
         datePublished: meta.datePublished || "",
         dateModified: meta.dateModified || "",

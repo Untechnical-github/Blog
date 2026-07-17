@@ -1,5 +1,7 @@
 // 404が連続で発生した場合（クローラーの巡回など）に、毎回 ASSETS.fetch + JSON parse が
-// 走らないよう、redirect-map.json はエッジキャッシュに載せて数分間使い回す。
+// 走らないよう、redirect-map.json はエッジキャッシュに載せて使い回す。
+// TTLは /rebuild の案内文（「数十秒後に更新されます」）と揃えて60秒に抑え、記事移動直後の
+// 404フォールバック窓を必要以上に広げないようにしている。
 async function loadRedirectMap(env, origin, waitUntil) {
   const redirectMapUrl = new URL('/redirect-map.json', origin).href;
   const cache = caches.default;
@@ -12,7 +14,7 @@ async function loadRedirectMap(env, origin, waitUntil) {
   if (!redirectMapRes.ok) return null;
 
   const cacheableResponse = new Response(redirectMapRes.clone().body, redirectMapRes);
-  cacheableResponse.headers.set('Cache-Control', 'max-age=300');
+  cacheableResponse.headers.set('Cache-Control', 'max-age=60');
   waitUntil(cache.put(cacheKey, cacheableResponse));
 
   return redirectMapRes.json();

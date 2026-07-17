@@ -75,6 +75,11 @@ function parseArticle(html, normalizedPath) {
   const metaCategory = document.querySelector("meta[name='category']")?.getAttribute("content") || "";
   const category = metaCategory.split(",").map(c => c.trim()).filter(Boolean);
 
+  const description =
+    document.querySelector("meta[name='description']")?.getAttribute("content")?.trim() ||
+    document.querySelector("meta[property='og:description']")?.getAttribute("content")?.trim() ||
+    "";
+
   const relativeImagePath =
     document.querySelector("main img, article img, body img")?.getAttribute("src") || "";
   let image = "";
@@ -89,6 +94,7 @@ function parseArticle(html, normalizedPath) {
     category,
     path: normalizedPath,
     content,
+    description,
     image,
     datePublished,
     dateModified,

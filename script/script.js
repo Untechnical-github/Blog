@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function setupLinkPreview(anchor, articlesByPath) {
       const article = findInternalArticle(articlesByPath, anchor.getAttribute('href'));
       if (article) {
-          renderPreview(anchor, { title: article.title, image: article.image, description: null });
+          renderPreview(anchor, { title: article.title, image: article.image, description: article.description || null });
       } else {
           externalPreviewObserver.observe(anchor);
       }

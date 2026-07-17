@@ -88,11 +88,13 @@ export default {
     // 🌟 1. GETリクエスト時：強力なOGPスクレイピング
     // ──────────────────────────────────────────
     if (request.method === 'GET') {
+      // エラー応答（403/400/500）はここでは長期キャッシュしない。成功レスポンスにのみ
+      // 個別に Cache-Control を付与する（正当なリクエストが一時的な403を1日引きずらないように）。
       const corsHeaders = {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Cache-Control': 'public, max-age=86400',
+        'Cache-Control': 'no-store',
       };
 
       if (!isAllowedCaller(request)) {
@@ -152,6 +154,7 @@ export default {
         // URLの正規化（相対パスを絶対URLに直す）
         const absoluteImageUrl = resolveUrl(image, urlStr);
 
+        // 外部サイトのOGPは1日単位でしか変わらないため、成功レスポンスにだけ長期キャッシュを許可する
         const ogResponse = new Response(JSON.stringify({
           status: 'success',
           data: {
@@ -159,7 +162,7 @@ export default {
             description: description,
             image: absoluteImageUrl ? { url: absoluteImageUrl } : null
           }
-        }), { headers: corsHeaders });
+        }), { headers: { ...corsHeaders, 'Cache-Control': 'public, max-age=86400' } });
 
         ctx.waitUntil(cache.put(cacheKey, ogResponse.clone()));
         return ogResponse;

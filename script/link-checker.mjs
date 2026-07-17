@@ -169,7 +169,8 @@ async function checkArticle(article) {
 
 // 記事単位で並列実行するワーカープール。CONCURRENCY 件の記事を同時に処理することで、
 // 記事数 × リンク数ぶん完全直列だった実行時間を約 1/CONCURRENCY に短縮する。
-const CONCURRENCY = 8;
+// 外部サイトへの同時アクセスが増えすぎるとBot判定の誤検知を誘発しかねないため、5程度に抑える。
+const CONCURRENCY = 5;
 
 async function runPool(items, worker, concurrency) {
   const results = [];

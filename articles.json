@@ -5,6 +5,7 @@
       "Android"
     ],
     "path": "articles/oppo_home_screen/oppo_home_screen.html",
+    "description": "OPPOのホーム画面左端に表示されるGoogle Discoverフィードをadbでオフにする方法を解説",
     "image": "https://untechnical.info/articles/oppo_home_screen/oppo_home_screen.jpg",
     "datePublished": "2026-06-05",
     "dateModified": "2026-06-05",
@@ -16,6 +17,7 @@
       "Android"
     ],
     "path": "articles/galaxy_quick_share/galaxy_quick_share.html",
+    "description": "Quick Shareを用いてGalaxyとiPhoneでAirDropを送受信する方法を解説",
     "image": "https://untechnical.info/articles/galaxy_quick_share/galaxy_quick_share.jpg",
     "datePublished": "2026-05-29",
     "dateModified": "2026-06-05",
@@ -27,6 +29,7 @@
       "Android"
     ],
     "path": "articles/xperia_flash/xperia_flash.html",
+    "description": "キャリア版のXperiaにSIMフリー版のROMを焼く方法を解説",
     "image": "https://untechnical.info/articles/xperia_flash/xperia_flash.jpg",
     "datePublished": "2026-05-20",
     "dateModified": "2026-06-05",
@@ -38,6 +41,7 @@
       "iOS"
     ],
     "path": "articles/sideload/sideload.html",
+    "description": "iOSでサイドロードする方法を解説",
     "image": "https://untechnical.info/articles/sideload/sideload.png",
     "datePublished": "2026-05-07",
     "dateModified": "2026-05-07",
@@ -49,6 +53,7 @@
       "Nintendo"
     ],
     "path": "articles/3ds_type-c/3ds_type-c.html",
+    "description": "ニンテンドー3DSの充電端子をC to C対応のUSB-C端子に改造する方法を解説",
     "image": "https://untechnical.info/articles/3ds_type-c/3ds_type-c.jpg",
     "datePublished": "2026-04-18",
     "dateModified": "2026-05-25",
@@ -60,6 +65,7 @@
       "iOS"
     ],
     "path": "articles/epic/epic.html",
+    "description": "AltStore PALでEpic Gamesのフォートナイトをインストールする方法を解説",
     "image": "https://untechnical.info/articles/epic/epic.jpg",
     "datePublished": "2026-03-06",
     "dateModified": "2026-05-25",
@@ -72,6 +78,7 @@
       "Android"
     ],
     "path": "articles/google_photo_partner/google_photo_partner.html",
+    "description": "Google フォトでパートナーと共有機能を使って、写真や動画を保存容量を消費せずにアップロードする方法を解説",
     "image": "https://untechnical.info/articles/google_photo_partner/google_photo_partner.jpg",
     "datePublished": "2025-12-27",
     "dateModified": "2025-12-27",
@@ -84,6 +91,7 @@
       "iOS"
     ],
     "path": "articles/x_login/x_login.html",
+    "description": "pikoやBHTwitterでログインできない問題の対処法を解説",
     "image": "https://untechnical.info/articles/x_login/x_login.jpg",
     "datePublished": "2025-12-20",
     "dateModified": "2026-05-25",
@@ -95,6 +103,7 @@
       "iOS"
     ],
     "path": "articles/altstore_pal/altstore_pal.html",
+    "description": "AltStore PALでできること、既存のサイドロードとの違いを解説",
     "image": "https://untechnical.info/articles/altstore_pal/altstore_pal.jpg",
     "datePublished": "2025-12-18",
     "dateModified": "2026-05-25",
@@ -107,6 +116,7 @@
       "Android"
     ],
     "path": "articles/remote_shutter/remote_shutter.html",
+    "description": "Wear OS搭載のスマートウォッチですべてのAndroidスマホに使えるリモートシャッターを実現する方法を解説",
     "image": "https://untechnical.info/articles/remote_shutter/remote_shutter.jpg",
     "datePublished": "2025-12-18",
     "dateModified": "2026-06-05",
@@ -118,6 +128,7 @@
       "Wear OS"
     ],
     "path": "articles/wear_os_adb/wear_os_adb.html",
+    "description": "adbを用いてWear OSのアプリを無効化する方法を解説",
     "image": "https://untechnical.info/articles/wear_os_adb/wear_os_adb.jpg",
     "datePublished": "2025-11-21",
     "dateModified": "2026-06-05",
@@ -129,6 +140,7 @@
       "Android"
     ],
     "path": "articles/camera_sound/aquos/aquos.html",
+    "description": "AQUOSの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/aquos/aquos.jpg",
     "datePublished": "2025-11-14",
     "dateModified": "2026-06-05",
@@ -140,6 +152,7 @@
       "Android"
     ],
     "path": "articles/camera_sound/galaxy/galaxy.html",
+    "description": "adbを用いてGalaxyの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/galaxy/galaxy.jpg",
     "datePublished": "2025-11-14",
     "dateModified": "2026-06-05",
@@ -151,6 +164,7 @@
       "Android"
     ],
     "path": "articles/camera_sound/motorola/motorola.html",
+    "description": "Motorolaの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/motorola/motorola.jpg",
     "datePublished": "2025-11-14",
     "dateModified": "2026-06-05",
@@ -162,6 +176,7 @@
       "Android"
     ],
     "path": "articles/camera_sound/nothing/nothing.html",
+    "description": "Nothing Phone･CMF Phoneの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/nothing/nothing.jpg",
     "datePublished": "2025-11-14",
     "dateModified": "2026-06-05",
@@ -173,6 +188,7 @@
       "Android"
     ],
     "path": "articles/camera_sound/nubia/nubia.html",
+    "description": "Nubia･REDMAGICの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/nubia/nubia.jpg",
     "datePublished": "2025-11-14",
     "dateModified": "2026-06-05",
@@ -184,6 +200,7 @@
       "Android"
     ],
     "path": "articles/camera_sound/pixel/pixel.html",
+    "description": "GCamを用いてGoogle Pixelのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/pixel/pixel.jpg",
     "datePublished": "2025-11-14",
     "dateModified": "2026-06-05",
@@ -195,6 +212,7 @@
       "Android"
     ],
     "path": "articles/camera_sound/xiaomi/xiaomi.html",
+    "description": "Xiaomi･Redmi･POCOの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/xiaomi/xiaomi.jpg",
     "datePublished": "2025-11-14",
     "dateModified": "2026-07-03",
@@ -206,6 +224,7 @@
       "Android"
     ],
     "path": "articles/camera_sound/xperia/xperia.html",
+    "description": "Xperiaの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/xperia/xperia.jpg",
     "datePublished": "2025-11-14",
     "dateModified": "2026-06-05",
@@ -217,6 +236,7 @@
       "iOS"
     ],
     "path": "articles/sideload/sidestore/sidestore.html",
+    "description": "SideStoreを用いて、iOSでサイドロードする方法を解説",
     "image": "https://untechnical.info/articles/sideload/sidestore/sidestore.jpg",
     "datePublished": "2025-10-24",
     "dateModified": "2026-05-07",
@@ -228,6 +248,7 @@
       "iOS"
     ],
     "path": "articles/sideload/feather/feather.html",
+    "description": "Featherを用いて、iOSでサイドロードする方法を解説",
     "image": "https://untechnical.info/articles/sideload/feather/feather.jpg",
     "datePublished": "2025-10-13",
     "dateModified": "2026-05-25",
@@ -239,6 +260,7 @@
       "Android"
     ],
     "path": "articles/xiaoxin_pad_pro/xiaoxin_pad_pro.html",
+    "description": "Xiaoxin Pad Pro 2025にグローバルROMをインストールする方法を解説",
     "image": "https://untechnical.info/articles/xiaoxin_pad_pro/xiaoxin_pad_pro.jpg",
     "datePublished": "2025-08-18",
     "dateModified": "2026-06-05",
@@ -251,6 +273,7 @@
       "iOS"
     ],
     "path": "articles/camera_sound/camera_sound.html",
+    "description": "機種ごとに標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/camera_sound.jpg",
     "datePublished": "2025-06-19",
     "dateModified": "2026-06-05",
