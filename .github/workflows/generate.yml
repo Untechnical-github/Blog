@@ -22,7 +22,7 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install jsdom
+        run: npm ci
 
       - name: Get changed files
         id: changed_files
@@ -44,7 +44,6 @@ jobs:
         run: node script/update-sitemap.js ${{ env.filtered_files }}
 
       - name: Rebuild articles.json
-        if: env.filtered_files != ''
         run: node script/rebuild-articles.js
 
       - name: Sync 404.html from index.html

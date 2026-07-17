@@ -35,9 +35,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: |
-          npm install
-          npm install @google/generative-ai jsdom
+        run: npm ci
 
       - name: Filter meaningful changes
         id: filter_changes
