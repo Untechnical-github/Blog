@@ -1,5 +1,5 @@
 const fs = require("fs/promises");
-const { XMLParser, XMLBuilder } = require("fast-xml-parser");
+const { XMLBuilder } = require("fast-xml-parser");
 
 const BASE_URL = "https://untechnical.info";
 const SITEMAP_FILE = "sitemap.xml";
@@ -33,22 +33,6 @@ function urlFromFile(relativePath) {
   return `${BASE_URL}${relativeUrl}`;
 }
 
-async function loadSitemapUrlMap() {
-  const urlMap = new Map();
-  try {
-    const xml = await fs.readFile(SITEMAP_FILE, "utf-8");
-    const parser = new XMLParser({ ignoreAttributes: false });
-    const sitemap = parser.parse(xml);
-    const urls = Array.isArray(sitemap.urlset?.url)
-      ? sitemap.urlset.url
-      : [sitemap.urlset?.url].filter(Boolean);
-    urls.forEach(entry => urlMap.set(entry.loc, entry));
-  } catch {
-    console.log("⚠️ 既存 sitemap.xml が見つかりません。新規作成します。");
-  }
-  return urlMap;
-}
-
 async function writeSitemapUrlMap(urlMap) {
   const builder = new XMLBuilder({ ignoreAttributes: false, format: true });
   const xml = builder.build({
@@ -68,6 +52,5 @@ module.exports = {
   extractPublishedDate,
   extractModifiedDate,
   urlFromFile,
-  loadSitemapUrlMap,
   writeSitemapUrlMap
 };

@@ -81,10 +81,8 @@ Discordから運用操作を行うための窓口。
 | `search-index.json` | 本文つき | 検索するときだけ |
 | `redirect-map.json` | ファイル名→パスの辞書だけ | 404が出たときだけ（エッジ） |
 
-* 生成は `script/rebuild-articles.js` が担当する。変更ファイルの差分だけを処理する方式は、23記事程度の規模では節約になる時間よりも「差分復元の失敗で記事一覧が消し飛ぶ」リスクの方が大きいと判断し廃止した。押されるたびに `articles/` 配下を毎回全件パースし直す（1秒程度）。解析ロジックは `script/lib/article-parser.js` に集約している。
-* `sitemap.xml` は2つのスクリプトで生成する（共通ロジックは `script/lib/sitemap-lib.js`）。
-  * `script/update-sitemap.js`（差分）: 変更された記事HTML内の最終更新日を書き換える副作用があるため、こちらは差分のまま残している。
-  * `script/rebuild-sitemap.js`（全記事）: `/rebuild` などフルビルド時に使う。HTMLは書き換えない。
+* `articles.json` / `search-index.json` / `redirect-map.json` は `script/rebuild-articles.js` が生成する。`sitemap.xml` は `script/rebuild-sitemap.js` が生成する（共通ロジックは `script/lib/sitemap-lib.js`）。どちらも毎回 `articles/` 配下を全件スキャンして作り直す方式で、差分は使わない。23記事程度の規模では節約になる時間（1秒程度）よりも、差分復元の失敗で記事一覧やサイトマップが古いまま/消えたまま公開されるリスクの方が大きいと判断した。特に記事を削除したケースは、差分方式だと「削除自体は変更ファイルとして検出できない」ため放置すると死んだURLがサイトマップに残り続けてしまう。解析ロジックは `script/lib/article-parser.js` に集約している。
+* `script/update-article-dates.js` だけは差分のまま残している。今回変更された記事HTML内の `<time class="modified">` と JSON-LD の `dateModified` を今日の日付に書き換える、というファイル内容そのものを書き換える副作用があるため、変更していない記事まで巻き込むわけにいかない。この後に `rebuild-sitemap.js` を走らせることで、書き換えた日付がそのまま `sitemap.xml` にも反映される。
 * `404.html` は `index.html` からビルド時に自動コピーされる（手動で2つ管理しなくてよい）。
 
 **AI校正（`ai-proofread.yml` / `ai-proofread-manual.yml`）**
@@ -136,8 +134,8 @@ Discordから運用操作を行うための窓口。
 │   ├── ai-proofreader.mjs        # AIによる記事の自動校正スクリプト
 │   ├── filter-meaningful-diff.js # 意味のある差分判定 (CIワークフローから共通利用)
 │   ├── rebuild-articles.js       # articles.json/search-index.json/redirect-map.json 生成 (全記事を毎回パース)
-│   ├── update-sitemap.js         # sitemap.xml 更新 (差分、記事HTML内の最終更新日も書き換える)
-│   ├── rebuild-sitemap.js        # sitemap.xml 生成 (全記事、フルビルド用)
+│   ├── rebuild-sitemap.js        # sitemap.xml 生成 (全記事を毎回パース)
+│   ├── update-article-dates.js   # 記事HTML内の最終更新日を書き換え (唯一の差分ステップ)
 │   ├── link-checker.mjs          # リンク切れチェッカー (記事単位で並列実行)
 │   ├── script.js                 # フロントエンド用（画像ズーム/OGPプレビュー/関連記事）
 │   └── search-worker.js          # フロントエンド検索用 Web Worker
@@ -195,6 +193,7 @@ Discordから運用操作を行うための窓口。
 ## 🧪 テスト
 
 `node --test`（`npm test`）で単体テストを実行できる。手で確認しづらく、壊れても気づきにくい箇所を優先してカバーしている。
+`generate.yml` は `npm ci` の直後に `npm test` を実行するので、テストが壊れているコミットはpushした時点でジョブが赤くなって気づける。
 
 * **`script/lib/article-parser.js`**
   メタ情報の抽出、日付のチェック（下書きの除外）、`description` 欠落時の警告、ファイル名が重複したときの優先順位。

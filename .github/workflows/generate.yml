@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run tests
+        run: npm test
+
       - name: Get changed files
         id: changed_files
         run: |
@@ -39,9 +42,12 @@ jobs:
           echo "filtered_files=$FILTERED" >> $GITHUB_ENV
           echo "🔍 Meaningful changes (Sitemap/Articles): $FILTERED"
 
-      - name: Update sitemap.xml
+      - name: Update article dates
         if: env.filtered_files != ''
-        run: node script/update-sitemap.js ${{ env.filtered_files }}
+        run: node script/update-article-dates.js ${{ env.filtered_files }}
+
+      - name: Rebuild sitemap.xml
+        run: node script/rebuild-sitemap.js
 
       - name: Rebuild articles.json
         run: node script/rebuild-articles.js

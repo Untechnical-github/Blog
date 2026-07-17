@@ -1,13 +1,9 @@
 const fs = require("fs/promises");
-const {
-  isNoindex,
-  isDraftDate,
-  extractPublishedDate,
-  urlFromFile,
-  loadSitemapUrlMap,
-  writeSitemapUrlMap
-} = require("./lib/sitemap-lib");
+const { isNoindex, isDraftDate, extractPublishedDate } = require("./lib/sitemap-lib");
 
+// 変更された記事HTML内の最終更新日（<time class="modified"> と JSON-LD の dateModified）を
+// 今日の日付に書き換える。この副作用は「今回変更されたファイルだけ」に対して行う必要があるため
+// 差分のまま残している。sitemap.xml 自体はここでは触らない（rebuild-sitemap.js が担当）。
 const getJSTDate = () => {
   const now = new Date();
   const jstOffset = 9 * 60;
@@ -25,39 +21,27 @@ const formatDateJapanese = (date) =>
 
   if (changedFiles.length === 0) {
     console.log("⏩ 変更されたHTMLファイルはありません。");
-  } else {
-    console.log(`🔍 変更ファイル: ${changedFiles.join(", ")}`);
+    return;
   }
-
-  const urlMap = await loadSitemapUrlMap();
+  console.log(`🔍 変更ファイル: ${changedFiles.join(", ")}`);
 
   const nowJST = getJSTDate();
   const isoDate = formatDateISO(nowJST);
   const jpDate = formatDateJapanese(nowJST);
 
   for (const file of changedFiles) {
-    const fullUrl = urlFromFile(file);
-
     try {
       let html = await fs.readFile(file, "utf-8");
 
       if (isNoindex(html)) {
         console.log(`🚫 Skipping ${file}: noindex 指定あり`);
-        if (urlMap.has(fullUrl)) {
-          urlMap.delete(fullUrl);
-          console.log(`🗑️ ${file} を sitemap から削除しました。`);
-        }
         continue;
       }
 
       const publishedISO = extractPublishedDate(html);
 
       if (isDraftDate(publishedISO)) {
-        console.log(`⛔ Skipping ${file}: 公開日未確定のため sitemap 登録なし`);
-        if (urlMap.has(fullUrl)) {
-          urlMap.delete(fullUrl);
-          console.log(`🗑️ ${file} を sitemap から削除しました。`);
-        }
+        console.log(`⛔ Skipping ${file}: 公開日未確定`);
         continue;
       }
 
@@ -76,13 +60,10 @@ const formatDateJapanese = (date) =>
       await fs.writeFile(file, html, "utf-8");
       console.log(`✏️ 更新完了: ${file}`);
 
-      urlMap.set(fullUrl, { loc: fullUrl, lastmod: isoDate });
-
     } catch (err) {
       console.error(`❌ エラー: ${file} 処理失敗`, err);
     }
   }
 
-  await writeSitemapUrlMap(urlMap);
-  console.log("🚀 sitemap.xml 更新完了");
+  console.log("🚀 記事の最終更新日を更新しました");
 })();
