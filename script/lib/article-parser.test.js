@@ -84,6 +84,19 @@ test('toMeta keeps description alongside the other meta fields', () => {
   assert.equal(meta.description, 'テスト記事の説明文');
 });
 
+test('parseArticle warns on the build log when description is missing entirely', (t) => {
+  const warn = t.mock.method(console, 'warn');
+  const article = parseArticle(sampleHtml({ description: '' }), 'articles/foo/foo.html');
+  assert.equal(article.description, '');
+  assert.equal(warn.mock.calls.some(call => call.arguments[0].includes('meta description が見つかりません')), true);
+});
+
+test('parseArticle does not warn when description is present', (t) => {
+  const warn = t.mock.method(console, 'warn');
+  parseArticle(sampleHtml(), 'articles/foo/foo.html');
+  assert.equal(warn.mock.calls.length, 0);
+});
+
 test('parseArticle marks noindex articles as private', () => {
   const article = parseArticle(sampleHtml({ robots: 'noindex' }), 'articles/foo/foo.html');
   assert.equal(article.visibility, 'private');

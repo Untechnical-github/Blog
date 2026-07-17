@@ -80,6 +80,12 @@ function parseArticle(html, normalizedPath) {
     document.querySelector("meta[property='og:description']")?.getAttribute("content")?.trim() ||
     "";
 
+  if (!description) {
+    // 暗黙の前提（全記事に description がある）が崩れると、内部リンクプレビューが
+    // タイトル/画像だけの劣化表示になる。buildRedirectMap の衝突警告と同様、ビルドログで検知可能にする。
+    console.warn(`⚠️ ${normalizedPath}: meta description が見つかりません（内部リンクプレビューの説明文が空になります）`);
+  }
+
   const relativeImagePath =
     document.querySelector("main img, article img, body img")?.getAttribute("src") || "";
   let image = "";

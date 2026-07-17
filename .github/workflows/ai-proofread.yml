@@ -10,6 +10,10 @@ on:
 
 jobs:
   proofread:
+    # Discord上の「反映する」ボタンはGITHUB_PATで /merges を叩いてmainにpushする。
+    # GITHUB_TOKENと違いPATは再帰防止が効かないため、そのマージがこのワークフローを
+    # 再発火させ、直った誤字に対して無駄にGeminiを呼んでしまう。そのマージ専用のマーカーで弾く。
+    if: "!contains(github.event.head_commit.message, '[skip-proofread]')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

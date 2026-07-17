@@ -84,6 +84,20 @@ async function checkUrl(url, type, retries = 2) {
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+// 記事は CONCURRENCY 件が並列で処理されるため、各記事の中で sleep(500) するだけでは
+// 同一ドメインへの実効リクエストレートが CONCURRENCY 倍に膨らんでしまう（例: 複数記事が
+// 同じAmazonリンクを含む場合など）。ホスト単位でリクエストを直列キューに通し、同じドメインへは
+// 常に約500ms間隔になるようにする（別ドメインへのアクセスは引き続き並列のまま）。
+const hostQueues = new Map();
+
+function throttledCheckUrl(url, type) {
+  const hostname = new URL(url).hostname;
+  const previous = hostQueues.get(hostname) || Promise.resolve();
+  const result = previous.then(() => checkUrl(url, type));
+  hostQueues.set(hostname, result.then(() => sleep(500), () => sleep(500)));
+  return result;
+}
+
 // 記事一件分のページ・画像・リンクチェックを行い、壊れたリンクの配列を返す。
 // 並列実行される他の記事の処理とは独立している。
 async function checkArticle(article) {
@@ -122,7 +136,7 @@ async function checkArticle(article) {
     }
 
     process.stdout.write(`  Checking Image: ${imgUrl} ... `);
-    const imgStatus = await checkUrl(imgUrl, 'Image');
+    const imgStatus = await throttledCheckUrl(imgUrl, 'Image');
 
     if (imgStatus === 'TIMEOUT/ERROR' || imgStatus === 'FAKE_200_HTML (パス間違い)' || (typeof imgStatus === 'number' && imgStatus >= 400)) {
       console.log(`❌ BROKEN (${imgStatus})`);
@@ -130,7 +144,6 @@ async function checkArticle(article) {
     } else {
       console.log(`✅ OK (${imgStatus})`);
     }
-    await sleep(500);
   }
 
   const links = document.querySelectorAll('a');
@@ -151,7 +164,7 @@ async function checkArticle(article) {
     }
 
     process.stdout.write(`  Checking Link: ${linkUrl} ... `);
-    const linkStatus = await checkUrl(linkUrl, 'TextLink');
+    const linkStatus = await throttledCheckUrl(linkUrl, 'TextLink');
 
     if (linkStatus === 'EXTERNAL_TIMEOUT_IGNORED' || linkStatus === 'BOT_PROTECTION_IGNORED') {
       console.log(`✅ IGNORED (Bot Protection / Timeout)`);
@@ -161,7 +174,6 @@ async function checkArticle(article) {
     } else {
       console.log(`✅ OK (${linkStatus})`);
     }
-    await sleep(500);
   }
 
   return brokenLinks;

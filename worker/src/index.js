@@ -273,10 +273,12 @@ export default {
         let responseText = "";
         try {
           if (action === 'apply') {
+            // GITHUB_PAT でのpushはGITHUB_TOKENと違い再帰防止が効かず、このマージがそのまま
+            // ai-proofread.yml を再発火させてしまう。[skip-proofread] を付け、ワークフロー側で弾く。
             const mergeRes = await fetch(`https://api.github.com/repos/${repoPath}/merges`, {
               method: 'POST',
               headers: { 'Authorization': `Bearer ${env.GITHUB_PAT}`, 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Cloudflare-Worker' },
-              body: JSON.stringify({ base: 'main', head: branchName, commit_message: `🤖 AI修正を反映: ${branchName}` })
+              body: JSON.stringify({ base: 'main', head: branchName, commit_message: `🤖 AI修正を反映: ${branchName} [skip-proofread]` })
             });
 
             if (mergeRes.ok) {
