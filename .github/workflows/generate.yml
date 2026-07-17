@@ -39,13 +39,13 @@ jobs:
           echo "filtered_files=$FILTERED" >> $GITHUB_ENV
           echo "🔍 Meaningful changes (Sitemap/Articles): $FILTERED"
 
-      - name: Generate sitemap.xml
+      - name: Update sitemap.xml
         if: env.filtered_files != ''
-        run: node script/generate-sitemap.js ${{ env.filtered_files }}
+        run: node script/update-sitemap.js ${{ env.filtered_files }}
 
-      - name: Generate articles.json
+      - name: Rebuild articles.json
         if: env.filtered_files != ''
-        run: node script/generate-articles.js ${{ env.filtered_files }}
+        run: node script/rebuild-articles.js
 
       - name: Sync 404.html from index.html
         run: cp index.html 404.html

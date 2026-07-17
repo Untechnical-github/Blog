@@ -145,26 +145,6 @@ function buildRedirectMap(articlesSortedByDateDesc) {
   return map;
 }
 
-// 差分ビルド（generate-articles.js）で正当に articleMap が減るのは、今回渡された
-// changedFiles のうち日付不完全で除外されたものだけ（最大 changedFilesCount 件）。
-// それ以上に大きく減っている場合は、既存の articles.json / search-index.json の読み込みに
-// 失敗して空のまま上書きしようとしている可能性が高い（「静かに壊れる」バグの検知用）。
-// previousCount が 0 の場合（初回ビルド等、比較対象がない）は常に false を返す。
-function isSuspiciousArticleCountDrop(previousCount, newCount, changedFilesCount) {
-  if (previousCount <= 0) return false;
-  return newCount < previousCount - changedFilesCount;
-}
-
-// isSuspiciousArticleCountDrop は articles.json（previousCount）を基準にした「件数が減った」
-// 検知なので、articles.json 自体が読めなかった場合（previousCount === 0）は素通りしてしまう。
-// そのケースを別途検知する: articles.json が読めていないのに search-index.json から
-// articleMap が復元できているのは、それ自体が異常（datePublished/dateModified/description が
-// 全記事分空のまま articles.json が上書きされてしまう）。初回ビルドは articleMap も 0 件なので
-// 誤検知しない。
-function isMissingArticlesJsonBaseline(previousCount, newCount) {
-  return previousCount === 0 && newCount > 0;
-}
-
 // articleMap (Map<path, article-with-content>) から articles.json / search-index.json /
 // redirect-map.json の3ファイルを生成して書き出す。
 async function writeArticleOutputs(articleMap) {
@@ -194,7 +174,5 @@ module.exports = {
   toMeta,
   toSearchEntry,
   buildRedirectMap,
-  isSuspiciousArticleCountDrop,
-  isMissingArticlesJsonBaseline,
   writeArticleOutputs
 };

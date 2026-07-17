@@ -81,9 +81,10 @@ Discordから運用操作を行うための窓口。
 | `search-index.json` | 本文つき | 検索するときだけ |
 | `redirect-map.json` | ファイル名→パスの辞書だけ | 404が出たときだけ（エッジ） |
 
-* 生成は `script/generate-articles.js`（差分）/ `script/generate-articles_local.js`（全記事）が担当し、解析ロジックは `script/lib/article-parser.js` に集約している。
-* **安全装置:** 差分ビルドは「変更していない記事は既存のJSONから復元し、変更した記事だけ作り直す」方式のため、その復元に失敗すると記事一覧が数件まで削られたまま公開されてしまう。書き込み前に記事数が不自然に減っていないか検証し、異常があればコミットせずにビルドを止める。復旧はDiscordの `/rebuild`（全記事ビルド）で行う。
-* `script/generate-sitemap.js` / `_local.js` が `sitemap.xml` を生成する（共通ロジックは `script/lib/sitemap-lib.js`）。差分ビルド時は記事HTML内の最終更新日も同時に更新する。
+* 生成は `script/rebuild-articles.js` が担当する。変更ファイルの差分だけを処理する方式は、23記事程度の規模では節約になる時間よりも「差分復元の失敗で記事一覧が消し飛ぶ」リスクの方が大きいと判断し廃止した。押されるたびに `articles/` 配下を毎回全件パースし直す（1秒程度）。解析ロジックは `script/lib/article-parser.js` に集約している。
+* `sitemap.xml` は2つのスクリプトで生成する（共通ロジックは `script/lib/sitemap-lib.js`）。
+  * `script/update-sitemap.js`（差分）: 変更された記事HTML内の最終更新日を書き換える副作用があるため、こちらは差分のまま残している。
+  * `script/rebuild-sitemap.js`（全記事）: `/rebuild` などフルビルド時に使う。HTMLは書き換えない。
 * `404.html` は `index.html` からビルド時に自動コピーされる（手動で2つ管理しなくてよい）。
 
 **AI校正（`ai-proofread.yml` / `ai-proofread-manual.yml`）**
@@ -134,10 +135,9 @@ Discordから運用操作を行うための窓口。
 │   │   └── sitemap-lib.js        # sitemap.xml 生成の共通ロジック
 │   ├── ai-proofreader.mjs        # AIによる記事の自動校正スクリプト
 │   ├── filter-meaningful-diff.js # 意味のある差分判定 (CIワークフローから共通利用)
-│   ├── generate-articles.js      # articles.json/search-index.json/redirect-map.json 生成 (差分・CI環境用)
-│   ├── generate-articles_local.js# 同上 (フルビルド・ローカル環境用)
-│   ├── generate-sitemap.js       # sitemap.xml 生成用 (CI環境用)
-│   ├── generate-sitemap_local.js # sitemap.xml 生成用 (ローカル環境用)
+│   ├── rebuild-articles.js       # articles.json/search-index.json/redirect-map.json 生成 (全記事を毎回パース)
+│   ├── update-sitemap.js         # sitemap.xml 更新 (差分、記事HTML内の最終更新日も書き換える)
+│   ├── rebuild-sitemap.js        # sitemap.xml 生成 (全記事、フルビルド用)
 │   ├── link-checker.mjs          # リンク切れチェッカー (記事単位で並列実行)
 │   ├── script.js                 # フロントエンド用（画像ズーム/OGPプレビュー/関連記事）
 │   └── search-worker.js          # フロントエンド検索用 Web Worker
@@ -197,6 +197,6 @@ Discordから運用操作を行うための窓口。
 `node --test`（`npm test`）で単体テストを実行できる。手で確認しづらく、壊れても気づきにくい箇所を優先してカバーしている。
 
 * **`script/lib/article-parser.js`**
-  メタ情報の抽出、日付のチェック（下書きの除外）、`description` 欠落時の警告、ファイル名が重複したときの優先順位、差分ビルドの安全装置。
+  メタ情報の抽出、日付のチェック（下書きの除外）、`description` 欠落時の警告、ファイル名が重複したときの優先順位。
 * **`worker/src/index.js`**
   OGPのメタタグ抽出、文字コードの判定、呼び出し元の検証。

@@ -7,9 +7,7 @@ const {
   parseArticle,
   buildRedirectMap,
   toMeta,
-  toSearchEntry,
-  isSuspiciousArticleCountDrop,
-  isMissingArticlesJsonBaseline
+  toSearchEntry
 } = require('./article-parser');
 
 test('isValidDate accepts YYYY-MM-DD', () => {
@@ -121,43 +119,6 @@ test('buildRedirectMap keeps the newest article on a filename collision', () => 
   ]; // 呼び出し側で日付降順ソート済みという前提
   const map = buildRedirectMap(articles);
   assert.equal(map['foo'], 'articles/new/foo.html');
-});
-
-test('isSuspiciousArticleCountDrop skips the check when there is no prior baseline', () => {
-  assert.equal(isSuspiciousArticleCountDrop(0, 1, 1), false);
-});
-
-test('isSuspiciousArticleCountDrop flags a near-total wipe (e.g. search-index.json failed to load)', () => {
-  // 23件あったはずが、変更ファイル1件だけを処理した結果1件になった
-  assert.equal(isSuspiciousArticleCountDrop(23, 1, 1), true);
-});
-
-test('isSuspiciousArticleCountDrop allows a drop no larger than the number of changed files', () => {
-  // 23件中、今回の変更ファイル1件が日付不完全で除外され22件になったのは正当
-  assert.equal(isSuspiciousArticleCountDrop(23, 22, 1), false);
-});
-
-test('isSuspiciousArticleCountDrop flags a drop larger than the number of changed files', () => {
-  assert.equal(isSuspiciousArticleCountDrop(23, 21, 1), true);
-});
-
-test('isSuspiciousArticleCountDrop allows an unchanged or growing count', () => {
-  assert.equal(isSuspiciousArticleCountDrop(23, 23, 0), false);
-  assert.equal(isSuspiciousArticleCountDrop(23, 24, 0), false);
-});
-
-test('isMissingArticlesJsonBaseline flags articles.json being unreadable while search-index.json still restored articles', () => {
-  // articles.json が壊れて previousCount=0 でも、search-index.json から23件復元できてしまった
-  // ケース。件数は変わらないので isSuspiciousArticleCountDrop は通ってしまう、こちらが本命の検知。
-  assert.equal(isMissingArticlesJsonBaseline(0, 23), true);
-});
-
-test('isMissingArticlesJsonBaseline allows a genuine first build (both files absent)', () => {
-  assert.equal(isMissingArticlesJsonBaseline(0, 0), false);
-});
-
-test('isMissingArticlesJsonBaseline does nothing when articles.json loaded normally', () => {
-  assert.equal(isMissingArticlesJsonBaseline(23, 23), false);
 });
 
 test('toMeta strips content (and the internal valid flag) from an article record', () => {

@@ -22,9 +22,9 @@ jobs:
 
       - name: Run Full Generation
         run: |
-          node script/generate-articles_local.js
-          
-          node script/generate-sitemap_local.js
+          node script/rebuild-articles.js
+
+          node script/rebuild-sitemap.js
 
       - name: Commit changes
         run: |
