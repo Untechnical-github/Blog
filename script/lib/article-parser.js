@@ -155,6 +155,16 @@ function isSuspiciousArticleCountDrop(previousCount, newCount, changedFilesCount
   return newCount < previousCount - changedFilesCount;
 }
 
+// isSuspiciousArticleCountDrop は articles.json（previousCount）を基準にした「件数が減った」
+// 検知なので、articles.json 自体が読めなかった場合（previousCount === 0）は素通りしてしまう。
+// そのケースを別途検知する: articles.json が読めていないのに search-index.json から
+// articleMap が復元できているのは、それ自体が異常（datePublished/dateModified/description が
+// 全記事分空のまま articles.json が上書きされてしまう）。初回ビルドは articleMap も 0 件なので
+// 誤検知しない。
+function isMissingArticlesJsonBaseline(previousCount, newCount) {
+  return previousCount === 0 && newCount > 0;
+}
+
 // articleMap (Map<path, article-with-content>) から articles.json / search-index.json /
 // redirect-map.json の3ファイルを生成して書き出す。
 async function writeArticleOutputs(articleMap) {
@@ -185,5 +195,6 @@ module.exports = {
   toSearchEntry,
   buildRedirectMap,
   isSuspiciousArticleCountDrop,
+  isMissingArticlesJsonBaseline,
   writeArticleOutputs
 };

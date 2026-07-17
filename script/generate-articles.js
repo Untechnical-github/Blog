@@ -5,6 +5,7 @@ const {
   normalizePath,
   parseArticle,
   isSuspiciousArticleCountDrop,
+  isMissingArticlesJsonBaseline,
   writeArticleOutputs
 } = require("./lib/article-parser");
 
@@ -78,6 +79,18 @@ async function loadExistingArticles() {
     console.error(
       `❌ 記事数が ${previousCount} → ${articleMap.size} に減少しました（今回の変更ファイル数: ${changedFiles.length}）。` +
       `既存インデックス（${ARTICLES_JSON_FILE} / ${SEARCH_INDEX_FILE}）の読み込みに失敗した可能性があります。書き込みを中止します。`
+    );
+    process.exit(1);
+  }
+
+  // 件数チェックは articles.json（previousCount）基準なので、articles.json 自体が読めなかった
+  // 場合（previousCount === 0）は上のチェックを素通りしてしまう。search-index.json だけから
+  // articleMap を復元できてしまっている状態は、それ自体が異常（日付・descriptionが全記事分
+  // 失われたまま articles.json が上書きされる）なので別途検知する。
+  if (isMissingArticlesJsonBaseline(previousCount, articleMap.size)) {
+    console.error(
+      `❌ ${ARTICLES_JSON_FILE} が読めないまま ${articleMap.size} 件を復元しようとしています` +
+      `（日付・descriptionが全て失われます）。書き込みを中止します。`
     );
     process.exit(1);
   }

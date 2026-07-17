@@ -88,9 +88,15 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 // 同一ドメインへの実効リクエストレートが CONCURRENCY 倍に膨らんでしまう（例: 複数記事が
 // 同じAmazonリンクを含む場合など）。ホスト単位でリクエストを直列キューに通し、同じドメインへは
 // 常に約500ms間隔になるようにする（別ドメインへのアクセスは引き続き並列のまま）。
+//
+// ただし自サイト（SITE_DOMAIN）はここに含めない。チェック対象URLの大半は自記事内の画像や
+// 内部リンクで、Cloudflare配信のためレート配慮の礼儀は不要。もし含めると全記事ぶんの
+// 画像・内部リンクが単一キューへ直列化し、CONCURRENCY による並列化がほぼ無効化されてしまう。
 const hostQueues = new Map();
 
 function throttledCheckUrl(url, type) {
+  if (url.startsWith(SITE_DOMAIN)) return checkUrl(url, type);
+
   const hostname = new URL(url).hostname;
   const previous = hostQueues.get(hostname) || Promise.resolve();
   const result = previous.then(() => checkUrl(url, type));

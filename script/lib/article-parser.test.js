@@ -8,7 +8,8 @@ const {
   buildRedirectMap,
   toMeta,
   toSearchEntry,
-  isSuspiciousArticleCountDrop
+  isSuspiciousArticleCountDrop,
+  isMissingArticlesJsonBaseline
 } = require('./article-parser');
 
 test('isValidDate accepts YYYY-MM-DD', () => {
@@ -143,6 +144,20 @@ test('isSuspiciousArticleCountDrop flags a drop larger than the number of change
 test('isSuspiciousArticleCountDrop allows an unchanged or growing count', () => {
   assert.equal(isSuspiciousArticleCountDrop(23, 23, 0), false);
   assert.equal(isSuspiciousArticleCountDrop(23, 24, 0), false);
+});
+
+test('isMissingArticlesJsonBaseline flags articles.json being unreadable while search-index.json still restored articles', () => {
+  // articles.json が壊れて previousCount=0 でも、search-index.json から23件復元できてしまった
+  // ケース。件数は変わらないので isSuspiciousArticleCountDrop は通ってしまう、こちらが本命の検知。
+  assert.equal(isMissingArticlesJsonBaseline(0, 23), true);
+});
+
+test('isMissingArticlesJsonBaseline allows a genuine first build (both files absent)', () => {
+  assert.equal(isMissingArticlesJsonBaseline(0, 0), false);
+});
+
+test('isMissingArticlesJsonBaseline does nothing when articles.json loaded normally', () => {
+  assert.equal(isMissingArticlesJsonBaseline(23, 23), false);
 });
 
 test('toMeta strips content (and the internal valid flag) from an article record', () => {
