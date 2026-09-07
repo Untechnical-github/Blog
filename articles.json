@@ -1,5 +1,17 @@
 [
   {
+    "title": "【OPPO】OS Updaterによるリージョン変更でシャッター音を消す方法",
+    "category": [
+      "Android"
+    ],
+    "path": "articles/camera_sound/oppo/oppo.html",
+    "description": "Felica非搭載のOPPOでOS Updaterによるリージョン変更でシャッター音を消す方法を解説",
+    "image": "https://untechnical.info/articles/camera_sound/oppo/oppo.jpg",
+    "datePublished": "2026-09-07",
+    "dateModified": "2026-09-07",
+    "visibility": "public"
+  },
+  {
     "title": "【OPPO】adbでホーム画面のGoogle Discoverフィードを消す方法",
     "category": [
       "Android"
