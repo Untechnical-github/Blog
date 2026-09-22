@@ -40,7 +40,21 @@ async function sendDiscordNotification(brokenLinks) {
   }
 }
 
-async function checkUrl(url, type, retries = 2) {
+// Retry-After ヘッダー（秒数 or HTTP日付）をミリ秒に変換する。無ければ null。
+function getRetryAfterMs(res) {
+  const header = res.headers.get('retry-after');
+  if (!header) return null;
+
+  const seconds = Number(header);
+  if (!Number.isNaN(seconds)) return seconds * 1000;
+
+  const dateMs = Date.parse(header);
+  if (!Number.isNaN(dateMs)) return Math.max(0, dateMs - Date.now());
+
+  return null;
+}
+
+async function checkUrl(url, type, retries = 3) {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       const options = {
@@ -50,24 +64,41 @@ async function checkUrl(url, type, retries = 2) {
           'Accept': type === 'Image' ? 'image/webp,image/apng,image/*,*/*;q=0.8' : 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
         }
       };
-      
+
       let res = await fetch(url, { ...options, method: 'HEAD' });
       let contentType = res.headers.get('content-type') || '';
-      
-      if (res.status === 403 || res.status === 405 || res.status === 500 || res.status === 503 || (type === 'Image' && contentType.includes('text/html'))) {
+
+      if (res.status === 403 || res.status === 405 || res.status === 415 || res.status === 500 || res.status === 503 || (type === 'Image' && contentType.includes('text/html'))) {
         res = await fetch(url, { ...options, method: 'GET' });
         contentType = res.headers.get('content-type') || '';
       }
 
+      // 429 (Too Many Requests) はレート制限であってリンク切れではない。
+      // Retry-After があればそれに従い、無ければバックオフしてリトライする。
+      if (res.status === 429) {
+        if (attempt < retries) {
+          const waitMs = getRetryAfterMs(res) ?? 3000 * attempt;
+          await new Promise(resolve => setTimeout(resolve, waitMs));
+          continue;
+        }
+        return 'RATE_LIMITED_IGNORED';
+      }
+
+      // 415 (Unsupported Media Type) はサーバー側がHEAD/Acceptヘッダーを
+      // 嫌っているだけのことが多く、リンク切れの兆候ではないため無視する。
+      if (res.status === 415) {
+        return 'UNSUPPORTED_MEDIA_TYPE_IGNORED';
+      }
+
       if (type === 'Image' && res.ok && contentType.includes('text/html')) {
-        return 'FAKE_200_HTML (パス間違い)'; 
+        return 'FAKE_200_HTML (パス間違い)';
       }
 
       const isExternal = !url.startsWith(SITE_DOMAIN);
       if (type === 'TextLink' && isExternal && (res.status === 403 || res.status === 503)) {
-        return 'BOT_PROTECTION_IGNORED'; 
+        return 'BOT_PROTECTION_IGNORED';
       }
-      
+
       return res.status;
     } catch (err) {
       if (attempt === retries) {
@@ -111,9 +142,17 @@ async function checkArticle(article) {
   const fullUrl = new URL(article.path, SITE_DOMAIN).href;
   console.log(`\nChecking Page: ${fullUrl} ...`);
 
-  const pageRes = await fetch(fullUrl);
+  let pageRes = await fetch(fullUrl);
+  if (pageRes.status === 429) {
+    // レート制限で弾かれただけの可能性が高いので、少し待って一度だけ再試行する。
+    const waitMs = getRetryAfterMs(pageRes) ?? 5000;
+    await new Promise(resolve => setTimeout(resolve, waitMs));
+    pageRes = await fetch(fullUrl);
+  }
   if (!pageRes.ok) {
-    if (pageRes.status >= 400) {
+    if (pageRes.status === 429 || pageRes.status === 415) {
+      console.log(`⚠️ Page ERROR / IGNORED (Rate Limit / Unsupported Media Type): ${pageRes.status}`);
+    } else if (pageRes.status >= 400) {
       console.log(`❌ Page BROKEN: ${pageRes.status}`);
       brokenLinks.push({ type: 'Page', url: fullUrl, status: pageRes.status, source: 'articles.json' });
     } else {
@@ -144,7 +183,9 @@ async function checkArticle(article) {
     process.stdout.write(`  Checking Image: ${imgUrl} ... `);
     const imgStatus = await throttledCheckUrl(imgUrl, 'Image');
 
-    if (imgStatus === 'TIMEOUT/ERROR' || imgStatus === 'FAKE_200_HTML (パス間違い)' || (typeof imgStatus === 'number' && imgStatus >= 400)) {
+    if (imgStatus === 'RATE_LIMITED_IGNORED' || imgStatus === 'UNSUPPORTED_MEDIA_TYPE_IGNORED') {
+      console.log(`✅ IGNORED (Rate Limit / Unsupported Media Type)`);
+    } else if (imgStatus === 'TIMEOUT/ERROR' || imgStatus === 'FAKE_200_HTML (パス間違い)' || (typeof imgStatus === 'number' && imgStatus >= 400)) {
       console.log(`❌ BROKEN (${imgStatus})`);
       brokenLinks.push({ type: 'Image', url: imgUrl, status: imgStatus, source: fullUrl });
     } else {
@@ -172,8 +213,8 @@ async function checkArticle(article) {
     process.stdout.write(`  Checking Link: ${linkUrl} ... `);
     const linkStatus = await throttledCheckUrl(linkUrl, 'TextLink');
 
-    if (linkStatus === 'EXTERNAL_TIMEOUT_IGNORED' || linkStatus === 'BOT_PROTECTION_IGNORED') {
-      console.log(`✅ IGNORED (Bot Protection / Timeout)`);
+    if (linkStatus === 'EXTERNAL_TIMEOUT_IGNORED' || linkStatus === 'BOT_PROTECTION_IGNORED' || linkStatus === 'RATE_LIMITED_IGNORED' || linkStatus === 'UNSUPPORTED_MEDIA_TYPE_IGNORED') {
+      console.log(`✅ IGNORED (Bot Protection / Timeout / Rate Limit / Unsupported Media Type)`);
     } else if (linkStatus === 'TIMEOUT/ERROR' || (typeof linkStatus === 'number' && linkStatus >= 400)) {
       console.log(`❌ BROKEN (${linkStatus})`);
       brokenLinks.push({ type: 'TextLink', url: linkUrl, status: linkStatus, source: fullUrl });

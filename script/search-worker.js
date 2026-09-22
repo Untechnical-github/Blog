@@ -17,9 +17,9 @@ self.onmessage = function (e) {
     const results = articles.filter(article => {
 
       if (article.visibility === "private") {
-        const isViewed = viewedPrivate.some(vp => {
-            return article.path.includes(vp) || vp.includes(article.path);
-        });
+        // 部分一致(includes)だと、別の記事のパスが偶然部分文字列として一致してしまい
+        // 未訪問の非公開記事が表示される事故につながるため、完全一致のみを許可する。
+        const isViewed = viewedPrivate.some(vp => vp === article.path);
 
         if (!isViewed) {
           return false;

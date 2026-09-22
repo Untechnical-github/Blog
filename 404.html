@@ -431,9 +431,12 @@
                initialKeyword = decodeURIComponent(pathParts[pathParts.length - 1]).toLowerCase();
                searchInput.value = initialKeyword;
 
-               const pathMatchedArticles = data.filter(article => 
-                 article.path.toLowerCase().includes(initialKeyword)
-               );
+               const pathMatchedArticles = data.filter(article => {
+                 if (article.visibility === "private" && !viewedPrivate.includes(article.path)) {
+                   return false;
+                 }
+                 return article.path.toLowerCase().includes(initialKeyword);
+               });
 
                const resultsDiv = document.getElementById("searchResults");
 
