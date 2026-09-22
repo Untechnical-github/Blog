@@ -8,7 +8,7 @@
     "description": "Felica非搭載のOPPOでOS Updaterによるリージョン変更でシャッター音を消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/oppo/oppo.jpg",
     "datePublished": "2026-09-07",
-    "dateModified": "2026-09-07",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -20,7 +20,7 @@
     "description": "OPPOのホーム画面左端に表示されるGoogle Discoverフィードをadbでオフにする方法を解説",
     "image": "https://untechnical.info/articles/oppo_home_screen/oppo_home_screen.jpg",
     "datePublished": "2026-06-05",
-    "dateModified": "2026-09-07",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -32,7 +32,7 @@
     "description": "Quick Shareを用いてGalaxyとiPhoneでAirDropを送受信する方法を解説",
     "image": "https://untechnical.info/articles/galaxy_quick_share/galaxy_quick_share.jpg",
     "datePublished": "2026-05-29",
-    "dateModified": "2026-06-05",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -44,7 +44,7 @@
     "description": "キャリア版のXperiaにSIMフリー版のROMを焼く方法を解説",
     "image": "https://untechnical.info/articles/xperia_flash/xperia_flash.jpg",
     "datePublished": "2026-05-20",
-    "dateModified": "2026-09-07",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -68,7 +68,7 @@
     "description": "ニンテンドー3DSの充電端子をC to C対応のUSB-C端子に改造する方法を解説",
     "image": "https://untechnical.info/articles/3ds_type-c/3ds_type-c.jpg",
     "datePublished": "2026-04-18",
-    "dateModified": "2026-05-25",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -118,7 +118,7 @@
     "description": "Wear OS搭載のスマートウォッチですべてのAndroidスマホに使えるリモートシャッターを実現する方法を解説",
     "image": "https://untechnical.info/articles/remote_shutter/remote_shutter.jpg",
     "datePublished": "2025-12-18",
-    "dateModified": "2026-06-05",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -130,7 +130,7 @@
     "description": "adbを用いてWear OSのアプリを無効化する方法を解説",
     "image": "https://untechnical.info/articles/wear_os_adb/wear_os_adb.jpg",
     "datePublished": "2025-11-21",
-    "dateModified": "2026-06-05",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -142,7 +142,7 @@
     "description": "AQUOSの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/aquos/aquos.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-09-07",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -154,7 +154,7 @@
     "description": "adbを用いてGalaxyの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/galaxy/galaxy.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-06-05",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -166,7 +166,7 @@
     "description": "Motorolaの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/motorola/motorola.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-06-05",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -178,7 +178,7 @@
     "description": "Nothing Phone･CMF Phoneの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/nothing/nothing.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-06-05",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -190,7 +190,7 @@
     "description": "Nubia･REDMAGICの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/nubia/nubia.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-06-05",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -202,7 +202,7 @@
     "description": "GCamを用いてGoogle Pixelのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/pixel/pixel.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-09-07",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -214,7 +214,7 @@
     "description": "Xiaomi･Redmi･POCOの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/xiaomi/xiaomi.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-07-03",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -226,7 +226,7 @@
     "description": "Xperiaの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/xperia/xperia.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-06-05",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -262,7 +262,7 @@
     "description": "Xiaoxin Pad Pro 2025にグローバルROMをインストールする方法を解説",
     "image": "https://untechnical.info/articles/xiaoxin_pad_pro/xiaoxin_pad_pro.jpg",
     "datePublished": "2025-08-18",
-    "dateModified": "2026-09-07",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   },
   {
@@ -275,7 +275,7 @@
     "description": "機種ごとに標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/camera_sound.jpg",
     "datePublished": "2025-06-19",
-    "dateModified": "2026-06-05",
+    "dateModified": "2026-09-22",
     "visibility": "public"
   }
 ]
