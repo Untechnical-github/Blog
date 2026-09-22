@@ -1,6 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import fs from 'node:fs/promises';
-import { execSync } from 'node:child_process';
 
 const apiKey = process.env.GEMINI_API_KEY;
 const botToken = process.env.DISCORD_BOT_TOKEN;     
@@ -82,65 +81,31 @@ ${originalText}`;
       return;
     }
 
-    let fixedText = originalText;
     let summaryLines = [];
-    let actualChangeCount = 0;
 
     for (const patch of patches) {
       if (!patch.before || !patch.after) continue;
 
-      const occurrenceCount = fixedText.split(patch.before).length - 1;
+      const occurrenceCount = originalText.split(patch.before).length - 1;
 
       if (occurrenceCount === 0) {
-        console.warn(`⚠️ 警告: 修正対象が見つかりません（スキップ）: ${patch.before}`);
+        console.warn(`⚠️ 警告: 該当箇所が見つかりません（AIの誤検出の可能性があるためスキップ）: ${patch.before}`);
         continue;
       }
 
-      // before が短い/曖昧なフレーズで意図せず多数の箇所にマッチした場合、
-      // 記事内の無関係な箇所まで一括置換してしまうリスクがあるため自動適用しない
-      const isRiskyMatch = occurrenceCount > 1 && (patch.before.length < 4 || occurrenceCount > 5);
-      if (isRiskyMatch) {
-        console.warn(`⚠️ 警告: "${patch.before}" が ${occurrenceCount} 箇所に一致したため、意図しない置換を避けてスキップします（手動確認が必要）。`);
-        continue;
-      }
-
-      fixedText = fixedText.replaceAll(patch.before, patch.after);
       summaryLines.push(`・[Before] \`${patch.before}\` ➡️ [After] \`${patch.after}\``);
-      actualChangeCount++;
     }
 
-    if (actualChangeCount === 0) {
-      console.log(`No applicable changes for ${filePath}.`);
+    if (summaryLines.length === 0) {
+      console.log(`No applicable findings for ${filePath}.`);
       return;
     }
 
-    await fs.writeFile(filePath, fixedText, 'utf-8');
-
-    const branchName = `ai-fix-${Date.now()}`;
-    try {
-      execSync(`git config user.name "github-actions[bot]"`);
-      execSync(`git config user.email "github-actions[bot]@users.noreply.github.com"`);
-      execSync(`git checkout -b ${branchName}`);
-      execSync(`git add "${filePath}"`);
-      execSync(`git commit -m "🤖 AI校正案: ${filePath}"`);
-      execSync(`git push origin ${branchName}`);
-      execSync(`git checkout main`);
-      execSync(`git branch -D ${branchName}`);
-    } catch (gitError) {
-      console.error("Git failed:", gitError);
-      process.exit(0);
-    }
-
+    // このスクリプトはファイルの自動修正・コミットは行わない。
+    // AIが検出した誤りの候補をDiscordへ通知し、実際の修正は人が確認のうえ手動で行う。
     const summary = summaryLines.join('\n');
     const payload = {
-      content: `🤖 **AI校正完了:** \`${filePath}\`\n\n**【修正の要約】**\n${summary}\n\n反映しますか？`,
-      components: [{
-        type: 1, 
-        components: [
-          { type: 2, style: 1, label: "反映する", custom_id: `apply:${branchName}` },
-          { type: 2, style: 4, label: "破棄する", custom_id: `reject:${branchName}` }
-        ]
-      }]
+      content: `🤖 **AI校正チェック完了:** \`${filePath}\`\n\n**【検出された誤りの候補】**\n${summary}\n\n※これは確認のための通知です。内容を確認し、必要に応じて手動で修正してください。`
     };
 
     await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {

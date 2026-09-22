@@ -258,59 +258,6 @@ export default {
       }), { headers: { 'Content-Type': 'application/json' } });
     }
 
-    if (interaction.type === 3) {
-      const [action, branchName] = interaction.data.custom_id.split(':');
-
-      const immediateResponse = new Response(JSON.stringify({
-        type: 7,
-        data: {
-          content: interaction.message.content + `\n\n⏳ **通信中... (GitHubで処理を行っています)**`,
-          components: []
-        }
-      }), { headers: { 'Content-Type': 'application/json' } });
-
-      ctx.waitUntil((async () => {
-        let responseText = "";
-        try {
-          if (action === 'apply') {
-            // GITHUB_PAT でのpushはGITHUB_TOKENと違い再帰防止が効かず、このマージがそのまま
-            // ai-proofread.yml を再発火させてしまう。[skip-proofread] を付け、ワークフロー側で弾く。
-            const mergeRes = await fetch(`https://api.github.com/repos/${repoPath}/merges`, {
-              method: 'POST',
-              headers: { 'Authorization': `Bearer ${env.GITHUB_PAT}`, 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Cloudflare-Worker' },
-              body: JSON.stringify({ base: 'main', head: branchName, commit_message: `🤖 AI修正を反映: ${branchName} [skip-proofread]` })
-            });
-
-            if (mergeRes.ok) {
-              responseText = "✅ **承認されました**。修正を本番に反映しました！";
-            } else {
-              responseText = "❌ **マージ失敗**。競合が起きている可能性があります。";
-            }
-          } else {
-            responseText = "🗑️ **破棄されました**。修正案を取り消しました。";
-          }
-
-          await fetch(`https://api.github.com/repos/${repoPath}/git/refs/heads/${branchName}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${env.GITHUB_PAT}`, 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Cloudflare-Worker' }
-          });
-        } catch (err) {
-          responseText = `⚠️ エラーが発生しました: ${err.message}`;
-        }
-
-        await fetch(`https://discord.com/api/v10/webhooks/${interaction.application_id}/${interaction.token}/messages/@original`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            content: interaction.message.content + `\n\n${responseText}`,
-            components: []
-          })
-        });
-      })());
-
-      return immediateResponse;
-    }
-
     return new Response('OK', { status: 200 });
   }
 };

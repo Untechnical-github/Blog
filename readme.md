@@ -8,7 +8,7 @@ Cloudflare Pages / Workers と GitHub Actions を組み合わせ、SEO最適化�
 ```
 記事を書く → GitHubへpush
                 ├─→ 記事一覧・検索データ・サイトマップを自動生成 → Cloudflare Pages が公開
-                └─→ AIが誤字を校正して修正案を作成 → Discordで承認 → 反映
+                └─→ AIが誤字を校正候補としてDiscordに通知（自動反映はしない）
 ```
 
 ---
@@ -22,7 +22,7 @@ Cloudflare Pages / Workers と GitHub Actions を組み合わせ、SEO最適化�
 | **バックエンド・API・Discord Bot** | Cloudflare Workers（`untechnical`）— wrangler で `worker/` 配下をローカル管理 |
 | **AI校正** | Google Gemini API |
 | **CI/CD・自動化** | GitHub Actions |
-| **運用インターフェース** | Discord（スラッシュコマンド / ボタン操作） |
+| **運用インターフェース** | Discord（スラッシュコマンド） |
 
 ---
 
@@ -63,7 +63,6 @@ Discordから運用操作を行うための窓口。
 * **`/proofread`（AI校正）:** 指定した記事のAI校正を依頼する。
 * **`/rebuild`（サイト再構築）:** 記事一覧・検索データ・サイトマップを全記事ぶん作り直す。
 * **入力補完:** コマンド入力中にGitHubからファイル一覧を取得し、記事名の候補を最大25件表示する（結果は60秒キャッシュ）。
-* **承認ボタン:** AI校正の結果に「反映する」「破棄する」ボタンが付き、押すとGitHub側でマージ／削除が実行され、結果がDiscordに返ってくる。
 
 ### 3. 自動ビルド・管理パイプライン（GitHub Actions）
 
@@ -90,9 +89,8 @@ script/filter-meaningful-diff.js は、本文・タイトル・画像・リン�
 
 * `ai-proofread.yml` は記事のpush時に自動実行、`ai-proofread-manual.yml` はDiscordの `/proofread` から実行する。
 * `script/ai-proofreader.mjs` が Gemini API に「明らかな誤字脱字・変換ミス・タグの構文エラー」だけの検出を依頼し、修正前後のペアを受け取る。文章のリライトや言い回しの変更は禁止している。
-* **AIは記事を直接書き換えない。** 修正案は一時ブランチに置かれ、Discordの「反映する」ボタンを押して初めて本番に反映される。
-* AIの回答もそのまま信用せず、「修正対象が本当にファイル内にあるか」「短いフレーズが意図せず何箇所にもマッチしていないか」を確認してから適用する。
-* 承認時のコミットには `[skip-proofread]` が付き、その反映がまたAI校正を呼び出す無限ループを防いでいる。
+* **AIは記事を一切書き換えない。** 検出した誤りの候補（修正前後のペア）をDiscordに通知するだけで、ファイルへの反映は行わない。実際の修正は通知内容を人が確認し、手動で行う。
+* AIの回答もそのまま信用せず、「修正対象が本当にファイル内にあるか」を確認してから通知する（見つからない候補はハルシネーションとして除外）。
 
 **リンク切れの定期チェック（`link-checker.yml`）**
 
