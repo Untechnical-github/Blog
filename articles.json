@@ -84,19 +84,6 @@
     "visibility": "public"
   },
   {
-    "title": "【Google フォト】写真や動画を容量無制限でアップロードする方法",
-    "category": [
-      "iOS",
-      "Android"
-    ],
-    "path": "articles/google_photo_partner/google_photo_partner.html",
-    "description": "Google フォトでパートナーと共有機能を使って、写真や動画を保存容量を消費せずにアップロードする方法を解説",
-    "image": "https://untechnical.info/articles/google_photo_partner/google_photo_partner.jpg",
-    "datePublished": "2025-12-27",
-    "dateModified": "2025-12-27",
-    "visibility": "private"
-  },
-  {
     "title": "【piko･BHTwitter】LoginError.AttestationDeniedの対処法",
     "category": [
       "Android",
