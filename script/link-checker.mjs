@@ -68,7 +68,11 @@ async function checkUrl(url, type, retries = 3) {
       let res = await fetch(url, { ...options, method: 'HEAD' });
       let contentType = res.headers.get('content-type') || '';
 
-      if (res.status === 403 || res.status === 405 || res.status === 415 || res.status === 500 || res.status === 503 || (type === 'Image' && contentType.includes('text/html'))) {
+      // HEAD を正しく扱えないサーバーがあるため、失敗系ステータスは GET で再確認する。
+      // 例: Amazon アソシエイトの短縮リンク (link.amazon) は HEAD だと 404 を返すが、
+      // GET では正常にリダイレクトされ商品ページ (200) に到達する。
+      const HEAD_UNRELIABLE_STATUSES = [400, 403, 404, 405, 415, 500, 501, 503];
+      if (HEAD_UNRELIABLE_STATUSES.includes(res.status) || (type === 'Image' && contentType.includes('text/html'))) {
         res = await fetch(url, { ...options, method: 'GET' });
         contentType = res.headers.get('content-type') || '';
       }
