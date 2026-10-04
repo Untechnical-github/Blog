@@ -68,7 +68,7 @@
     "description": "ニンテンドー3DSの充電端子をC to C対応のUSB-C端子に改造する方法を解説",
     "image": "https://untechnical.info/articles/3ds_type-c/3ds_type-c.jpg",
     "datePublished": "2026-04-18",
-    "dateModified": "2026-09-30",
+    "dateModified": "2026-10-04",
     "visibility": "public"
   },
   {
@@ -166,7 +166,7 @@
     "description": "Motorolaの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/motorola/motorola.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-09-30",
+    "dateModified": "2026-10-04",
     "visibility": "public"
   },
   {
@@ -178,7 +178,7 @@
     "description": "Nothing Phone･CMF Phoneの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/nothing/nothing.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-09-30",
+    "dateModified": "2026-10-04",
     "visibility": "public"
   },
   {
@@ -214,7 +214,7 @@
     "description": "Xiaomi･Redmi･POCOの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/xiaomi/xiaomi.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-09-30",
+    "dateModified": "2026-10-04",
     "visibility": "public"
   },
   {
@@ -275,7 +275,7 @@
     "description": "機種ごとに標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/camera_sound.jpg",
     "datePublished": "2025-06-19",
-    "dateModified": "2026-09-30",
+    "dateModified": "2026-10-04",
     "visibility": "public"
   }
 ]
