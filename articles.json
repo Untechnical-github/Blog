@@ -60,15 +60,15 @@
     "visibility": "public"
   },
   {
-    "title": "【ニンテンドー3DS】C to C対応のUSB Type-C端子に改造する方法",
+    "title": "【ニンテンドー3DS】PD充電器対応のUSB Type-C端子に改造する方法",
     "category": [
       "Nintendo"
     ],
     "path": "articles/3ds_type-c/3ds_type-c.html",
-    "description": "ニンテンドー3DSの充電端子をC to C対応のUSB-C端子に改造する方法を解説",
+    "description": "ニンテンドー3DSの充電端子をPD充電器対応のUSB-C端子に改造する方法を解説",
     "image": "https://untechnical.info/articles/3ds_type-c/3ds_type-c.jpg",
     "datePublished": "2026-04-18",
-    "dateModified": "2026-10-04",
+    "dateModified": "2026-10-07",
     "visibility": "public"
   },
   {
@@ -109,13 +109,13 @@
     "visibility": "public"
   },
   {
-    "title": "【Pixel Watch・Galaxy Watch】全Android対応のリモートシャッターを使う方法",
+    "title": "【Pixel Watch・Galaxy Watch】PixelやGalaxy以外でも使えるリモートシャッターの方法",
     "category": [
       "Wear OS",
       "Android"
     ],
     "path": "articles/remote_shutter/remote_shutter.html",
-    "description": "Wear OS搭載のスマートウォッチですべてのAndroidスマホに使えるリモートシャッターを実現する方法を解説",
+    "description": "Wear OS搭載のスマートウォッチでPixelやGalaxy以外のAndroidスマホでも使えるリモートシャッターを解説",
     "image": "https://untechnical.info/articles/remote_shutter/remote_shutter.jpg",
     "datePublished": "2025-12-18",
     "dateModified": "2026-09-30",
@@ -166,7 +166,7 @@
     "description": "Motorolaの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/motorola/motorola.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-10-04",
+    "dateModified": "2026-10-07",
     "visibility": "public"
   },
   {
@@ -178,7 +178,7 @@
     "description": "Nothing Phone･CMF Phoneの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/nothing/nothing.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-10-04",
+    "dateModified": "2026-10-07",
     "visibility": "public"
   },
   {
@@ -214,7 +214,7 @@
     "description": "Xiaomi･Redmi･POCOの標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/xiaomi/xiaomi.jpg",
     "datePublished": "2025-11-14",
-    "dateModified": "2026-10-04",
+    "dateModified": "2026-10-07",
     "visibility": "public"
   },
   {
@@ -275,7 +275,7 @@
     "description": "機種ごとに標準カメラアプリのシャッター音を完全に消す方法を解説",
     "image": "https://untechnical.info/articles/camera_sound/camera_sound.jpg",
     "datePublished": "2025-06-19",
-    "dateModified": "2026-10-04",
+    "dateModified": "2026-10-07",
     "visibility": "public"
   }
 ]
