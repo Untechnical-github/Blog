@@ -17,16 +17,16 @@
     <meta name="google-site-verification" content="0Lm3uRwedrKk66bbYr_2TmZNx986VFE1yXWuB2h1iAs" /> 
     <meta property="og:type" content="website"> 
     <meta property="og:site_name" content="Untechnical">
-    <meta property="og:title" content="【iPhone・iPad】FeatherでIPAからアプリをインストールする方法">
+    <meta property="og:title" content="【KravaSigner･Feather】IPAからアプリをインストールする方法">
     <meta property="og:description" content="Featherを用いて、iOSでサイドロードする方法を解説">
     <meta property="og:url" content="https://untechnical.info/articles/sideload/feather/feather.html">
     <meta property="og:image" content="https://untechnical.info/articles/sideload/feather/feather.jpg">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="【iPhone・iPad】FeatherでIPAからアプリをインストールする方法">
+    <meta name="twitter:title" content="【KravaSigner･Feather】IPAからアプリをインストールする方法">
     <meta name="twitter:description" content="Featherを用いて、iOSでサイドロードする方法を解説">
     <meta name="twitter:image" content="https://untechnical.info/articles/sideload/feather/feather.jpg">
     <meta name="category" content="iOS">
-    <title>【iPhone・iPad】FeatherでIPAからアプリをインストールする方法</title>
+    <title>【KravaSigner･Feather】IPAからアプリをインストールする方法</title>
     <link rel="icon" href="https://untechnical.info/images/profile.ico" type="image/x-icon">
     <link rel="shortcut icon" href="https://untechnical.info/images/profile.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="https://untechnical.info/images/profile.ico">
@@ -40,7 +40,7 @@
           "@type": "WebPage",
           "@id": "https://untechnical.info/articles/sideload/feather/feather.html"
         },
-        "headline": "【iPhone・iPad】FeatherでIPAからアプリをインストールする方法",
+        "headline": "【KravaSigner･Feather】IPAからアプリをインストールする方法",
         "description": "Featherを用いて、iOSでサイドロードする方法を解説",
         "image": "https://untechnical.info/articles/sideload/feather/feather.jpg",
         "author": {
@@ -70,7 +70,7 @@
     <main>
       <section>
         <div class="box-section1">
-          <h1>【iPhone・iPad】FeatherでIPAからアプリをインストールする方法</h1>
+          <h1>【KravaSigner･Feather】IPAからアプリをインストールする方法</h1>
           <div class="article-dates">
             <time class="published" datetime="2025-10-13">公開日：2025年10月13日</time><br>
             <time class="modified" datetime="2026-05-25">最終更新日：2026年5月25日</time>
@@ -78,20 +78,23 @@
           <img src="feather.jpg" alt="Feather" class="zoomable">
         </div>
         <div class="box-section1">
-          <h2>Featherによるサイドロード</h2>
+          <h2>KravaSigner･Featherによるサイドロード</h2>
           <p>
             完全なサイドロードを利用するにはアプリ開発者向けのプログラムであるApple Developer Programに登録し、アプリを署名してサイドロードするのに必要な証明書を得るという方法があるが、これの年会費は99米ドル、2025年10月時点の日本円で約15,000円となっていて、安易にサイドロードのためだけに支払う金額ではないように感じられる。
-            そこで、Apple Developer Programの証明書を複数人のユーザーで共有して使うことで年間およそ1,000円から3,000円と比較的安い金額で完全なサイドロードができるようにするというサービスがいくつかある。
+            そこで、Apple Developer Programの証明書を複数人のユーザーで共有して使うことで年間およそ1,000円から3,000円と比較的安い金額で完全なサイドロードができるようにするというサービスがある。
+            その証明書を使って、KravaSignerまたはFeatherで完全なサイドロードができる。
             この方法はすべてiPhoneまたはiPadで実行可能で、サイドロードできるアプリ数の制限や7日に1回の再署名が必要なく、サイドロードしたアプリの通知機能も使える。
           </p>
         </div>
         <div class="box-section1">
-          <h2>手順</h2>
+          <h2>目次</h2>
           <nav>
             <ul>
             <li><a href="#certificate">証明書を購入する</a></li>
-            <li><a href="#ipa_signer">Apptesters IPA Signerを用いてFeatherをサイドロードする</a></li>
-            <li><a href="#feather">Featherを用いてサイドロードする</a></li>
+            <li><a href="#choice">サイドロード手段を選ぶ</a></li>
+            <li><a href="#app">アプリ版KravaSignerでサイドロードする</a></li>
+            <li><a href="#web">Web版KravaSignerでサイドロードする</a></li>
+            <li><a href="#feather">Featherでサイドロードする</a></li>
             </ul>
           </nav>
         </div>
@@ -118,134 +121,38 @@
                 Appleより引用
               </a>
             </div>
-            <p>Apple Developer Programの証明書を購入できるサービスは複数あるが、ここではKravaSignとAppTestersのそれぞれで証明書を購入する方法を解説する。</p>
-          </div>
-          <div class="box-section1">
-            <h3>KravaSignで証明書を購入する方法</h3>
+            <p>Apple Developer Programの証明書を購入できるサービスは複数あるが、ここではKravaSignで証明書を購入する方法を解説する。</p>
+            <h3>方法</h3>
             <h4>1.KravaSignのサイトを開く</h4>
             <p>以下のリンクからKravaSignのサイトを開く。</p>
             <a href="https://kravasign.com/" target="_blank" class="link-preview"></a>
             <h4>2. "Get Started" をタップする</h4>
-            <img src="kravasign2.PNG" class="imageh zoomable" alt="Get Started">
-            <h4>3.購入するプランを選択する</h4>
+            <img src="certificate2.png" class="imageh zoomable" alt="Get Started">
+            <h4>3. "these instructions" をタップする</h4>
+            <p>デバイスのUDIDを入力するため、プロファイルをインストールする。</p>
+            <img src="certificate3.png" class="imageh zoomable" alt="these instructions">
+            <h4>4. "許可" をタップする</h4>
+            <img src="certificate4.png" class="imageh zoomable" alt="許可">
+            <h4>5.設定アプリを開き、 "ダウンロード済みのプロファイル" をタップする</h4>
+            <img src="certificate5.png" class="imageh zoomable" alt="ダウンロード済みのプロファイル">
+            <h4>6. "インストール" をタップする</h4>
+            <img src="certificate6.png" class="imageh zoomable" alt="インストール">
+            <h4>7. "インストール" をタップする</h4>
+            <p>
+              ここで自動的にKravaSignのサイトに戻り、UDIDが入力される。
+              このUDIDはメモしておくことを推奨する。
+            </p>
+            <img src="certificate7.png" class="imageh zoomable" alt="インストール">
+            <h4>8.購入するプランを選択する</h4>
             <p>
               KravaSignでは証明書のサポートについて2つのプランから選ぶことができる。
-              どちらも1年間使えるプランだが、Professionalは1回だけ、証明書を利用する端末を入れ替えることができる。
-              また、iPhoneかiPad以外のデバイスはStandardでは登録できないので、Professionalを選ぶ必要がある。              
+              Apple Developer Programの証明書を正規の方法ではなくKravaSignのような非正規のサービスから入手した場合、稀にAppleからその証明書を失効させられることがある。
+              その際に無料で証明書を再発行できる期間がこの2つのプランの違いになっていて、Standardは90日間、Professionalでは365日間となっている。
             </p>
-            <img src="kravasign3.PNG" class="imageh zoomable" alt="購入するプラン">
-            <h4>4.支払いをする</h4>
-            <img src="kravasign4.PNG" class="imageh zoomable" alt="支払い">
-            <h4>5. "Join Discord" をタップする</h4>
-            <p>
-              支払いが完了すると、receipt numberが表示される。
-              KravaSignのUDIDの提出や証明書の発行はDiscordで行われるため、事前にDiscordのアカウントを作成する必要がある。
-            </p>
-            <img src="kravasign5.PNG" class="imageh zoomable" alt="Join Discord">
-            <h4>6. "招待を受ける" をタップする</h4>
-            <img src="kravasign6.PNG" class="imageh zoomable" alt="招待を受ける">
-            <h4>7. "I understand!" をタップして "次へ" をタップする</h4>
-            <img src="kravasign7.PNG" class="imageh zoomable" alt="I understand!">
-            <h4>8. "同意して完了" をタップする</h4>
-            <img src="kravasign8.PNG" class="imageh zoomable" alt="同意して完了">
-            <h4>9. "support" のテキストチャンネルを開く</h4>
-            <img src="kravasign9.PNG" class="imageh zoomable" alt="support">
-            <h4>10.KravaSign Botからのメッセージの "#purchase" をタップする</h4>
-            <p>これで "support" のテキストチャンネルに移動する。</p>
-            <img src="kravasign10.PNG" class="imageh zoomable" alt="#support">
-            <h4>11.angからのメッセージの "udid.kravasign.com" をタップする</h4>
-            <img src="kravasign11.PNG" class="imageh zoomable" alt="udid.kravasign.com">
-            <h4>12. "サイトを見る" をタップする</h4>
-            <img src="kravasign12.PNG" class="imageh zoomable" alt="サイトを見る">
-            <h4>13. "Click to get your UDID" をタップする</h4>
-            <img src="kravasign13.PNG" class="imageh zoomable" alt="Click to get your UDID">
-            <h4>14. "許可" をタップする</h4>
-            <img src="kravasign14.PNG" class="imageh zoomable" alt="許可">
-            <h4>15.設定アプリを開き、"ダウンロード済みのプロファイル" をタップする</h4>
-            <img src="apptesters5.PNG" class="imageh zoomable" alt="ダウンロード済みのプロファイル">
-            <h4>16. "インストール" をタップする</h4>
-            <img src="kravasign16.PNG" class="imageh zoomable" alt="インストール">
-            <h4>17. "インストール" をタップし、パスワードを入力する</h4>
-            <img src="kravasign17.PNG" class="imageh zoomable" alt="パスワード">
-            <h4>18. "インストール" をタップする</h4>
-            <p>ここで自動的にudid.kravasign.comのサイトに戻る。</p>
-            <img src="kravasign18.PNG" class="imageh zoomable" alt="インストール">
-            <h4>19.画面に表示されたUDIDをコピーする</h4>
-            <img src="kravasign19.PNG" class="imageh zoomable" alt="UDID">
-            <h4>20.Discordの "purchase" のテキストチャンネルに戻り、 "Redeem Purchase" をタップする</h4>
-            <img src="kravasign11.PNG" class="imageh zoomable" alt="Redeem Purchase">
-            <h4>21.5で表示されたreceipt numberを入力し、 "送信" をタップする</h4>
-            <img src="kravasign21.PNG" class="imageh zoomable" alt="送信">
-            <h4>22. "Use Credits (Queue UDID)" をタップする</h4>
-            <img src="kravasign22.PNG" class="imageh zoomable" alt="Use Credits (Queue UDID)">
-            <h4>23.19で表示されたUDIDを入力し、 "送信" をタップする</h4>
-            <p>この送信が完了したあと、証明書が発行されるまでには最大72時間かかる。</p>
-            <img src="kravasign23.PNG" class="imageh zoomable" alt="送信">
-            <h4>24.Krava3 BotからDMで証明書が送られたら、 "cert_[19で表示されたUDID]_development.zip" をダウンロードする</h4>
-            <p> "cert_[19で表示されたUDID]_distribution.zip" も送られてくるが、こちらは配布用の証明書のため、開発用であるほうの証明書をダウンロードする。</p>
-            <img src="kravasign24-1.PNG" class="imageh zoomable" alt="ダウンロード">
-            <img src="kravasign24-2.PNG" class="imageh zoomable" alt="ダウンロード">
-            <img src="kravasign24-3.PNG" class="imageh zoomable" alt="ダウンロード">
-            <h4>25.ダウンロードした証明書のzipファイルを展開する</h4>
-            <p>
-              ファイルアプリでダウンロードした証明書のzipファイルをタップすると展開でき、passwordファイル、mobileprovisionファイル、p12ファイルが入ったフォルダが生成される。
-              passwordファイルにはp12ファイルのパスワードが記載されている。
-            </p>
-            <img src="kravasign25-1.PNG" class="imageh zoomable" alt="展開">
-            <img src="kravasign25-2.PNG" class="imageh zoomable" alt="展開">
-            <img src="kravasign25-3.PNG" class="imageh zoomable" alt="展開">
-          </div>
-          <div class="box-section1">
-            <h3>AppTestersで証明書を購入する方法</h3>
-            <h4>1.Get UDIDのサイトを開く</h4>
-            <p>
-              以下のリンクから、デバイスのUDIDを取得できる。
-              ここで取得したUDIDは証明書を発行する際に必要になる。
-            </p>
-            <a href="https://udid.tech" target="_blank" class="link-preview"></a>
-            <h4>2. "Get your UDID now" をタップする</h4>
-            <img src="apptesters2.PNG" class="imageh zoomable" alt="Get your UDID now">
-            <h4>3. "Download" をタップする</h4>
-            <img src="apptesters3.PNG" class="imageh zoomable" alt="Download">
-            <h4>4. "許可" をタップする</h4>
-            <img src="apptesters4.PNG" class="imageh zoomable" alt="許可">
-            <h4>5.設定アプリを開き、 "ダウンロード済みのプロファイル" をタップする</h4>
-            <img src="apptesters5.PNG" class="imageh zoomable" alt="ダウンロード済みのプロファイル">
-            <h4>6. "インストール" をタップし、パスワードを入力する</h4>
-            <img src="apptesters6.PNG" class="imageh zoomable" alt="パスワード">
-            <h4>7. "インストール" をタップする</h4>
-            <p>ここで自動的にGet UDIDのサイトに戻る。</p>
-            <img src="apptesters7.PNG" class="imageh zoomable" alt="インストール">
-            <h4>8.画面に表示されたUDIDをコピーする</h4>
-            <img src="apptesters8.PNG" class="imageh zoomable" alt="UDID">
-            <h4>9.AppTestersのサイトを開く</h4>
-            <p>以下のリンクから、AppTestersのサイトを開く。</p>
-            <a href="https://apptesters.org/purchase-certificate" target="_blank" class="link-preview"></a>
-            <h4>10.購入するプランを選択する</h4>
-            <p>
-              AppTestersでは証明書のサポートについて3つのプランから選ぶことができる。
-               "Full revoke protection" とは、AppleがAppTestersのようなサービスで利用されている証明書を稀に失効させることがあり、その際に証明書をAppTestersが無料で再発行してくれる保証のことである。
-              Premium Planでは "Lifetime validity"と書かれていて永久に使えるように思えるが、端末のUDIDが必要になることからもわかるように機種変更すると以前の機種で利用していた証明書は新しい機種に引き継ぐことができない。
-              Ultimate Planでも5年間で最大2回までしか引き継ぎができない点に注意する必要がある。
-              また、iPhone以外のデバイスはEssential Planでは登録できないので、Premium PlanまたはUltimate Planを選ぶ必要がある。              
-            </p>
-            <img src="apptesters10.PNG" class="imageh zoomable" alt="購入するプラン">
-            <h4>11.支払いとUDIDの提出をする</h4>
-            <p>支払いとUDIDの提出が終わったら、証明書のzipファイルがダウンロードできるようになるまで4営業日待つ。</p>
-            <img src="apptesters11.PNG" class="imageh zoomable" alt="支払い">
-            <h4>12.証明書のzipファイルをダウンロードする</h4>
-            <p>AppTestersから "Your Certificate is Ready!" というメールが届いたら、AppTestersにログインして右上の "≡" をタップして "Orders" を開き、証明書をダウンロードする</p>
-            <img src="apptesters12-1.PNG" class="imageh zoomable" alt="ダウンロード">
-            <img src="apptesters12-2.PNG" class="imageh zoomable" alt="ダウンロード">
-            <img src="apptesters12-3.PNG" class="imageh zoomable" alt="ダウンロード">
-            <h4>13.ダウンロードした証明書のzipファイルを展開する</h4>
-            <p>
-              ファイルアプリでダウンロードした証明書のzipファイルをタップすると展開でき、certificate infoファイル、mobileprovisionファイル、p12ファイルが入ったフォルダが生成される。
-              certificate infoファイルにはp12ファイルのパスワードが記載されている。
-            </p>
-            <img src="apptesters13-1.PNG" class="imageh zoomable" alt="展開">
-            <img src="apptesters13-2.PNG" class="imageh zoomable" alt="展開">
-            <img src="apptesters13-3.PNG" class="imageh zoomable" alt="展開">
+            <img src="certificate8.png" class="imageh zoomable" alt="購入するプラン">
+            <h4>9.支払いをする</h4>
+            <p>支払い完了後にOrder Detailsのページが開く。</p>
+            <img src="certificate9.png" class="imageh zoomable" alt="支払い">
           </div>
         </section>
         <div style="text-align: center; margin: 30px 0;">
@@ -263,38 +170,157 @@
           </script>
         </div>
         <div class="box-section1">
-          <section id="ipa_signer">
-            <h2>AppTesters IPA Signerを用いてFeatherをサイドロードする</h2>
+          <section id="choice">
+            <h2>サイドロード手段を選ぶ</h2>
+            <img src="choice.jpg" alt="サイドロード" class="imagew zoomable">
+            <p>ここから先、サイドロードはアプリ版KravaSigner、Web版KravaSigner、Featherの3通りの方法でできるのでこの中から自分にあったものを選ぶ。</p>
+            <h3>アプリ版KravaSignerの特徴</h4>
+            <h4>･デベロッパーモードを有効にする必要がある</h4>
+            <h4>･KravaSignのOrder Detailsのページから直接インストールできる</h4>
+            <p>IPAをダウンロードして別のツールでインストール、のような面倒な工程なしにすぐインストールできる。</p>
+            <h4>･p12ファイルやmobileprovisionファイルが最初からインポートされている</h4>
+            <p>p12ファイルやmobileprovisionファイルをダウンロードしてアプリでインポート、のような面倒な工程なしにすぐ使える。</p>
+            <h4>･便利な機能が豊富</h4>
+            <p>サイドロードするアプリのアイコンを変更できたり、サイドロードしたアプリのバージョンや証明書の有効期限を確認できたりする。</p>
+            <h4>･Featherと同等のUIと機能</h4>
+            <p>アプリアイコンやアクセントカラー以外はFeatherとUIや機能が全く同じである。</p>
+            <h3>Web版KravaSignerの特徴</h3>
+            <h4>･ブラウザ上で完結する</h4>
+            <p>追加のアプリの必要なく、ブラウザだけでアプリのサイドロードができる。</p>
+            <h4>･機能が少ない</h4>
+            <p>アプリ版KravaSignerやFeatherにある便利な機能がほぼない。</p>
+            <h3>Featherの特徴</h3>
+            <h4>一度Web版のKravaSignerでサイドロードする必要がある</h4>
+            <p>導入時にIPAをダウンロードし、Web版のKravaSIgnerでサイドロードする必要がある。</p>
+            <h4>一度p12ファイルやmobileprovisionファイルをインポートする必要がある</h4>
+            <p>導入時にKravaSignのOrder Detailsのページからp12ファイルとmobileprovisionファイルをダウンロードし、インポートする必要がある。</p>
+            <h4>･便利な機能が豊富</h4>
+            <p>サイドロードするアプリのアイコンを変更できたり、サイドロードしたアプリのバージョンや証明書の有効期限を確認できたりする。</p>
+            <h4>･ユーザーが多い</h4>
+            <p>iOSのサイドロードアプリとして有名であり、ユーザーが多い。</p>
+            <nav>
+            <ul>
+            <li><a href="#app">アプリ版KravaSignerでサイドロードする</a></li>
+            <li><a href="#web">Web版KravaSignerでサイドロードする</a></li>
+            <li><a href="#feather">Featherでサイドロードする</a></li>
+            </ul>
+          </nav>
+          </section>
+        </div>
+        <div class="box-section1">
+          <section id="app">
+            <h2>アプリ版KravaSignerでサイドロードする</h2>
             <div class="reference">
-              <a href="https://apptesters.org/" target="_blank">
-                <img src="apptesters.webp" alt="AppTesters" class="image zoomable">
-                AppTestersより引用
+              <a href="https://www.kravasign.com/" target="_blank">
+                <img src="app.jpg" alt="KravaSign" class="image zoomable">
+                KravaSignより引用
               </a>
             </div>
             <p>
-              ここではAppTesters IPA Signerを用いてFeatherをサイドロードし、使えるようにする。
-              また、Featherに限らずAppTesters IPA Signerでアプリをサイドロードする手順はこれと同様である。
-              さらに、サイドロードしたアプリをアップデートする際も同様の手順で行う。
+              ここではアプリ版KravaSignerでサイドロードする方法を解説する。
+              サイドロードしたアプリをアップデートする際も同様の手順で行う。
             </p>
             <h3>方法</h3>
-            <h4>1.FeatherのIPAをダウンロードする</h4>
-            <p>以下のリンクからFeatherのIPAをダウンロードする。</p>
-            <a href="https://github.com/khcrysalis/feather/releases" target="_blank" class="link-preview"></a>
-            <h4>2.AppTesters IPA Signerのサイトを開く</h4>
-            <p>以下のリンクからAppTesters IPA Signerのサイトを開く。</p>
-            <a href="https://signer.apptesters.org/" target="_blank" class="link-preview"></a>
-            <h4>3.FeatherのIPA、p12ファイル、mobileprovisionファイルをアップロードする</h4>
-            <p>サイドロードするIPAと、先ほどダウンロードした証明書のzipファイルを展開してでてきたp12ファイル、mobileprovisionファイルをアップロードする。</p>
-            <img src="ipa_signer3.PNG" class="imageh zoomable" alt="アップロード">
-            <h4>4.p12ファイルのパスワードを入力する</h4>
-            <p>先ほどダウンロードした証明書のzipファイルを展開してでてきたcertificate infoファイルまたはpasswordファイルを開くとp12ファイルのパスワードが記載されている。</p>
-            <img src="ipa_signer4.PNG" class="imageh zoomable" alt="パスワード">
-            <h4>5. "Upload and Sign" をタップする</h4>
-            <img src="ipa_signer5.PNG" class="imageh zoomable" alt="Upload and Sign">
-            <h4>6. "Install" をタップする</h4>
-            <img src="ipa_signer6.PNG" class="imageh zoomable" alt="Install">
-            <h4>7. "インストール"  をタップする</h4>
-            <img src="ipa_signer7.PNG" class="imageh zoomable" alt="インストール">
+            <h4>1.設定アプリを開き、 "プライバシーとセキュリティ" をタップする</h4>
+            <img src="../sidestore/iloader3.PNG" class="imageh zoomable" alt="プライバシーとセキュリティ">
+            <h4>2. "デベロッパーモード" をタップする</h4>
+            <img src="../sidestore/iloader4.PNG" class="imageh zoomable" alt="デベロッパーモード">
+            <h4>3. "デベロッパーモード" をオンにする</h4>
+            <img src="../sidestore/iloader5.PNG" class="imageh zoomable" alt="オン">
+            <h4>4. "再起動" をタップし、デバイスを再起動する</h4>
+            <img src="../sidestore/iloader6.PNG" class="imageh zoomable" alt="再起動">
+            <h4>5.デベロッパーモードを有効にする</h4>
+            <p>再起動後の画面でホームバーを上にスワイプし、 "有効にする" をタップする</p>
+            <img src="../sidestore/iloader7-1.jpg" class="imageh zoomable" alt="スワイプ">
+            <img src="../sidestore/iloader7-2.jpg" class="imageh zoomable" alt="有効にする">
+            <h4>6.KravaSignのCheck Orderのサイトを開く</h4>
+            <p>以下のリンクからKravaSignのCheck Orderのサイトを開く。</p>
+            <a href="https://www.kravasign.com/check-order" target="_blank" class="link-preview"></a>
+            <h4>7.デバイスのUDIDを入力して "Check Order" をタップする</h4>
+            <p>
+              メモしておいたデバイスのUDIDを入力する。
+              メモをしていなくても、 "証明書を購入する" の3から7の手順をもう一度行えばUDIDは見られる。
+            </p>
+            <img src="app7.png" class="imageh zoomable" alt="Check Order">
+            <h4>8. "Sign & Install KravaSigner" をタップする</h4>
+            <img src="app8.png" class="imageh zoomable" alt="Sign & Install KravaSigner">
+            <h4>9. "インストール" をタップする</h4>
+            <p>ここでKravaSignerがインストールされる。</p>
+            <img src="app9.png" class="imageh zoomable" alt="インストール">
+            <h4>10.KravaSignerを開き、Settingsタブの "Signing Options" をタップする</h4>
+            <img src="app10.png" class="imageh zoomable" alt="Signing Options">
+            <h4>11. "Post Signing" の下の "Install After Signing" をオンにする。</h4>
+            <img src="app11.png" class="imageh zoomable" alt="Install After Signing">
+            <h4>12.Libraryタブで右上の "+" をタップする</h4>
+            <img src="app12.png" class="imageh zoomable" alt="+">
+            <h4>13. "Import from Files" をタップする</h4>
+            <img src="app13.png" class="imageh zoomable" alt="Import from Files">
+            <h4>14.サイドロードするアプリのIPAを選択して "開く" をタップする</h4>
+            <p>ここではBHTwitterをサイドロードする。</p>
+            <img src="app14.png" class="imageh zoomable" alt="開く">
+            <h4>15.サイドロードするアプリの横の "Sign" をタップする</h4>
+            <img src="app15.png" class="imageh zoomable" alt="Sign">
+            <h4>16.必要に応じてアプリのアイコンや名前を変え、 "Start Signing" をタップする</h4>
+            <p>ここでアイコンをタップするとアプリアイコンが、 "Name" の行の "＞" をタップするとアプリ名が変更できる。</p>
+            <img src="app16.png" class="imageh zoomable" alt="Start Signing">
+            <h4>17. "インストール" をタップする</h4>
+            <img src="app17.png" class="imageh zoomable" alt="インストール">
+          </section>
+        </div>
+        <div style="text-align: center; margin: 30px 0;">
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3996338946771353"
+              crossorigin="anonymous"></script>
+          <!-- スクエア -->
+          <ins class="adsbygoogle"
+              style="display:block"
+              data-ad-client="ca-pub-3996338946771353"
+              data-ad-slot="7532383969"
+              data-ad-format="auto"
+              data-full-width-responsive="false"></ins>
+          <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+         <div class="box-section1">
+          <section id="web">
+            <h2>Web版KravaSignerでサイドロードする</h2>
+            <div class="reference">
+              <a href="https://www.kravasign.com/" target="_blank">
+                <img src="app.jpg" alt="KravaSign" class="image zoomable">
+                KravaSignより引用
+              </a>
+            </div>
+            <p>
+              ここではWeb版KravaSignerでサイドロードする方法を解説する。
+              サイドロードしたアプリをアップデートする際も同様の手順で行う。
+            </p>
+            <h3>方法</h3>
+            <h4>1.KravaSigner Webのサイトを開く</h4>
+            <p>以下のリンクからKravaSigner Webのサイトを開く。</p>
+            <a href="https://www.kravasign.com/sign" target="_blank" class="link-preview"></a>
+            <h4>2.デバイスのUDIDを入力して "Continue" をタップする</h4>
+            <p>
+              メモしておいたデバイスのUDIDを入力する。
+              メモをしていなくても、<a href="#certificate"> "証明書を購入する" </a>の3から7の手順をもう一度行えばUDIDは見られる。
+              サイトが開けたら、頻繁に利用するならブックマークやショートカットを作成することを推奨する。
+            </p>
+            <img src="web2.png" class="imageh zoomable" alt="Continue">
+            <h4>3. "ファイルを選択" をタップする</h4>
+            <img src="web3.png" class="imageh zoomable" alt="ファイルを選択">
+            <h4>4. "ファイルを選択" をタップする</h4>
+            <img src="web4.png" class="imageh zoomable" alt="ファイルを選択">
+            <h4>5.サイドロードするアプリのIPAを選択して "開く" をタップする</h4>
+            <p>ここではFeatherをサイドロードする。</p>
+            <img src="web5.png" class="imageh zoomable" alt="開く">
+            <h4>6. "Enable push notifications" にチェックを入れる</h4>
+            <img src="web6.png" class="imageh zoomable" alt="Enable push notifications">
+            <h4>7.必要に応じてアプリの名前を変え、 "Sign App" をタップする</h4>
+            <p>ここで "Modifyname (optional):" からアプリ名が変更できる。</p>
+            <img src="web7.png" class="imageh zoomable" alt="Start Signing">
+            <h4>8. "開く" をタップする</h4>
+            <img src="web8.png" class="imageh zoomable" alt="開く">
+            <h4>9. "インストール" をタップする</h4>
+            <img src="app9.png" class="imageh zoomable" alt="インストール">
           </section>
         </div>
         <div style="text-align: center; margin: 30px 0;">
@@ -313,7 +339,7 @@
         </div>
         <div class="box-section1">
           <section id="feather">
-            <h2>Featherを用いてサイドロードする</h2>
+            <h2>Featherでサイドロードする</h2>
             <div class="reference">
               <a href="https://feather-ios.com" target="_blank">
                 <img src="feather.webp" alt="Feather" class="image zoomable">
@@ -322,39 +348,66 @@
             </div>
             <p>
               ここではFeatherによるサイドロードの方法を解説する。
-              AppTesters IPA Signerだけでもアプリのサイドロードはできるが、Featherを使うとサイドロード毎のmobileprovisionファイルとp12ファイルのアップロード、p12ファイルのパスワードの入力が不要になり、さらに証明書やサイドロードしたアプリの管理が便利になる。
-              Featherを含むサイドロードしたアプリをアップデートする際も11から同様の手順で行う。
+              サイドロードしたアプリをアップデートする際も11から同様の手順で行う。
             </p>
             <h3>方法</h3>
-            <h4>1.Featherを開き、 "Settings" タブの "Certificates" を開く</h4>
-            <img src="feather1.PNG" class="imageh zoomable" alt="Certificates">
-            <h4>2. "Import" をタップする</h4>
-            <img src="feather2.PNG" class="imageh zoomable" alt="Import">
-            <h4>3. "Import Certificate File" をタップする</h4>
-            <img src="feather3.PNG" class="imageh zoomable" alt="Import Certificate File">
-            <h4>4.p12ファイルをインポートする</h4>
-            <img src="feather4.PNG" class="imageh zoomable" alt="p12">
-            <h4>5. "Import Provisioning File" をタップする</h4>
-            <img src="feather5.PNG" class="imageh zoomable" alt="Import Provisioning File">
-            <h4>6.mobileprovisionファイルをインポートする</h4>
-            <img src="feather6.PNG" class="imageh zoomable" alt="mobileprovision">
-            <h4>7.p12ファイルのパスワードを入力し、 "Save"をタップする</h4>
-            <img src="feather7.PNG" class="imageh zoomable" alt="パスワード">
-            <h4>8. "Settings" タブの "Signing Option" を開く</h4>
-            <img src="feather1.PNG" class="imageh zoomable" alt="Signing Option">
-            <h4>9. "Install After Signing" をオンにする</h4>
-            <img src="feather9.PNG" class="imageh zoomable" alt="Install After Signing">
-            <h4>10. "Library" タブで "Import" をタップする</h4>
-            <img src="feather10.PNG" class="imageh zoomable" alt="Import">
-            <h4>11.サイドロードするアプリのIPAをインポートする</h4>
-            <img src="feather11.PNG" class="imageh zoomable" alt="IPA">
-            <h4>12.インポートしたIPAの横の "Sign" をタップする</h4>
-            <img src="feather12.PNG" class="imageh zoomable" alt="Sign">
-            <h4>13. "Start Signing" をタップする</h4>
-            <p>この画面ではアプリ名やアプリアイコンなどを変更できる。</p>
-            <img src="feather13.PNG" class="imageh zoomable" alt="Start Signing">
-            <h4>14. "インストール" をタップする</h4>
-            <img src="feather14.PNG" class="imageh zoomable" alt="インストール">
+            <h4>1.KravaSignのCheck Orderのサイトを開く</h4>
+            <p>以下のリンクからKravaSignのCheck Orderのサイトを開く。</p>
+            <a href="https://www.kravasign.com/check-order" target="_blank" class="link-preview"></a>
+            <h4>2.デバイスのUDIDを入力して "Check Order" をタップする</h4>
+            <p>
+              メモしておいたデバイスのUDIDを入力する。
+              メモをしていなくても、 "証明書を購入する" の3から7の手順をもう一度行えばUDIDは見られる。
+            </p>
+            <img src="app7.png" class="imageh zoomable" alt="Check Order">
+            <h4>3. "Certificate & Provisioning Files" をタップする。</h4>
+            <img src="app8.png" class="imageh zoomable" alt="Certificate & Provisioning Files">
+            <h4>4. "Development.p12" を長押しする</h4>
+            <img src="feather4.png" class="imageh zoomable" alt="Development.p12">
+            <h4>5. "リンク先のファイルをダウンロード" をタップする</h4>
+            <p>タブを開いて "許可" をタップしてもp12ファイルはダウンロードできない。</p>
+            <img src="feather5.png" class="imageh zoomable" alt="リンク先のファイルをダウンロード">
+            <h4>6. "Development.mobileprovision" を長押しする</h4>
+            <img src="feather4.png" class="imageh zoomable" alt="Development.mobileprovision">
+            <h4>7. "リンク先のファイルをダウンロード" をタップする</h4>
+            <p>タブを開いて "許可" をタップしてもmobileprovisionファイルはダウンロードできない。</p>
+            <img src="feather5.png" class="imageh zoomable" alt="リンク先のファイルをダウンロード">
+            <h4>8.FeatherのIPAをダウンロードする</h4>
+            <p>以下のリンクからFeatherのIPAをダウンロードする。</p>
+            <a href="https://github.com/claration/feather/releases" target="_blank" class="link-preview"></a>
+            <h4>9.FeatherをWeb版KravaSignerでサイドロードする</h4>
+            <p><a href="#web"> "Web版KravaSignerでサイドロードする" </a>の手順に従ってFeatherをサイドロードする。</p>
+            <img src="choice.jpg" class="imagew zoomable" alt="サイドロード">
+            <h4>10.Featherを開き、 "Settings" タブの "Certificates" を開く</h4>
+            <img src="feather10.PNG" class="imageh zoomable" alt="Certificates">
+            <h4>11. "Import" をタップする</h4>
+            <img src="feather11.PNG" class="imageh zoomable" alt="Import">
+            <h4>12. "Import Certificate File" をタップする</h4>
+            <img src="feather12.PNG" class="imageh zoomable" alt="Import Certificate File">
+            <h4>13.p12ファイルをインポートする</h4>
+            <img src="feather13.PNG" class="imageh zoomable" alt="p12">
+            <h4>14. "Import Provisioning File" をタップする</h4>
+            <img src="feather14.PNG" class="imageh zoomable" alt="Import Provisioning File">
+            <h4>15.mobileprovisionファイルをインポートする</h4>
+            <img src="feather15.PNG" class="imageh zoomable" alt="mobileprovision">
+            <h4>16.p12ファイルのパスワードを入力し、 "Save" をタップする</h4>
+            <p>パスワードは "123456" である。</p>
+            <img src="feather16.PNG" class="imageh zoomable" alt="パスワード">
+            <h4>17. "Settings" タブの "Signing Option" を開く</h4>
+            <img src="feather10.PNG" class="imageh zoomable" alt="Signing Option">
+            <h4>18. "Install After Signing" をオンにする</h4>
+            <img src="feather18.PNG" class="imageh zoomable" alt="Install After Signing">
+            <h4>19. "Library" タブで "Import" をタップする</h4>
+            <img src="feather19.PNG" class="imageh zoomable" alt="Import">
+            <h4>20.サイドロードするアプリのIPAをインポートする</h4>
+            <img src="feather20.PNG" class="imageh zoomable" alt="IPA">
+            <h4>21.インポートしたIPAの横の "Sign" をタップする</h4>
+            <img src="feather21.PNG" class="imageh zoomable" alt="Sign">
+            <h4>22.必要に応じてアプリのアイコンや名前を変え、 "Start Signing" をタップする</h4>
+            <p>ここでアイコンをタップするとアプリアイコンが、 "Name" の行の "＞" をタップするとアプリ名が変更できる。</p>
+            <img src="feather22.PNG" class="imageh zoomable" alt="Start Signing">
+            <h4>23. "インストール" をタップする</h4>
+            <img src="feather23.PNG" class="imageh zoomable" alt="インストール">
             <h3>アプリのインストールが完了しない場合の対処法</h3>
             <p>
               アプリの署名まではできるがインストールされないという場合がある。
@@ -362,34 +415,37 @@
               以下はインストール方法の変更手順である。
             </p>
             <h4>1. "Settings" タブの "Installation" をタップする</h4>
-            <img src="feather1.PNG" class="imageh zoomable" alt="インストール">
+            <img src="feather10.PNG" class="imageh zoomable" alt="Installation">
             <h4>2. "Server Type" をタップする</h4>
-            <img src="feather2_2.PNG" class="imageh zoomable" alt="インストール">
+            <img src="feather2_2.PNG" class="imageh zoomable" alt="Server Type">
             <h4>3. "Fully Local" と "Semi Local" を切り替えてみる</h4>
-            <img src="feather3_2.PNG" class="imageh zoomable" alt="インストール">
-            <h3>Featherによるサイドロードのメリット</h3>
-            <h4>･7日に1度アプリを再署名する必要がない</h4>
-            <p>SideloadlyやAltStore、SideStoreと違い、7日に一度アプリを再署名しなくても証明書が有効な期間はサイドロードしたアプリが使える。</p>
-            <h4>･サイドロードできるアプリ数に制限がない</h4>
-            <p>
-              SideloadlyやAltStore、SideStoreと違い、4つ以上のアプリをサイドロードできる。
-              App IDの制限もない。
-            </p>
-            <h4>･サイドロードしたアプリで通知機能が使える</h4>
-            <p>SideloadlyやAltStore、SideStoreと違い、サイドロードしたアプリの通知機能が使える。</p>
-            <h4>･Apple Developer Programよりも安い金額で証明書を入手できる</h4>
-            <p>年間およそ1,000円から3,000円とApple Developer Programよりも安い金額で証明書を入手できる。</p>
-            <h3>Featherによるサイドロードのデメリット</h4>
-            <h4>･証明書の再発行や再購入の手間がある</h4>
-            <p>1年ごと、もしくは端末を機種変更するたびに保証外なら新しく証明書を購入するか、保証内なら別の証明書を発行する必要がある</p>
-            <h4>･証明書の入手にコストがかかる</h4>
-            <p>年間およそ1,000円から3,000円かかる。</p>
-            <h4>･Appleに証明書を失効させられるリスクがある</h4>
-            <p>もし失効させられた場合、新しい証明書が発行されるまでしばらくサイドロードはできなくなり、サイドロードしたアプリは使えなくなる。</p>
+            <img src="feather3_2.PNG" class="imageh zoomable" alt="切り替え">
           </section>
         </div>
         <div class="box-section1">
+          <h3>KravaSigner･Featherによるサイドロードのメリット</h3>
+          <h4>･7日に1度アプリを再署名する必要がない</h4>
+          <p>SideloadlyやAltStore、SideStoreと違い、7日に一度アプリを再署名しなくても証明書が有効な期間はサイドロードしたアプリが使える。</p>
+          <h4>･サイドロードできるアプリ数に制限がない</h4>
+          <p>
+            SideloadlyやAltStore、SideStoreと違い、4つ以上のアプリをサイドロードできる。
+            App IDの制限もない。
+          </p>
+          <h4>･サイドロードしたアプリで通知機能が使える</h4>
+          <p>SideloadlyやAltStore、SideStoreと違い、サイドロードしたアプリの通知機能が使える。</p>
+          <h4>･Apple Developer Programよりも安い金額で証明書を入手できる</h4>
+          <p>年間およそ1,000円から3,000円とApple Developer Programよりも安い金額で証明書を入手できる。</p>
+          <h3>KravaSigner･Featherによるサイドロードのデメリット</h4>
+          <h4>･証明書の再発行や再購入の手間がある</h4>
+          <p>1年ごと、もしくは端末を機種変更するたびに保証外なら新しく証明書を購入するか、保証内なら別の証明書を発行する必要がある</p>
+          <h4>･証明書の入手にコストがかかる</h4>
+          <p>年間およそ1,000円から3,000円かかる。</p>
+          <h4>･Appleに証明書を失効させられるリスクがある</h4>
+          <p>もし失効させられた場合、新しい証明書が発行されるまでしばらくサイドロードはできなくなり、サイドロードしたアプリは使えなくなる。</p>
+        </div>
+        <div class="box-section1">
           <h2>関連記事</h2>
+          <a href="../sidestore/sidestore.html" target="_blank" class="link-preview"></a>
           <a href="../sideload.html" target="_blank" class="link-preview"></a>
         </div>
       </section>
