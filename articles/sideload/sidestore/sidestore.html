@@ -13,20 +13,20 @@
      crossorigin="anonymous"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="SideStoreを用いて、iOSでサイドロードする方法を解説">
+    <meta name="description" content="SideStoreまたはLiveContainerを利用して、iOSでサイドロードする方法を解説">
     <meta name="google-site-verification" content="0Lm3uRwedrKk66bbYr_2TmZNx986VFE1yXWuB2h1iAs" /> 
     <meta property="og:type" content="website"> 
     <meta property="og:site_name" content="Untechnical">
-    <meta property="og:title" content="【SideStore】IPAからアプリをインストールする方法">
-    <meta property="og:description" content="SideStoreを用いて、iOSでサイドロードする方法を解説">
+    <meta property="og:title" content="【SideStore･LiveContainer】IPAからアプリをインストールする方法">
+    <meta property="og:description" content="SideStoreまたはLiveContainerを利用して、iOSでサイドロードする方法を解説">
     <meta property="og:url" content="https://untechnical.info/articles/sideload/sidestore/sidestore.html">
     <meta property="og:image" content="https://untechnical.info/articles/sideload/sidestore/sidestore.jpg">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="【SideStore】IPAからアプリをインストールする方法">
-    <meta name="twitter:description" content="SideStoreを用いて、iOSでサイドロードする方法を解説">
+    <meta name="twitter:title" content="【SideStore･LiveContainer】IPAからアプリをインストールする方法">
+    <meta name="twitter:description" content="SideStoreまたはLiveContainerを利用して、iOSでサイドロードする方法を解説">
     <meta name="twitter:image" content="https://untechnical.info/articles/sideload/sidestore/sidestore.jpg">
     <meta name="category" content="iOS">
-    <title>【SideStore】IPAからアプリをインストールする方法</title>
+    <title>【SideStore･LiveContainer】IPAからアプリをインストールする方法</title>
     <link rel="icon" href="https://untechnical.info/images/profile.ico" type="image/x-icon">
     <link rel="shortcut icon" href="https://untechnical.info/images/profile.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="https://untechnical.info/images/profile.ico">
@@ -40,8 +40,8 @@
           "@type": "WebPage",
           "@id": "https://untechnical.info/articles/sideload/sidestore/sidestore.html"
         },
-        "headline": "【SideStore】IPAからアプリをインストールする方法",
-        "description": "SideStoreを用いて、iOSでサイドロードする方法を解説",
+        "headline": "【SideStore･LiveContainer】IPAからアプリをインストールする方法",
+        "description": "SideStoreまたはLiveContainerを利用して、iOSでサイドロードする方法を解説",
         "image": "https://untechnical.info/articles/sideload/sidestore/sidestore.jpg",
         "author": {
           "@type": "Person",
@@ -70,7 +70,7 @@
     <main>
       <section>
         <div class="box-section1">
-          <h1>【SideStore】IPAからアプリをインストールする方法</h1>
+          <h1>【SideStore･LiveContainer】IPAからアプリをインストールする方法</h1>
           <div class="article-dates">
             <time class="published" datetime="2025-10-24">公開日：2025年10月24日</time><br>
             <time class="modified" datetime="2026-10-13">最終更新日：2026年10月13日</time>
@@ -78,7 +78,7 @@
           <img src="sidestore.jpg" alt="SideStore" class="zoomable">
         </div>
         <div class="box-section1">
-          <h2>SideStoreによるサイドロード</h2>
+          <h2>SideStore･LiveContainerによるサイドロード</h2>
           <p>
             サイドロードできるアプリが3つに制限される、7日に1回アプリを開いて再署名が必要、サイドロードしたアプリの通知機能が使えないなどのデメリットがあるものの、SideStoreというアプリでIPAからアプリをインストールできるようになる。
             初回やデバイスのアップデート後はPCによる設定が必要になるが、7日に1回の再署名はiPhoneまたはiPadのみで実行できる。
@@ -86,7 +86,7 @@
           </p>
         </div>
         <div class="box-section1">
-          <h2>手順</h2>
+          <h2>目次</h2>
           <nav>
             <ul>
             <li><a href="#iloader">iLoaderでSideStoreをサイドロードする</a></li>
@@ -184,7 +184,7 @@
               他のVPNを利用中でなければ、常に接続した状態にしておくことを推奨する。
             </p>
             <img src="iloader21.PNG" class="imageh zoomable" alt="許可">
-            <h4>22.SideStoreを開き、 "Settings" タブで "Sign in with Apple ID" をタップする</h4>
+            <h4>22.SideStoreを開き、Settingsタブで "Sign in with Apple ID" をタップする</h4>
             <img src="iloader22.PNG" class="imageh zoomable" alt="Sign in with Apple ID">
             <h4>23.11で入力したApple IDでサインインする</h4>
             <img src="iloader23.PNG" class="imageh zoomable" alt="サインイン">
@@ -219,7 +219,10 @@
             <p>
               ここではSideStoreを用いてLiveContainerをサイドロードし、使えるようにする。
               また、LiveContainerに限らずSideStoreでアプリをサイドロードする手順はこれと同様である。
-              さらにサイドロードしたアプリをアップデートする際も同様の手順で行う。
+              サイドロードしたアプリをアップデートする際も同様の手順で行う。
+              ここで注意しなければならないのが、SideStoreとサイドロードしたアプリは7日に1度再署名する必要がある。
+              再署名しないとSideStoreの場合は<a href="#iloader">iLoaderでSideStoreをサイドロードする</a>の8から17の手順を、サイドロードしたアプリの場合は以下の2から4の手順を再度行わなければならない。
+              再署名する際はLocaldevVPNに接続したうえでMy AppsタブでSideStoreとサイドロードしたアプリの横の "[署名期限切れまでの日数]DAYS" をタップする。
               この手順ではPCは使わない。
             </p>
             <h3>方法</h3>
@@ -228,11 +231,10 @@
               以下のリンクからLiveContainerのIPAをダウンロードする。
               LiveContainer以外のアプリをサイドロードする際はこの手順は不要である。
             </p>
-            <a href="https://github.com/LiveContainer/LiveContainer/releases" target="_blank" class="link-preview">
-              <img src="livecontainer.png" alt="LiveContainer" class="content-visual">
-              <div class="content-title">Releases · LiveContainer/LiveContainer · GitHub</div>
-            </a>
-            <h4>2.SideStoreを開き、 "My Apps" タブで 左上の "+" をタップする</h4>
+            <a href="https://github.com/LiveContainer/LiveContainer/releases" target="_blank" class="link-preview"></a>
+            <p>2026年10月現在、LiveContainerの開発者のGithubアカウントがBANされているので以下のリンクからIPAをダウンロードする。</p>
+            <a href="https://github.com/LiveContainerMirror/LiveContainer/releases" target="_blank" class="link-preview"></a>
+            <h4>2.SideStoreを開き、My Appsタブで左上の "+" をタップする</h4>
             <img src="sidestore2.PNG" class="imageh zoomable" alt="+">
             <h4>3.LiveContainerのIPAを選択する</h4>
             <p>サイドロードするアプリのIPAを選択する。</p>
@@ -243,8 +245,6 @@
               Apple Developer Programに登録していないApple IDで署名をした場合、登録できるApp IDが10個までに制限される。
               ここではサイドロードするアプリの拡張機能を保持するか削除するか選択し、登録されるApp IDが10個を超えないようにする必要がある。
               なお、ここでRefreshができない場合はLocalDevVPNに接続中であることを確認する。
-              これでサイドロードが完了するが、アプリの署名期限が0日になる前に "My Apps" タブからRefreshをする必要がある。
-              もし署名期限が0日になった場合、そのアプリは起動できなくなるので再度この手順でアプリをサイドロードする必要がある。
             </p>
             <img src="sidestore4.PNG" class="imageh zoomable" alt="拡張機能">
             <h3>SideStoreによるサイドロードのメリット</h3>
@@ -298,11 +298,11 @@
               サイドロードしたアプリをアップデートする際も4･5･6を同様の手順で行う。
             </p>
             <h3>方法</h3>
-            <h4>1.LiveContainerを開き、 "設定" タブで "SideStoreから証明書をインストール" をタップする</h4>
+            <h4>1.LiveContainerを開き、設定タブで "SideStoreから証明書をインストール" をタップする</h4>
             <img src="livecontainer1.PNG" class="imageh zoomable" alt="SideStoreから証明書をインストール">
             <h4>2. "Export" をタップする</h4>
             <img src="livecontainer2.PNG" class="imageh zoomable" alt="Export">
-            <h4>3. "アプリ" タブで左上の "+" をタップする</h4>
+            <h4>3.アプリタブで左上の "+" をタップする</h4>
             <img src="livecontainer3.PNG" class="imageh zoomable" alt="+">
             <h4>4. "IPAファイルをインストール" をタップする</h4>
             <img src="livecontainer4.PNG" class="imageh zoomable" alt="IPAファイルをインストール">
@@ -324,9 +324,9 @@
             <img src="livecontainer12.PNG" class="imageh zoomable" alt="次へ">
             <h4>13. "インストール" をタップする</h4>
             <img src="livecontainer13.PNG" class="imageh zoomable" alt="インストール">
-            <h4>14. "インストール" をタップし、パスワードを入力する</h4>
+            <h4>14. "インストール" をタップする</h4>
             <p>これにより、ホーム画面上にサイドロードしたアプリのアイコンが追加され、タップすると起動できるようになっている。</p>
-            <img src="livecontainer14.PNG" class="imageh zoomable" alt="パスワード">
+            <img src="livecontainer14.PNG" class="imageh zoomable" alt="インストール">
             <h3>LiveContainerによるサイドロードのメリット</h3>
             <h4>･サイドロードできなくなるリスクがない</h4>
             <p>証明書を用いて行うサイドロードと違い、サイドロードできなくなったりサイドロードしたアプリが使えなくなることがない。</p>
