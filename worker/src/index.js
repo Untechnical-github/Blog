@@ -1,3 +1,5 @@
+import { handleViews } from './views.js';
+
 function hex2bin(hex) {
   const buf = new Uint8Array(Math.ceil(hex.length / 2));
   for (let i = 0; i < buf.length; i++) { buf[i] = parseInt(hex.substring(i * 2, i * 2 + 2), 16); }
@@ -80,10 +82,16 @@ function isAllowedCaller(request) {
 }
 
 // 単体テスト用（Worker本体の挙動には影響しない）
-export { unescapeHTML, extractMeta, resolveUrl, detectCharset, isAllowedCaller, ALLOWED_ORIGIN };
+// エントリーモジュールが関数以外（文字列定数など）を export するとランタイムが起動を拒否するため、
+// ALLOWED_ORIGIN はここから export しない。
+export { unescapeHTML, extractMeta, resolveUrl, detectCharset, isAllowedCaller };
 
 export default {
   async fetch(request, env, ctx) {
+    // アクセス数の集計API（/views/*）は別ファイルに分離している
+    const requestUrl = new URL(request.url);
+    if (requestUrl.pathname.startsWith('/views/')) return handleViews(request, env, ctx, requestUrl);
+
     // ──────────────────────────────────────────
     // 🌟 1. GETリクエスト時：強力なOGPスクレイピング
     // ──────────────────────────────────────────

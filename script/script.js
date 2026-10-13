@@ -1,5 +1,22 @@
 const OGP_WORKER_URL = "https://untechnical.eusng90912.workers.dev";
 
+// アクセス数の記録。ローカルで開いたとき（localhost / file://）と、解析ページ（/stats）に
+// ログイン済みの自分のブラウザからは送らない。Worker側でも Origin を検証している。
+(() => {
+  try {
+    if (location.hostname !== "untechnical.info") return;
+    if (localStorage.getItem("untechnicalOwner") === "1") return;
+    if (navigator.webdriver) return;
+
+    // 一般的なPVの数え方に合わせ、ページを読み込むたびに1回数える（再読み込みも1回）。
+    // ブラウザの先読み（プリレンダリング）は、実際に表示された時点で初めて数える。
+    const sendHit = () => fetch(`${OGP_WORKER_URL}/views/hit`, { method: "POST", body: location.pathname, keepalive: true }).catch(() => {});
+    if (document.prerendering) document.addEventListener("prerenderingchange", sendHit, { once: true });
+    else sendHit();
+  } catch (e) {
+  }
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById("imgModal");
   const modalImg = document.getElementById("modalImage");

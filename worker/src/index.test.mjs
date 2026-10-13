@@ -5,9 +5,10 @@ import {
   extractMeta,
   resolveUrl,
   detectCharset,
-  isAllowedCaller,
-  ALLOWED_ORIGIN
+  isAllowedCaller
 } from './index.js';
+
+const ALLOWED_ORIGIN = 'https://untechnical.info';
 
 test('unescapeHTML decodes common HTML entities', () => {
   assert.equal(unescapeHTML('A &amp; B &lt;tag&gt; &quot;q&quot; &#39;a&#39;'), `A & B <tag> "q" 'a'`);

@@ -132,7 +132,11 @@
         background-size: 24px;
         cursor: pointer;
       }
-    
+
+      .search-container select + select {
+        margin-top: 15px;
+      }
+
       .posts {
         margin: 40px auto;
         max-width: 100%;
@@ -305,6 +309,14 @@
           <option value="Wear OS">Wear OS</option>
           <option value="Nintendo">Nintendo</option>
         </select>
+        <select id="sortOrder" aria-label="並び替え">
+          <option value="newest">新しい順</option>
+          <option value="oldest">古い順</option>
+          <option value="views-week">アクセス数順（直近1週間）</option>
+          <option value="views-month">アクセス数順（直近1ヶ月）</option>
+          <option value="views-year">アクセス数順（直近1年間）</option>
+          <option value="views-total">アクセス数順（2026年10月14日〜の合計）</option>
+        </select>
       </div>
       <section class="posts" id="postSection"></section>
       <div id="searchResults"></div>
@@ -347,7 +359,23 @@
             const worker = new Worker("/script/search-worker.js");
       const searchInput = document.getElementById("searchBar");
       const categorySelect = document.getElementById("categoryFilter");
+      const sortSelect = document.getElementById("sortOrder");
       const postSection = document.getElementById("postSection");
+
+      const VIEWS_WORKER_URL = "https://untechnical.eusng90912.workers.dev";
+
+      // アクセス数の記録。404フォールバックとして表示されたとき、ローカルで開いたとき、
+      // 解析ページ（/stats）にログイン済みの自分のブラウザからは送らない。
+      try {
+        if (location.hostname === "untechnical.info" && location.pathname === "/" &&
+            localStorage.getItem("untechnicalOwner") !== "1" && !navigator.webdriver) {
+          // 読み込むたびに1回数える。ブラウザの先読み（プリレンダリング）は表示された時点で数える。
+          const sendHit = () => fetch(`${VIEWS_WORKER_URL}/views/hit`, { method: "POST", body: "/", keepalive: true }).catch(() => {});
+          if (document.prerendering) document.addEventListener("prerenderingchange", sendHit, { once: true });
+          else sendHit();
+        }
+      } catch (e) {
+      }
 
       const viewedPrivate = JSON.parse(
         localStorage.getItem("viewedPrivateArticles") || "[]"
@@ -408,6 +436,50 @@
         }).join("");
       }
 
+      // 並び替えを変えたときに検索をやり直さず再描画できるよう、直近の検索結果を覚えておく
+      let lastArticles = [];
+      let lastKeyword = "";
+      let viewRankingPromise = null;
+
+      // 人気順は「アクセス数順」を選んだときに初めて取得する（数値ではなく順位だけが返る）
+      function loadViewRanking() {
+        if (!viewRankingPromise) {
+          viewRankingPromise = fetch(`${VIEWS_WORKER_URL}/views/ranking`)
+            .then(res => res.ok ? res.json() : Promise.reject(new Error(res.status)))
+            .catch(() => {
+              viewRankingPromise = null;
+              return null;
+            });
+        }
+        return viewRankingPromise;
+      }
+
+      // search-index.json は公開日の新しい順に並んでいるので、検索結果もその順で届く
+      function sortArticles(articles, order, ranking) {
+        if (order === "newest") return articles;
+        if (order === "oldest") return [...articles].reverse();
+
+        const rankedPaths = (ranking && ranking[order.replace("views-", "")]) || [];
+        const rankOf = new Map(rankedPaths.map((path, i) => [path, i]));
+        const rank = article => rankOf.has(article.path) ? rankOf.get(article.path) : rankedPaths.length;
+
+        // アクセスがまだ無い記事は末尾に新しい順で並ぶ（sortは安定ソート）
+        return [...articles].sort((a, b) => rank(a) - rank(b));
+      }
+
+      async function renderArticles(articles, keyword) {
+        lastArticles = articles;
+        lastKeyword = keyword;
+
+        const order = sortSelect.value;
+        const ranking = order.startsWith("views-") ? await loadViewRanking() : null;
+
+        // 取得を待っている間に検索条件や並び順が変わっていたら、新しい方の描画に任せる
+        if (articles !== lastArticles || order !== sortSelect.value) return;
+
+        displayArticles(sortArticles(articles, order, ranking), keyword);
+      }
+
       fetch("/search-index.json")
         .then(res => res.json())
         .then(data => {
@@ -444,7 +516,7 @@
                  if(resultsDiv) {
                     resultsDiv.innerHTML = `<p style="text-align:center; color: #d9534f; font-weight:bold; margin: 20px 0;">お探しのページが見つかりませんでした。URLのパス（${initialKeyword}）に関連する記事を表示しています。</p>`;
                  }
-                 displayArticles(pathMatchedArticles, initialKeyword);
+                 renderArticles(pathMatchedArticles, initialKeyword);
                  searchedByPath = true; 
                } else {
                  if(resultsDiv) {
@@ -477,11 +549,12 @@
 
       searchInput.addEventListener("input", performSearch);
       categorySelect.addEventListener("change", performSearch);
+      sortSelect.addEventListener("change", () => renderArticles(lastArticles, lastKeyword));
 
       worker.onmessage = function (e) {
         const results = e.data;
         const keyword = searchInput.value.trim().toLowerCase();
-        displayArticles(results, keyword);
+        renderArticles(results, keyword);
       };
     </script>
   </body>

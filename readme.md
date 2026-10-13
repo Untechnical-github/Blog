@@ -3,7 +3,7 @@
 個人技術ブログ「Untechnical」のソースコードおよびシステムリポジトリ。
 Cloudflare Pages / Workers と GitHub Actions を組み合わせ、SEO最適化、運用の自動化（ChatOps）、ユーザー利便性の向上をエッジサーバーおよびCI/CDパイプライン上で実現している。
 
-データベースを持たず、**記事のHTMLファイルだけを情報源**として、検索用データやサイトマップをすべて自動生成するのが特徴。記事を書いてpushすれば、あとは公開まで自動で進む。
+**記事のHTMLファイルだけを情報源**として、検索用データやサイトマップをすべて自動生成するのが特徴（データベースはアクセス数の集計にだけ使う）。記事を書いてpushすれば、あとは公開まで自動で進む。
 
 ```
 記事を書く → GitHubへpush
@@ -20,6 +20,7 @@ Cloudflare Pages / Workers と GitHub Actions を組み合わせ、SEO最適化�
 | **フロントエンド** | ライブラリを一切使わない素の HTML / CSS / JavaScript |
 | **ホスティング・ルーティング** | Cloudflare Pages + Pages Functions（`functions/_middleware.js`） |
 | **バックエンド・API・Discord Bot** | Cloudflare Workers（`untechnical`）— wrangler で `worker/` 配下をローカル管理 |
+| **アクセス数の集計** | Cloudflare D1（`untechnical-views`） |
 | **AI校正** | Google Gemini API |
 | **CI/CD・自動化** | GitHub Actions |
 | **運用インターフェース** | Discord（スラッシュコマンド） |
@@ -107,6 +108,33 @@ script/filter-meaningful-diff.js は、本文・タイトル・画像・リン�
 * **画像のズーム・移動:** マウスホイール、ドラッグ、タッチ操作に対応。
 * **コードブロックのコピーボタン。**
 
+### 5. アクセス数の集計・並び替え・解析ページ
+
+外部の解析サービスに頼らず、Worker と D1 だけで「日付 × ページごとの表示回数」を数えている（IPアドレスやCookieなどの個人を識別する情報は保存しない）。
+
+* **記録（`POST /views/hit`）:** 記事ページ（`script/script.js`）とトップページ（`index.html`）が、表示のたびにビーコンを送る。数え方は一般的なPV（ページビュー）と同じで、ページを読み込むたびに1回、再読み込みも1回と数える（同じ人の重複は除かない）。ブラウザの先読みは実際に表示された時点で数える。日付は日本時間で区切る。
+* **参照するのは前日まで:** 並び替えも解析ページも、数え終わった前日までのデータだけを使う。当日分は記録だけして、翌日から反映される（「直近1週間」は前日までの7日間）。
+* **数えないアクセス:**
+  * ローカルで開いたページ（`localhost` / `file://`）— ブラウザ側で送信せず、Worker側でも `Origin` が `https://untechnical.info` でなければ拒否する。
+  * 自分のブラウザ — 解析ページにログインすると `localStorage` に印（`untechnicalOwner`）が付き、以後そのブラウザは送信しない。**ブラウザごと**の設定なので、スマホやアプリ内ブラウザなど、使う環境それぞれで一度ログインしておく。
+  * クローラー（User-Agentで判定）、`articles.json` に存在しないパス、404フォールバックとして表示されたトップページ。
+* **並び替え（`GET /views/ranking`）:** トップページの「アクセス数順」は、期間ごとの**順位だけ**（パスの並び）を受け取って並び替える。アクセス数そのものは公開しない。順位は1日1回、日本時間の0時を過ぎてから更新される。「新しい順 / 古い順」は `search-index.json` の並び（公開日の新しい順）をそのまま使う。
+* **解析ページ（`/stats` = `stats.html`）:** パスワード（Workerのシークレット `STATS_TOKEN`）で保護した自分専用ページ。`GET /views/stats` から日別のデータを受け取り、直近1週間・1ヶ月・1年・合計・期間指定での集計と、推移の折れ線グラフ（日・週・月単位）を表示する。ページ自体は公開リポジトリにあるが、データはパスワードが無いと取得できない。
+* **年数が延びても重くならない設計:** D1 の無料枠には容量のほかに「1日に読める行数・書ける行数」の上限があるため、どの処理も運用年数に比例して増えないようにしている。
+  * `views`（日付 × ページ）は消さずに残し続ける。行数は「ページ数 × 日数」でしか増えない（25記事で年約9,000行）。
+  * アクセスのたびに書くのは `views` の1行だけ。
+  * 日付が変わって最初に順位が求められたときに、1日1回の「締め処理」が走る。前日までの分を `totals`（ページごとの累計）に足し込み、直近1年分の行から順位を計算して `ranking_snapshot`（常に1行）に保存する。その日のうちは保存した順位を返すだけ。
+  * 締め処理は、ページごとに「何日の分まで足したか」を記録しているので、同時に2回走っても、失敗してやり直しても、何日か空いても、二重に足したり取りこぼしたりしない。失敗したときは前回の順位をそのまま返す。
+  * 解析ページは直近約2年分だけを受け取り、それより前の期間を選んだときだけ追加で取得する。
+* **「合計」の起点:** 2026年10月14日（`worker/src/views.js` の `COUNT_START_DAY`）。
+
+初回セットアップ（データベースは作成済み）:
+
+```sh
+npx wrangler secret put STATS_TOKEN --config worker/wrangler.toml   # 解析ページのパスワードを決める
+npm run worker:deploy
+```
+
 ---
 
 ## 📂 ディレクトリ構成
@@ -142,7 +170,10 @@ script/filter-meaningful-diff.js は、本文・タイトル・画像・リン�
 │   ├── .wrangler/                # wrangler の作業用ディレクトリ (自動生成)
 │   ├── src/
 │   │   ├── index.js              # Worker本体（OGP API + Discord Bot）
-│   │   └── index.test.mjs        # 上記の単体テスト
+│   │   ├── index.test.mjs        # 上記の単体テスト
+│   │   ├── views.js              # アクセス数の集計API（/views/*）
+│   │   └── views.test.mjs        # 上記の単体テスト
+│   ├── schema.sql                # D1 のテーブル定義
 │   ├── .dev.vars.example         # ローカル開発用の環境変数テンプレート
 │   ├── package.json              # Worker用のプロジェクト設定
 │   └── wrangler.toml             # Worker設定
@@ -159,6 +190,7 @@ script/filter-meaningful-diff.js は、本文・タイトル・画像・リン�
 ├── policy.html                   # プライバシーポリシー
 ├── readme.md
 ├── sitemap.xml                   # 自動生成されるサイトマップ
+├── stats.html                    # 自分専用のアクセス解析ページ (/stats、パスワード保護)
 └── style.css                     # グローバルスタイルシート
 ```
 
@@ -170,7 +202,7 @@ script/filter-meaningful-diff.js は、本文・タイトル・画像・リン�
 ## 🔐 運用上の注意
 
 * **シークレットの管理**
-  Worker のシークレット（`DISCORD_PUBLIC_KEY` / `GITHUB_PAT`）は `wrangler secret put` で設定し、コードには一切書かない。ローカル開発では `worker/.dev.vars`（gitignore対象）を使い、テンプレートだけを `.dev.vars.example` としてコミットする。GitHub Actions 側は `GEMINI_API_KEY` / `DISCORD_BOT_TOKEN` / `DISCORD_CHANNEL_ID` / `DISCORD_WEBHOOK_URL` を Secrets に登録する。
+  Worker のシークレット（`DISCORD_PUBLIC_KEY` / `GITHUB_PAT` / `STATS_TOKEN`）は `wrangler secret put` で設定し、コードには一切書かない。ローカル開発では `worker/.dev.vars`（gitignore対象）を使い、テンプレートだけを `.dev.vars.example` としてコミットする。GitHub Actions 側は `GEMINI_API_KEY` / `DISCORD_BOT_TOKEN` / `DISCORD_CHANNEL_ID` / `DISCORD_WEBHOOK_URL` を Secrets に登録する。
 
 * **`GITHUB_PAT` の権限範囲**
   Discord Bot（`worker/src/index.js`）がGitHub APIに使うトークンは、万一漏れたときの被害を抑えるため fine-grained PAT を使い、対象をこのリポジトリ1つに限定し、権限は `contents: write` と `actions: write` だけに絞ることを推奨する。
@@ -198,3 +230,5 @@ script/filter-meaningful-diff.js は、本文・タイトル・画像・リン�
   メタ情報の抽出、日付のチェック（下書きの除外）、`description` 欠落時の警告、ファイル名が重複したときの優先順位。
 * **`worker/src/index.js`**
   OGPのメタタグ抽出、文字コードの判定、呼び出し元の検証。
+* **`worker/src/views.js`**
+  日本時間での日付の区切り、パスの正規化（記事以外の除外）、クローラー判定、期間別の順位、パスワードの検証。

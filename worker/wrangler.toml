@@ -5,3 +5,10 @@ compatibility_date = "2026-07-12"
 # Secrets (DISCORD_PUBLIC_KEY, GITHUB_PAT) are NOT set here.
 # Set them once via: npx wrangler secret put DISCORD_PUBLIC_KEY
 #                     npx wrangler secret put GITHUB_PAT
+#                     npx wrangler secret put STATS_TOKEN   (解析ページ /stats のパスワード)
+
+# アクセス数の集計用データベース。テーブルは `npm run worker:db:init` で作成する。
+[[d1_databases]]
+binding = "DB"
+database_name = "untechnical-views"
+database_id = "44787d0f-dbfb-4360-b1f8-04fba9293a96"

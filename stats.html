@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>アクセス解析 | Untechnical</title>
+    <link rel="icon" href="/images/profile.ico" type="image/x-icon">
+    <style>
+      :root {
+        color-scheme: light;
+        --page: #f9f9f7;
+        --surface: #fcfcfb;
+        --text-primary: #0b0b0b;
+        --text-secondary: #52514e;
+        --text-muted: #898781;
+        --grid: #e1e0d9;
+        --axis: #c3c2b7;
+        --border: rgba(11, 11, 11, 0.10);
+        --wash: rgba(11, 11, 11, 0.05);
+        --series: #2a78d6;
+        --up: #006300;
+        --critical: #d03b3b;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          color-scheme: dark;
+          --page: #0d0d0d;
+          --surface: #1a1a19;
+          --text-primary: #f0efec;
+          --text-secondary: #c3c2b7;
+          --text-muted: #898781;
+          --grid: #2c2c2a;
+          --axis: #383835;
+          --border: rgba(255, 255, 255, 0.10);
+          --wash: rgba(255, 255, 255, 0.07);
+          --series: #3987e5;
+          --up: #0ca30c;
+          --critical: #e66767;
+        }
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: var(--page);
+        color: var(--text-primary);
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 24px 16px 64px;
+      }
+
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px 16px;
+        margin-bottom: 20px;
+      }
+
+      h1 { font-size: 20px; margin: 0; }
+      h2 { font-size: 15px; margin: 0; }
+
+      .muted { color: var(--text-muted); font-size: 12px; }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px;
+      }
+
+      button, input, select {
+        font: inherit;
+        color: inherit;
+      }
+
+      button, select, input[type="date"], input[type="password"] {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 6px 12px;
+        min-height: 34px;
+      }
+
+      button { cursor: pointer; }
+      button:hover { background: var(--wash); }
+
+      .group button[aria-pressed="true"] {
+        background: var(--text-primary);
+        border-color: var(--text-primary);
+        color: var(--surface);
+        font-weight: 600;
+      }
+
+      :focus-visible { outline: 2px solid var(--series); outline-offset: 2px; }
+
+      .header-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+      .header-actions label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
+
+      /* ── ログイン ── */
+      #login { max-width: 360px; margin: 80px auto 0; }
+      #login form { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+      #loginError { color: var(--critical); min-height: 1.5em; margin: 0; }
+
+      /* ── フィルタ ── */
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 16px;
+        margin-bottom: 16px;
+      }
+
+      .group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+      #subject { max-width: min(100%, 320px); }
+
+      /* ── 数値タイル ── */
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .tile .label { color: var(--text-secondary); font-size: 12px; }
+      .tile .value { font-size: 28px; font-weight: 600; line-height: 1.3; }
+      .tile .note { color: var(--text-muted); font-size: 12px; min-height: 1.5em; }
+      .tile .note .up { color: var(--up); }
+      .tile .note .down { color: var(--critical); }
+
+      /* ── グラフ ── */
+      .chart-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin-bottom: 8px; }
+      #chartTitle { overflow-wrap: anywhere; }
+      #chartWrap { position: relative; }
+      #chart { display: block; width: 100%; height: 280px; outline-offset: 4px; }
+      #chart text { font-size: 11px; fill: var(--text-muted); font-variant-numeric: tabular-nums; }
+      #chart .end-label { fill: var(--text-primary); font-size: 12px; font-weight: 600; }
+
+      #tooltip {
+        position: absolute;
+        top: 4px;
+        pointer-events: none;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 6px 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        white-space: nowrap;
+      }
+
+      #tooltip .tip-value { font-size: 16px; font-weight: 600; }
+      #tooltip .tip-label { color: var(--text-secondary); font-size: 12px; }
+
+      #empty { text-align: center; color: var(--text-muted); padding: 100px 0; margin: 0; }
+
+      /* ── 表 ── */
+      .table-card { margin-top: 16px; padding: 16px 0 4px; }
+      .table-card .chart-head { padding: 0 16px; }
+      .table-scroll { overflow-x: auto; }
+
+      table { width: 100%; border-collapse: collapse; min-width: 560px; }
+
+      th, td { padding: 8px 12px; text-align: right; border-top: 1px solid var(--grid); white-space: nowrap; }
+      th:first-child, td:first-child { text-align: left; white-space: normal; padding-left: 16px; }
+      th:last-child, td:last-child { padding-right: 16px; }
+
+      th { font-weight: 400; color: var(--text-secondary); font-size: 12px; border-top: none; }
+      th button { border: none; background: none; padding: 2px 0; min-height: 0; color: inherit; }
+      th button:hover { background: none; color: var(--text-primary); }
+      th[aria-sort] button { color: var(--text-primary); font-weight: 600; }
+
+      td { font-variant-numeric: tabular-nums; }
+      td .page { border: none; background: none; padding: 0; min-height: 0; text-align: left; overflow-wrap: anywhere; }
+      td .page:hover { background: none; text-decoration: underline; }
+      td .path { display: block; color: var(--text-muted); font-size: 11px; overflow-wrap: anywhere; }
+
+      tr.total td { font-weight: 600; }
+      tr.selected td { background: var(--wash); }
+      tr.selected td:first-child { box-shadow: inset 3px 0 0 var(--series); }
+
+      .bar { display: block; height: 3px; margin-top: 3px; margin-left: auto; background: var(--series); border-radius: 2px; }
+
+      .loading { opacity: 0.5; transition: opacity 0.15s; }
+      [hidden] { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section id="login" class="card" hidden>
+        <h1>アクセス解析</h1>
+        <form id="loginForm">
+          <label for="tokenInput">パスワード</label>
+          <input type="password" id="tokenInput" autocomplete="current-password" required>
+          <button type="submit">ログイン</button>
+          <p id="loginError" role="alert"></p>
+        </form>
+      </section>
+
+      <div id="dashboard" hidden>
+        <header>
+          <div>
+            <h1>アクセス解析</h1>
+            <div class="muted" id="meta"></div>
+          </div>
+          <div class="header-actions">
+            <label id="ownerLabel"><input type="checkbox" id="ownerToggle"> このブラウザからのアクセスを数えない</label>
+            <button type="button" id="reload">更新</button>
+            <button type="button" id="logout">ログアウト</button>
+          </div>
+        </header>
+
+        <div class="filters">
+          <div class="group" id="presets" role="group" aria-label="期間">
+            <button type="button" data-preset="week">直近1週間</button>
+            <button type="button" data-preset="month">直近1ヶ月</button>
+            <button type="button" data-preset="year">直近1年</button>
+            <button type="button" data-preset="total" id="presetTotal">合計</button>
+          </div>
+          <div class="group">
+            <input type="date" id="from" aria-label="開始日">
+            <span class="muted">〜</span>
+            <input type="date" id="to" aria-label="終了日">
+          </div>
+          <div class="group" id="grans" role="group" aria-label="グラフの集計単位">
+            <button type="button" data-gran="day">日</button>
+            <button type="button" data-gran="week">週</button>
+            <button type="button" data-gran="month">月</button>
+          </div>
+          <select id="subject" aria-label="表示するページ"></select>
+        </div>
+
+        <div id="content">
+          <div class="tiles">
+            <div class="card tile"><div class="label">期間内のアクセス数</div><div class="value" id="tileTotal"></div><div class="note" id="tileDelta"></div></div>
+            <div class="card tile"><div class="label">1日あたりの平均</div><div class="value" id="tileAvg"></div><div class="note" id="tileDays"></div></div>
+            <div class="card tile"><div class="label">前日</div><div class="value" id="tileLatest"></div><div class="note" id="tilePrevious"></div></div>
+            <div class="card tile"><div class="label">最も多かった日</div><div class="value" id="tilePeak"></div><div class="note" id="tilePeakDay"></div></div>
+          </div>
+
+          <div class="card">
+            <div class="chart-head">
+              <h2 id="chartTitle"></h2>
+              <span class="muted" id="chartRange"></span>
+            </div>
+            <div id="chartWrap">
+              <svg id="chart" tabindex="0" role="img"></svg>
+              <div id="tooltip" hidden><div class="tip-value"></div><div class="tip-label"></div></div>
+              <p id="empty" hidden>この期間のデータはまだありません。当日分は翌日に反映されます。</p>
+            </div>
+          </div>
+
+          <div class="card table-card">
+            <div class="chart-head">
+              <h2>ページごとのアクセス数</h2>
+              <span class="muted">行を選ぶとグラフがそのページに切り替わります</span>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th><button type="button" data-sort="title">ページ</button></th>
+                    <th><button type="button" data-sort="week">直近1週間</button></th>
+                    <th><button type="button" data-sort="month">直近1ヶ月</button></th>
+                    <th><button type="button" data-sort="year">直近1年</button></th>
+                    <th><button type="button" data-sort="range" id="rangeHeader">選択期間</button></th>
+                  </tr>
+                </thead>
+                <tbody id="rows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const DEFAULT_API = "https://untechnical.eusng90912.workers.dev";
+      const TOKEN_KEY = "untechnicalStatsToken";
+      const OWNER_KEY = "untechnicalOwner"; // script.js / index.html がこの印を見て送信をやめる
+      const ALL = "__all__";
+      const PRESET_DAYS = { week: 7, month: 30, year: 365 };
+      const SVG_NS = "http://www.w3.org/2000/svg";
+
+      // ローカルの wrangler dev に向けるための上書き。パスワードを外部に送らせないよう localhost に限る
+      const API = (() => {
+        const override = new URLSearchParams(location.search).get("api");
+        try {
+          if (override && ["localhost", "127.0.0.1"].includes(new URL(override).hostname)) return override.replace(/\/$/, "");
+        } catch (e) {
+        }
+        return DEFAULT_API;
+      })();
+
+      const $ = id => document.getElementById(id);
+      const fmt = n => Math.round(n).toLocaleString("ja-JP");
+
+      const state = {
+        counts: new Map(),      // path -> Map(day -> count)
+        totalByDay: new Map(),  // day -> count（全ページ合計）
+        titles: new Map(),      // path -> 記事タイトル
+        topPage: "index",
+        latest: "",             // 表示する最後の日（= 前日。当日分は翌日から見える）
+        start: "",
+        firstDay: "",           // データが存在する最初の日
+        loadedFrom: "",         // この日付以降の日別データを読み込み済み
+        preset: "month",
+        from: "",
+        to: "",
+        gran: null,             // null = 期間の長さから自動で決める
+        subject: ALL,
+        sort: "range",
+        sortAsc: false
+      };
+
+      // ── 日付（YYYY-MM-DD の文字列のまま扱う） ──
+
+      const toDate = day => new Date(day + "T00:00:00Z");
+      const toDay = date => date.toISOString().slice(0, 10);
+      const addDays = (day, n) => toDay(new Date(toDate(day).getTime() + n * 86400000));
+      const dayCount = (from, to) => Math.round((toDate(to) - toDate(from)) / 86400000) + 1;
+      const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
+
+      function shortDay(day) {
+        const [, m, d] = day.split("-").map(Number);
+        return `${m}/${d}`;
+      }
+
+      function longDay(day) {
+        const [y, m, d] = day.split("-").map(Number);
+        return `${y}年${m}月${d}日(${WEEKDAYS[toDate(day).getUTCDay()]})`;
+      }
+
+      // ── 集計 ──
+
+      const dayMap = subject => subject === ALL ? state.totalByDay : (state.counts.get(subject) || new Map());
+
+      function sumRange(subject, from, to) {
+        let sum = 0;
+        for (const [day, count] of dayMap(subject)) {
+          if (day >= from && day <= to) sum += count;
+        }
+        return sum;
+      }
+
+      // 集計を始める前の日付までグラフを伸ばすと 0 が並ぶだけなので、データのある日から始める
+      function effectiveRange() {
+        const from = state.from < state.firstDay ? state.firstDay : state.from;
+        const to = state.to > state.latest ? state.latest : state.to;
+        return { from, to };
+      }
+
+      function autoGran(days) {
+        if (days <= 92) return "day";
+        if (days <= 730) return "week";
+        return "month";
+      }
+
+      function buildSeries(subject, from, to, gran) {
+        const map = dayMap(subject);
+        const buckets = [];
+        let current = null;
+
+        for (let day = from; day <= to; day = addDays(day, 1)) {
+          let key = day;
+          if (gran === "week") key = addDays(day, -((toDate(day).getUTCDay() + 6) % 7)); // 月曜始まり
+          if (gran === "month") key = day.slice(0, 7);
+
+          if (!current || current.key !== key) {
+            current = { key, first: day, last: day, value: 0 };
+            buckets.push(current);
+          }
+          current.last = day;
+          current.value += map.get(day) || 0;
+        }
+
+        return buckets.map(b => {
+          if (gran === "day") return { value: b.value, axis: shortDay(b.first), tip: longDay(b.first) };
+          if (gran === "week") return { value: b.value, axis: shortDay(b.first) + "〜", tip: `${longDay(b.first)} 〜 ${shortDay(b.last)}` };
+          const [y, m] = b.key.split("-").map(Number);
+          return { value: b.value, axis: `${y}/${m}`, tip: `${y}年${m}月` };
+        });
+      }
+
+      function pageTitle(path) {
+        if (path === ALL) return "全体";
+        if (path === state.topPage) return "トップページ";
+        return state.titles.get(path) || path;
+      }
+
+      // ── グラフ ──
+
+      const svgEl = (name, attrs, parent) => {
+        const el = document.createElementNS(SVG_NS, name);
+        for (const key in attrs) el.setAttribute(key, attrs[key]);
+        if (parent) parent.appendChild(el);
+        return el;
+      };
+
+      // 目盛りを 1・2・5 系のきりのいい数に揃える（アクセス数なので 1 未満にはしない）
+      function niceStep(max) {
+        const raw = Math.max(max, 1) / 4;
+        const pow = Math.pow(10, Math.floor(Math.log10(raw)));
+        const step = [1, 2, 5, 10].find(m => m * pow >= raw) * pow;
+        return Math.max(1, step);
+      }
+
+      let hover = null; // 現在のグラフのホバー処理（再描画のたびに差し替える）
+
+      function drawChart(series) {
+        const svg = $("chart");
+        const tooltip = $("tooltip");
+        svg.replaceChildren();
+        tooltip.hidden = true;
+        hover = null;
+
+        const hasData = series.length > 0 && series.some(p => p.value > 0);
+        $("empty").hidden = hasData;
+        svg.hidden = !hasData;
+        if (!hasData) return;
+
+        const width = $("chartWrap").clientWidth;
+        const height = 280;
+        const margin = { top: 16, right: 48, bottom: 28, left: 44 };
+        const plotW = width - margin.left - margin.right;
+        const plotH = height - margin.top - margin.bottom;
+        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+
+        const step = niceStep(Math.max(...series.map(p => p.value)));
+        const yMax = Math.ceil(Math.max(...series.map(p => p.value)) / step) * step;
+        const x = i => margin.left + (series.length === 1 ? plotW / 2 : (i / (series.length - 1)) * plotW);
+        const y = v => margin.top + plotH - (v / yMax) * plotH;
+
+        for (let v = 0; v <= yMax; v += step) {
+          svgEl("line", { x1: margin.left, x2: margin.left + plotW, y1: y(v), y2: y(v), stroke: v === 0 ? "var(--axis)" : "var(--grid)", "stroke-width": 1 }, svg);
+          svgEl("text", { x: margin.left - 8, y: y(v) + 4, "text-anchor": "end" }, svg).textContent = fmt(v);
+        }
+
+        const tickEvery = Math.max(1, Math.ceil(series.length / Math.max(2, Math.floor(plotW / 72))));
+        series.forEach((p, i) => {
+          if (i % tickEvery !== 0) return;
+          const anchor = series.length === 1 ? "middle" : i === 0 ? "start" : "middle";
+          svgEl("text", { x: x(i), y: height - 8, "text-anchor": anchor }, svg).textContent = p.axis;
+        });
+
+        const points = series.map((p, i) => `${x(i)},${y(p.value)}`);
+        if (series.length > 1) {
+          svgEl("path", { d: `M${points.join("L")}L${x(series.length - 1)},${y(0)}L${x(0)},${y(0)}Z`, fill: "var(--series)", opacity: 0.1 }, svg);
+          svgEl("path", { d: `M${points.join("L")}`, fill: "none", stroke: "var(--series)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+        }
+
+        const last = series.length - 1;
+        svgEl("circle", { cx: x(last), cy: y(series[last].value), r: 4, fill: "var(--series)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
+        svgEl("text", { x: x(last) + 9, y: y(series[last].value) + 4, class: "end-label" }, svg).textContent = fmt(series[last].value);
+
+        const crosshair = svgEl("line", { y1: margin.top, y2: margin.top + plotH, stroke: "var(--axis)", "stroke-width": 1, visibility: "hidden" }, svg);
+        const dot = svgEl("circle", { r: 5, fill: "var(--series)", stroke: "var(--surface)", "stroke-width": 2, visibility: "hidden" }, svg);
+
+        let active = -1;
+        hover = {
+          show(i) {
+            active = Math.max(0, Math.min(last, i));
+            const px = x(active);
+            crosshair.setAttribute("x1", px);
+            crosshair.setAttribute("x2", px);
+            crosshair.setAttribute("visibility", "visible");
+            dot.setAttribute("cx", px);
+            dot.setAttribute("cy", y(series[active].value));
+            dot.setAttribute("visibility", "visible");
+
+            tooltip.querySelector(".tip-value").textContent = fmt(series[active].value);
+            tooltip.querySelector(".tip-label").textContent = series[active].tip;
+            tooltip.hidden = false;
+            const tipW = tooltip.offsetWidth;
+            tooltip.style.left = (px > width / 2 ? px - tipW - 12 : px + 12) + "px";
+          },
+          hide() {
+            active = -1;
+            crosshair.setAttribute("visibility", "hidden");
+            dot.setAttribute("visibility", "hidden");
+            tooltip.hidden = true;
+          },
+          fromPointer(clientX) {
+            const px = clientX - svg.getBoundingClientRect().left;
+            this.show(series.length === 1 ? 0 : Math.round(((px - margin.left) / plotW) * last));
+          },
+          move(delta) {
+            this.show(active === -1 ? last : active + delta);
+          }
+        };
+      }
+
+      $("chart").addEventListener("pointermove", e => hover && hover.fromPointer(e.clientX));
+      $("chart").addEventListener("pointerdown", e => hover && hover.fromPointer(e.clientX));
+      $("chart").addEventListener("pointerleave", () => hover && hover.hide());
+      $("chart").addEventListener("blur", () => hover && hover.hide());
+      $("chart").addEventListener("keydown", e => {
+        if (!hover || (e.key !== "ArrowLeft" && e.key !== "ArrowRight")) return;
+        e.preventDefault();
+        hover.move(e.key === "ArrowLeft" ? -1 : 1);
+      });
+
+      // ── 表 ──
+
+      function drawTable(from, to) {
+        const periodFrom = days => addDays(state.latest, -(days - 1));
+        const paths = new Set([state.topPage, ...state.titles.keys(), ...state.counts.keys()]);
+
+        const rowFor = path => ({
+          path,
+          title: pageTitle(path),
+          week: sumRange(path, periodFrom(PRESET_DAYS.week), state.latest),
+          month: sumRange(path, periodFrom(PRESET_DAYS.month), state.latest),
+          year: sumRange(path, periodFrom(PRESET_DAYS.year), state.latest),
+          range: from <= to ? sumRange(path, from, to) : 0
+        });
+
+        const rows = [...paths].map(rowFor);
+        const dir = state.sortAsc ? 1 : -1;
+        rows.sort((a, b) => state.sort === "title"
+          ? dir * a.title.localeCompare(b.title, "ja")
+          : dir * (a[state.sort] - b[state.sort]) || b.range - a.range || a.title.localeCompare(b.title, "ja"));
+
+        const maxRange = Math.max(1, ...rows.map(r => r.range));
+        const tbody = $("rows");
+        tbody.replaceChildren();
+
+        // 全体の行は並び替えに関係なく常に先頭に置く
+        for (const row of [rowFor(ALL), ...rows]) {
+          const tr = document.createElement("tr");
+          if (row.path === ALL) tr.classList.add("total");
+          if (row.path === state.subject) tr.classList.add("selected");
+
+          const titleCell = tr.insertCell();
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "page";
+          button.textContent = row.title;
+          button.setAttribute("aria-pressed", row.path === state.subject ? "true" : "false");
+          button.addEventListener("click", () => {
+            state.subject = row.path;
+            render();
+          });
+          titleCell.appendChild(button);
+          if (row.path !== ALL && row.path !== state.topPage) {
+            const path = document.createElement("span");
+            path.className = "path";
+            path.textContent = "/" + row.path.replace(/\.html$/, "");
+            titleCell.appendChild(path);
+          }
+
+          for (const key of ["week", "month", "year", "range"]) {
+            const cell = tr.insertCell();
+            cell.textContent = fmt(row[key]);
+            if (key === "range" && row.path !== ALL) {
+              const bar = document.createElement("span");
+              bar.className = "bar";
+              bar.style.width = (row.range / maxRange) * 100 + "%";
+              cell.appendChild(bar);
+            }
+          }
+          tbody.appendChild(tr);
+        }
+
+        document.querySelectorAll("th").forEach(th => {
+          const key = th.querySelector("button").dataset.sort;
+          if (key === state.sort) th.setAttribute("aria-sort", state.sortAsc ? "ascending" : "descending");
+          else th.removeAttribute("aria-sort");
+        });
+      }
+
+      // ── 画面全体の描画 ──
+
+      function setPreset(preset) {
+        state.preset = preset;
+        state.gran = null;
+        state.to = state.latest;
+        state.from = preset === "total" ? state.start : addDays(state.latest, -(PRESET_DAYS[preset] - 1));
+      }
+
+      function render() {
+        const { from, to } = effectiveRange();
+        const valid = from <= to;
+        const days = valid ? dayCount(from, to) : 0;
+        const gran = state.gran || autoGran(days);
+        const subject = state.subject;
+
+        document.querySelectorAll("#presets button").forEach(b => b.setAttribute("aria-pressed", b.dataset.preset === state.preset));
+        document.querySelectorAll("#grans button").forEach(b => b.setAttribute("aria-pressed", b.dataset.gran === gran));
+        $("from").value = state.from;
+        $("to").value = state.to;
+        $("from").max = $("to").max = state.latest;
+
+        const select = $("subject");
+        const options = [ALL, state.topPage, ...[...new Set([...state.titles.keys(), ...state.counts.keys()])].filter(p => p !== state.topPage)];
+        select.replaceChildren(...options.map(path => new Option(pageTitle(path), path)));
+        select.value = subject;
+
+        // タイル
+        const total = valid ? sumRange(subject, from, to) : 0;
+        $("tileTotal").textContent = fmt(total);
+        $("tileAvg").textContent = days ? (total / days).toLocaleString("ja-JP", { maximumFractionDigits: 1 }) : "0";
+        $("tileDays").textContent = days ? `${days}日間` : "";
+
+        const delta = $("tileDelta");
+        delta.replaceChildren();
+        if (valid && state.preset !== "total") {
+          // 比較対象の期間が読み込み済みの範囲に収まっているときだけ表示する（途中で切れた数値と比べない）
+          const prevFrom = addDays(from, -days);
+          const prevLoaded = prevFrom >= state.loadedFrom || state.loadedFrom <= state.firstDay;
+          const prevTotal = prevLoaded ? sumRange(subject, prevFrom, addDays(from, -1)) : 0;
+          if (prevTotal > 0) {
+            const change = (total - prevTotal) / prevTotal * 100;
+            const mark = document.createElement("span");
+            mark.className = change >= 0 ? "up" : "down";
+            mark.textContent = `${change >= 0 ? "▲" : "▼"} ${Math.abs(change).toFixed(0)}%`;
+            delta.append(mark, ` 前の${days}日間（${fmt(prevTotal)}）比`);
+          }
+        }
+
+        $("tileLatest").textContent = fmt(dayMap(subject).get(state.latest) || 0);
+        $("tilePrevious").textContent = `その前の日 ${fmt(dayMap(subject).get(addDays(state.latest, -1)) || 0)}`;
+
+        let peakDay = "";
+        let peak = 0;
+        for (const [day, count] of dayMap(subject)) {
+          if (day >= from && day <= to && count > peak) { peak = count; peakDay = day; }
+        }
+        $("tilePeak").textContent = fmt(peak);
+        $("tilePeakDay").textContent = peakDay ? longDay(peakDay) : "";
+
+        // グラフ
+        const unit = { day: "日別", week: "週別", month: "月別" }[gran];
+        $("chartTitle").textContent = `${pageTitle(subject)}のアクセス数の推移（${unit}）`;
+        $("chartRange").textContent = valid ? `${longDay(from)} 〜 ${longDay(to)}` : "";
+        $("chart").setAttribute("aria-label", `${pageTitle(subject)}のアクセス数の推移。左右キーで値を確認できます。`);
+        drawChart(valid ? buildSeries(subject, from, to, gran) : []);
+
+        $("rangeHeader").textContent = state.preset === "custom" ? "指定期間" : document.querySelector(`[data-preset="${state.preset}"]`).textContent;
+        drawTable(from, to);
+      }
+
+      // ── データ取得 ──
+
+      // from を省くと、Worker が既定の範囲（直近約2年）を返す
+      async function fetchStats(token, from) {
+        const res = await fetch(`${API}/views/stats${from ? `?from=${from}` : ""}`, { headers: { Authorization: `Bearer ${token}` } });
+        if (res.status === 401) throw new Error("パスワードが違います。");
+        if (!res.ok) throw new Error(`データを取得できませんでした（${res.status}）。`);
+        return res.json();
+      }
+
+      async function fetchTitles() {
+        try {
+          const res = await fetch("/articles.json");
+          if (!res.ok) return [];
+          return await res.json();
+        } catch (e) {
+          return []; // ローカルで直接開いた場合など。タイトルの代わりにパスを表示する
+        }
+      }
+
+      function applyData(stats, articles) {
+        state.counts = new Map();
+        state.totalByDay = new Map();
+        for (const [day, pathIndex, count] of stats.rows) {
+          const path = stats.paths[pathIndex];
+          if (!state.counts.has(path)) state.counts.set(path, new Map());
+          state.counts.get(path).set(day, count);
+          state.totalByDay.set(day, (state.totalByDay.get(day) || 0) + count);
+        }
+
+        state.titles = new Map(articles.map(a => [a.path, a.title]));
+        state.topPage = stats.topPage;
+        state.start = stats.start;
+        state.firstDay = stats.firstDay || stats.latest;
+        state.loadedFrom = stats.from;
+
+        // 日付が変わっていたら、選択中のプリセットを新しい最終日に合わせ直す
+        const dayChanged = state.latest !== stats.latest;
+        state.latest = stats.latest;
+        if (dayChanged && state.preset !== "custom") setPreset(state.preset);
+
+        $("presetTotal").textContent = `合計（${shortDay(state.start)}〜）`;
+        $("meta").textContent = `集計開始 ${longDay(state.firstDay)} ／ ${longDay(state.latest)} までのデータ（当日分は翌日に反映）`;
+      }
+
+      async function load(token, from) {
+        $("content").classList.add("loading");
+        try {
+          const [stats, articles] = await Promise.all([fetchStats(token, from), fetchTitles()]);
+          applyData(stats, articles);
+          render();
+        } finally {
+          $("content").classList.remove("loading");
+        }
+      }
+
+      // 期間を変えたときの再描画。読み込み済みより前の日付が必要になったら、その分を取り直す
+      function update() {
+        if (state.from < state.loadedFrom && state.loadedFrom > state.firstDay) {
+          load(localStorage.getItem(TOKEN_KEY), state.from).catch(err => showLogin(err.message));
+          return;
+        }
+        render();
+      }
+
+      function showLogin(message) {
+        $("dashboard").hidden = true;
+        $("login").hidden = false;
+        $("loginError").textContent = message || "";
+        $("tokenInput").focus();
+      }
+
+      async function start(token) {
+        try {
+          $("login").hidden = true;
+          $("dashboard").hidden = false;
+          await load(token);
+        } catch (err) {
+          showLogin(err.message);
+          return false;
+        }
+        return true;
+      }
+
+      // ── 操作 ──
+
+      $("loginForm").addEventListener("submit", async e => {
+        e.preventDefault();
+        const token = $("tokenInput").value;
+        if (!(await start(token))) return;
+
+        localStorage.setItem(TOKEN_KEY, token);
+        // ログインできた = 自分のブラウザなので、以後このブラウザからのアクセスは数えない
+        localStorage.setItem(OWNER_KEY, "1");
+        $("ownerToggle").checked = true;
+        $("tokenInput").value = "";
+      });
+
+      $("logout").addEventListener("click", () => {
+        localStorage.removeItem(TOKEN_KEY);
+        showLogin("");
+      });
+
+      $("reload").addEventListener("click", () => {
+        load(localStorage.getItem(TOKEN_KEY), state.loadedFrom).catch(err => showLogin(err.message));
+      });
+
+      $("ownerToggle").addEventListener("change", e => {
+        if (e.target.checked) localStorage.setItem(OWNER_KEY, "1");
+        else localStorage.removeItem(OWNER_KEY);
+      });
+
+      $("presets").addEventListener("click", e => {
+        const preset = e.target.dataset.preset;
+        if (!preset) return;
+        setPreset(preset);
+        update();
+      });
+
+      $("grans").addEventListener("click", e => {
+        if (!e.target.dataset.gran) return;
+        state.gran = e.target.dataset.gran;
+        render();
+      });
+
+      for (const id of ["from", "to"]) {
+        $(id).addEventListener("change", e => {
+          if (!e.target.value) return;
+          state[id] = e.target.value;
+          state.preset = "custom";
+          state.gran = null;
+          update();
+        });
+      }
+
+      $("subject").addEventListener("change", e => {
+        state.subject = e.target.value;
+        render();
+      });
+
+      document.querySelector("thead").addEventListener("click", e => {
+        const key = e.target.dataset.sort;
+        if (!key) return;
+        // 同じ列をもう一度押したら昇順・降順を入れ替える。数値の列は多い順から始める
+        state.sortAsc = state.sort === key ? !state.sortAsc : key === "title";
+        state.sort = key;
+        render();
+      });
+
+      let resizeTimer = null;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => { if (!$("dashboard").hidden && state.latest) render(); }, 150);
+      });
+
+      // 除外の印はサイトごとに保存されるため、公開サイト上で開いたときだけ意味がある
+      if (location.hostname === "untechnical.info") {
+        $("ownerToggle").checked = localStorage.getItem(OWNER_KEY) === "1";
+      } else {
+        $("ownerLabel").hidden = true;
+      }
+
+      const savedToken = localStorage.getItem(TOKEN_KEY);
+      if (savedToken) start(savedToken);
+      else showLogin("");
+    </script>
+  </body>
+</html>
