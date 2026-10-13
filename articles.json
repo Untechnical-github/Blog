@@ -48,7 +48,7 @@
     "visibility": "public"
   },
   {
-    "title": "【iPhone・iPad】IPAからアプリをインストールする方法",
+    "title": "【サイドロード】IPAからアプリをインストールする方法",
     "category": [
       "iOS"
     ],
@@ -56,7 +56,7 @@
     "description": "iOSでサイドロードする方法を解説",
     "image": "https://untechnical.info/articles/sideload/sideload.png",
     "datePublished": "2026-05-07",
-    "dateModified": "2026-05-07",
+    "dateModified": "2026-10-13",
     "visibility": "public"
   },
   {
@@ -72,7 +72,7 @@
     "visibility": "public"
   },
   {
-    "title": "【iPhone】フォートナイトのAltStore PALでのインストール方法",
+    "title": "【フォートナイト】AltStore PALでのインストール方法",
     "category": [
       "iOS"
     ],
@@ -80,7 +80,7 @@
     "description": "AltStore PALでEpic Gamesのフォートナイトをインストールする方法を解説",
     "image": "https://untechnical.info/articles/epic/epic.jpg",
     "datePublished": "2026-03-06",
-    "dateModified": "2026-05-25",
+    "dateModified": "2026-10-13",
     "visibility": "public"
   },
   {
@@ -230,7 +230,7 @@
     "visibility": "public"
   },
   {
-    "title": "【iPhone・iPad】SideStoreでIPAからアプリをインストールする方法",
+    "title": "【SideStore】IPAからアプリをインストールする方法",
     "category": [
       "iOS"
     ],
@@ -238,11 +238,11 @@
     "description": "SideStoreを用いて、iOSでサイドロードする方法を解説",
     "image": "https://untechnical.info/articles/sideload/sidestore/sidestore.jpg",
     "datePublished": "2025-10-24",
-    "dateModified": "2026-05-07",
+    "dateModified": "2026-10-13",
     "visibility": "public"
   },
   {
-    "title": "【iPhone・iPad】FeatherでIPAからアプリをインストールする方法",
+    "title": "【KravaSigner･Feather】IPAからアプリをインストールする方法",
     "category": [
       "iOS"
     ],
@@ -250,7 +250,7 @@
     "description": "Featherを用いて、iOSでサイドロードする方法を解説",
     "image": "https://untechnical.info/articles/sideload/feather/feather.jpg",
     "datePublished": "2025-10-13",
-    "dateModified": "2026-05-25",
+    "dateModified": "2026-10-13",
     "visibility": "public"
   },
   {
