@@ -17,7 +17,7 @@ const formatDateJapanese = (date) =>
 (async () => {
   const changedFiles = process.argv
     .slice(2)
-    .filter(f => f.endsWith(".html") && f !== "index.html" && f !== "policy.html");
+    .filter(f => f.endsWith(".html") && f !== "index.html" && f !== "policy.html" && f !== "stats.html");
 
   if (changedFiles.length === 0) {
     console.log("⏩ 変更されたHTMLファイルはありません。");
