@@ -230,12 +230,12 @@
     "visibility": "public"
   },
   {
-    "title": "【SideStore】IPAからアプリをインストールする方法",
+    "title": "【SideStore･LiveContainer】IPAからアプリをインストールする方法",
     "category": [
       "iOS"
     ],
     "path": "articles/sideload/sidestore/sidestore.html",
-    "description": "SideStoreを用いて、iOSでサイドロードする方法を解説",
+    "description": "SideStoreまたはLiveContainerを利用して、iOSでサイドロードする方法を解説",
     "image": "https://untechnical.info/articles/sideload/sidestore/sidestore.jpg",
     "datePublished": "2025-10-24",
     "dateModified": "2026-10-13",
@@ -247,7 +247,7 @@
       "iOS"
     ],
     "path": "articles/sideload/feather/feather.html",
-    "description": "Featherを用いて、iOSでサイドロードする方法を解説",
+    "description": "KravaSignerまたはFeatherを利用して、iOSでサイドロードする方法を解説",
     "image": "https://untechnical.info/articles/sideload/feather/feather.jpg",
     "datePublished": "2025-10-13",
     "dateModified": "2026-10-13",
