@@ -24,7 +24,7 @@ async function getAllHtmlFiles(dir) {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       if (!IGNORE_DIRS.includes(entry.name)) results = results.concat(await getAllHtmlFiles(fullPath));
-    } else if (entry.isFile() && entry.name.endsWith(".html") && !["index.html", "policy.html", "stats.html"].includes(entry.name)) {
+    } else if (entry.isFile() && entry.name.endsWith(".html") && !["index.html", "404.html", "policy.html", "stats.html"].includes(entry.name)) {
       results.push(fullPath);
     }
   }

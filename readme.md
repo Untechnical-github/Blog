@@ -83,7 +83,7 @@ script/filter-meaningful-diff.js は、本文・タイトル・画像・リン�
 | `redirect-map.json` | ファイル名→パスの辞書だけ | 404が出たときだけ（エッジ） |
 
 * `articles.json` / `search-index.json` / `redirect-map.json` は `script/rebuild-articles.js` が生成する。`sitemap.xml` は `script/rebuild-sitemap.js` が生成する（共通ロジックは `script/lib/sitemap-lib.js`）。どちらも毎回 `articles/` 配下を全件スキャンして作り直す方式で、差分は使わない。23記事程度の規模では節約になる時間（1秒程度）よりも、差分復元の失敗で記事一覧やサイトマップが古いまま/消えたまま公開されるリスクの方が大きいと判断した。特に記事を削除したケースは、差分方式だと「削除自体は変更ファイルとして検出できない」ため放置すると死んだURLがサイトマップに残り続けてしまう。解析ロジックは `script/lib/article-parser.js` に集約している。
-* `script/update-article-dates.js` だけは差分のまま残している。今回変更された記事HTML内の `<time class="modified">` と JSON-LD の `dateModified` を今日の日付に書き換える、というファイル内容そのものを書き換える副作用があるため、変更していない記事まで巻き込むわけにいかない。この後に `rebuild-sitemap.js` を走らせることで、書き換えた日付がそのまま `sitemap.xml` にも反映される。
+* `script/update-article-dates.js` だけは差分のまま残している。今回変更された記事HTML内の `<time class="modified">` と JSON-LD の `dateModified` を今日の日付に書き換える、というファイル内容そのものを書き換える副作用があるため、変更していない記事まで巻き込むわけにいかない。この後に `rebuild-sitemap.js` を走らせることで、書き換えた日付がそのまま `sitemap.xml` にも反映される。記事のほか `index.html` と `policy.html` も対象（記事一覧やサイトマップには載せないが、最終更新日だけは更新する）。`404.html` は直後に `index.html` からコピーされるので同じ日付になる。
 * `404.html` は `index.html` からビルド時に自動コピーされる（手動で2つ管理しなくてよい）。
 
 **AI校正（`ai-proofread.yml` / `ai-proofread-manual.yml`）**

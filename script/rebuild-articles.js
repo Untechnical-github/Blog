@@ -28,6 +28,7 @@ async function getAllHtmlFiles(dir) {
       entry.isFile() &&
       entry.name.endsWith(".html") &&
       entry.name !== "index.html" &&
+      entry.name !== "404.html" &&
       entry.name !== "policy.html" &&
       entry.name !== "stats.html"
     ) {
