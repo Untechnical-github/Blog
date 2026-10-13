@@ -122,7 +122,8 @@
       }
 
       .group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-      #subject { max-width: min(100%, 320px); }
+      #sort { max-width: 100%; }
+      .table-hint { margin: 0 16px 8px; }
 
       /* ── 数値タイル ── */
       .tiles {
@@ -140,13 +141,14 @@
 
       /* ── グラフ ── */
       .chart-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin-bottom: 8px; }
-      #chartTitle { overflow-wrap: anywhere; }
-      #chartWrap { position: relative; }
-      #chart { display: block; width: 100%; height: 280px; outline-offset: 4px; }
-      #chart text { font-size: 11px; fill: var(--text-muted); font-variant-numeric: tabular-nums; }
-      #chart .end-label { fill: var(--text-primary); font-size: 12px; font-weight: 600; }
+      #charts { display: grid; gap: 16px; }
+      #charts h2 { overflow-wrap: anywhere; }
+      .chart-wrap { position: relative; }
+      .chart { display: block; width: 100%; height: 280px; outline-offset: 4px; }
+      .chart text { font-size: 11px; fill: var(--text-muted); font-variant-numeric: tabular-nums; }
+      .chart .end-label { fill: var(--text-primary); font-size: 12px; font-weight: 600; }
 
-      #tooltip {
+      .tooltip {
         position: absolute;
         top: 4px;
         pointer-events: none;
@@ -158,10 +160,10 @@
         white-space: nowrap;
       }
 
-      #tooltip .tip-value { font-size: 16px; font-weight: 600; }
-      #tooltip .tip-label { color: var(--text-secondary); font-size: 12px; }
+      .tooltip .tip-value { font-size: 16px; font-weight: 600; }
+      .tooltip .tip-label { color: var(--text-secondary); font-size: 12px; }
 
-      #empty { text-align: center; color: var(--text-muted); padding: 100px 0; margin: 0; }
+      .empty { text-align: center; color: var(--text-muted); padding: 100px 0; margin: 0; }
 
       /* ── 表 ── */
       .table-card { margin-top: 16px; padding: 16px 0 4px; }
@@ -175,13 +177,12 @@
       th:last-child, td:last-child { padding-right: 16px; }
 
       th { font-weight: 400; color: var(--text-secondary); font-size: 12px; border-top: none; }
-      th button { border: none; background: none; padding: 2px 0; min-height: 0; color: inherit; }
-      th button:hover { background: none; color: var(--text-primary); }
-      th[aria-sort] button { color: var(--text-primary); font-weight: 600; }
 
       td { font-variant-numeric: tabular-nums; }
       td .page { border: none; background: none; padding: 0; min-height: 0; text-align: left; overflow-wrap: anywhere; }
-      td .page:hover { background: none; text-decoration: underline; }
+      td button.page:hover { background: none; text-decoration: underline; }
+      td label.page { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; }
+      td label.page input { margin: 3px 0 0; flex: none; }
       td .path { display: block; color: var(--text-muted); font-size: 11px; overflow-wrap: anywhere; }
 
       tr.total td { font-weight: 600; }
@@ -231,12 +232,10 @@
             <span class="muted">〜</span>
             <input type="date" id="to" aria-label="終了日">
           </div>
-          <div class="group" id="grans" role="group" aria-label="グラフの集計単位">
-            <button type="button" data-gran="day">日</button>
-            <button type="button" data-gran="week">週</button>
-            <button type="button" data-gran="month">月</button>
+          <div class="group">
+            <span class="muted" id="selectionLabel"></span>
+            <button type="button" id="clearSelection">選択を解除</button>
           </div>
-          <select id="subject" aria-label="表示するページ"></select>
         </div>
 
         <div id="content">
@@ -247,32 +246,30 @@
             <div class="card tile"><div class="label">最も多かった日</div><div class="value" id="tilePeak"></div><div class="note" id="tilePeakDay"></div></div>
           </div>
 
-          <div class="card">
-            <div class="chart-head">
-              <h2 id="chartTitle"></h2>
-              <span class="muted" id="chartRange"></span>
-            </div>
-            <div id="chartWrap">
-              <svg id="chart" tabindex="0" role="img"></svg>
-              <div id="tooltip" hidden><div class="tip-value"></div><div class="tip-label"></div></div>
-              <p id="empty" hidden>この期間のデータはまだありません。当日分は翌日に反映されます。</p>
-            </div>
-          </div>
+          <div id="charts"></div>
 
           <div class="card table-card">
             <div class="chart-head">
               <h2>ページごとのアクセス数</h2>
-              <span class="muted">行を選ぶとグラフがそのページに切り替わります</span>
+              <select id="sort" aria-label="並び替え">
+                <option value="newest">新しい順</option>
+                <option value="oldest">古い順</option>
+                <option value="views-week">アクセス数順（直近1週間）</option>
+                <option value="views-month" selected>アクセス数順（直近1ヶ月）</option>
+                <option value="views-year">アクセス数順（直近1年間）</option>
+                <option value="views-total">アクセス数順（合計）</option>
+              </select>
             </div>
+            <p class="muted table-hint">チェックを入れたページの合計が、上の数値とグラフに表示されます（複数選択できます）</p>
             <div class="table-scroll">
               <table>
                 <thead>
                   <tr>
-                    <th><button type="button" data-sort="title">ページ</button></th>
-                    <th><button type="button" data-sort="week">直近1週間</button></th>
-                    <th><button type="button" data-sort="month">直近1ヶ月</button></th>
-                    <th><button type="button" data-sort="year">直近1年</button></th>
-                    <th><button type="button" data-sort="range" id="rangeHeader">選択期間</button></th>
+                    <th>ページ</th>
+                    <th>直近1週間</th>
+                    <th>直近1ヶ月</th>
+                    <th>直近1年</th>
+                    <th id="rangeHeader">合計</th>
                   </tr>
                 </thead>
                 <tbody id="rows"></tbody>
@@ -308,6 +305,7 @@
         counts: new Map(),      // path -> Map(day -> count)
         totalByDay: new Map(),  // day -> count（全ページ合計）
         titles: new Map(),      // path -> 記事タイトル
+        dates: new Map(),       // path -> 公開日
         topPage: "index",
         latest: "",             // 表示する最後の日（= 前日。当日分は翌日から見える）
         start: "",
@@ -316,10 +314,9 @@
         preset: "month",
         from: "",
         to: "",
-        gran: null,             // null = 期間の長さから自動で決める
-        subject: ALL,
-        sort: "range",
-        sortAsc: false
+        picked: { from: false, to: false }, // 期間指定で、開始日・終了日をそれぞれ自分で選んだか
+        selected: new Set(),    // グラフと数値に出すページ。空なら全体
+        sort: "views-month"     // index.html の並び替えと同じ値。期間指定中だけ "views-range" も選べる
       };
 
       // ── 日付（YYYY-MM-DD の文字列のまま扱う） ──
@@ -344,9 +341,26 @@
 
       const dayMap = subject => subject === ALL ? state.totalByDay : (state.counts.get(subject) || new Map());
 
-      function sumRange(subject, from, to) {
+      // 選択中のページを足し合わせた日別の数
+      function selectedMap() {
+        if (state.selected.size === 0) return state.totalByDay;
+        if (state.selected.size === 1) return dayMap([...state.selected][0]);
+        const merged = new Map();
+        for (const path of state.selected) {
+          for (const [day, count] of dayMap(path)) merged.set(day, (merged.get(day) || 0) + count);
+        }
+        return merged;
+      }
+
+      function selectedTitle() {
+        if (state.selected.size === 0) return pageTitle(ALL);
+        if (state.selected.size === 1) return pageTitle([...state.selected][0]);
+        return `選択した${state.selected.size}ページ`;
+      }
+
+      function sumRange(map, from, to) {
         let sum = 0;
-        for (const [day, count] of dayMap(subject)) {
+        for (const [day, count] of map) {
           if (day >= from && day <= to) sum += count;
         }
         return sum;
@@ -359,14 +373,15 @@
         return { from, to };
       }
 
-      function autoGran(days) {
-        if (days <= 92) return "day";
-        if (days <= 730) return "week";
-        return "month";
-      }
+      // 推移グラフの種類。期間が minSpan 日以下のときは点が 1 つにしかならないので表示しない
+      const GRANS = [
+        { gran: "day", unit: "日別", minSpan: -Infinity },
+        { gran: "week", unit: "週別", minSpan: 7 },
+        { gran: "month", unit: "月別", minSpan: 31 },
+        { gran: "year", unit: "年別", minSpan: 366 }
+      ];
 
-      function buildSeries(subject, from, to, gran) {
-        const map = dayMap(subject);
+      function buildSeries(map, from, to, gran) {
         const buckets = [];
         let current = null;
 
@@ -374,6 +389,7 @@
           let key = day;
           if (gran === "week") key = addDays(day, -((toDate(day).getUTCDay() + 6) % 7)); // 月曜始まり
           if (gran === "month") key = day.slice(0, 7);
+          if (gran === "year") key = day.slice(0, 4);
 
           if (!current || current.key !== key) {
             current = { key, first: day, last: day, value: 0 };
@@ -386,6 +402,7 @@
         return buckets.map(b => {
           if (gran === "day") return { value: b.value, axis: shortDay(b.first), tip: longDay(b.first) };
           if (gran === "week") return { value: b.value, axis: shortDay(b.first) + "〜", tip: `${longDay(b.first)} 〜 ${shortDay(b.last)}` };
+          if (gran === "year") return { value: b.value, axis: b.key, tip: `${b.key}年` };
           const [y, m] = b.key.split("-").map(Number);
           return { value: b.value, axis: `${y}/${m}`, tip: `${y}年${m}月` };
         });
@@ -414,21 +431,31 @@
         return Math.max(1, step);
       }
 
-      let hover = null; // 現在のグラフのホバー処理（再描画のたびに差し替える）
+      // グラフ 1 枚分のカードを作って #charts に追加する
+      function drawChart(title, range, series) {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="chart-head"><h2></h2><span class="muted"></span></div>
+          <div class="chart-wrap">
+            <svg class="chart" tabindex="0" role="img"></svg>
+            <div class="tooltip" hidden><div class="tip-value"></div><div class="tip-label"></div></div>
+            <p class="empty" hidden>この期間のデータはまだありません。当日分は翌日に反映されます。</p>
+          </div>`;
+        card.querySelector("h2").textContent = title;
+        card.querySelector(".muted").textContent = range;
+        $("charts").appendChild(card);
 
-      function drawChart(series) {
-        const svg = $("chart");
-        const tooltip = $("tooltip");
-        svg.replaceChildren();
-        tooltip.hidden = true;
-        hover = null;
+        const svg = card.querySelector("svg");
+        const tooltip = card.querySelector(".tooltip");
+        svg.setAttribute("aria-label", `${title}。左右キーで値を確認できます。`);
 
         const hasData = series.length > 0 && series.some(p => p.value > 0);
-        $("empty").hidden = hasData;
-        svg.hidden = !hasData;
+        card.querySelector(".empty").hidden = hasData;
+        svg.toggleAttribute("hidden", !hasData);
         if (!hasData) return;
 
-        const width = $("chartWrap").clientWidth;
+        const width = card.querySelector(".chart-wrap").clientWidth;
         const height = 280;
         const margin = { top: 16, right: 48, bottom: 28, left: 44 };
         const plotW = width - margin.left - margin.right;
@@ -466,7 +493,7 @@
         const dot = svgEl("circle", { r: 5, fill: "var(--series)", stroke: "var(--surface)", "stroke-width": 2, visibility: "hidden" }, svg);
 
         let active = -1;
-        hover = {
+        const hover = {
           show(i) {
             active = Math.max(0, Math.min(last, i));
             const px = x(active);
@@ -497,38 +524,58 @@
             this.show(active === -1 ? last : active + delta);
           }
         };
-      }
 
-      $("chart").addEventListener("pointermove", e => hover && hover.fromPointer(e.clientX));
-      $("chart").addEventListener("pointerdown", e => hover && hover.fromPointer(e.clientX));
-      $("chart").addEventListener("pointerleave", () => hover && hover.hide());
-      $("chart").addEventListener("blur", () => hover && hover.hide());
-      $("chart").addEventListener("keydown", e => {
-        if (!hover || (e.key !== "ArrowLeft" && e.key !== "ArrowRight")) return;
-        e.preventDefault();
-        hover.move(e.key === "ArrowLeft" ? -1 : 1);
-      });
+        svg.addEventListener("pointermove", e => hover.fromPointer(e.clientX));
+        svg.addEventListener("pointerdown", e => hover.fromPointer(e.clientX));
+        svg.addEventListener("pointerleave", () => hover.hide());
+        svg.addEventListener("blur", () => hover.hide());
+        svg.addEventListener("keydown", e => {
+          if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+          e.preventDefault();
+          hover.move(e.key === "ArrowLeft" ? -1 : 1);
+        });
+      }
 
       // ── 表 ──
 
-      function drawTable(from, to) {
+      function toggleSelected(path) {
+        if (state.selected.has(path)) state.selected.delete(path);
+        else state.selected.add(path);
+        render();
+        // 描き直しで外れたフォーカスを、同じ行のチェックボックスに戻す
+        const box = [...document.querySelectorAll("#rows input")].find(input => input.value === path);
+        if (box) box.focus();
+      }
+
+      // 右端の列（選択中の期間）は、合計か期間指定のときだけ出す
+      function drawTable(from, to, showRange) {
         const periodFrom = days => addDays(state.latest, -(days - 1));
         const paths = new Set([state.topPage, ...state.titles.keys(), ...state.counts.keys()]);
 
-        const rowFor = path => ({
-          path,
-          title: pageTitle(path),
-          week: sumRange(path, periodFrom(PRESET_DAYS.week), state.latest),
-          month: sumRange(path, periodFrom(PRESET_DAYS.month), state.latest),
-          year: sumRange(path, periodFrom(PRESET_DAYS.year), state.latest),
-          range: from <= to ? sumRange(path, from, to) : 0
-        });
+        const rowFor = path => {
+          const map = dayMap(path);
+          return {
+            path,
+            title: pageTitle(path),
+            date: state.dates.get(path) || "",
+            week: sumRange(map, periodFrom(PRESET_DAYS.week), state.latest),
+            month: sumRange(map, periodFrom(PRESET_DAYS.month), state.latest),
+            year: sumRange(map, periodFrom(PRESET_DAYS.year), state.latest),
+            total: sumRange(map, state.start, state.latest),
+            range: from <= to ? sumRange(map, from, to) : 0
+          };
+        };
 
         const rows = [...paths].map(rowFor);
-        const dir = state.sortAsc ? 1 : -1;
-        rows.sort((a, b) => state.sort === "title"
-          ? dir * a.title.localeCompare(b.title, "ja")
-          : dir * (a[state.sort] - b[state.sort]) || b.range - a.range || a.title.localeCompare(b.title, "ja"));
+        const byTitle = (a, b) => a.title.localeCompare(b.title, "ja");
+        if (state.sort === "newest" || state.sort === "oldest") {
+          // 公開日のないページ（トップページなど）は末尾に置く
+          const dir = state.sort === "newest" ? -1 : 1;
+          rows.sort((a, b) => !a.date - !b.date || dir * a.date.localeCompare(b.date) || byTitle(a, b));
+        } else {
+          const key = state.sort.replace("views-", "");
+          rows.sort((a, b) => b[key] - a[key] || b.total - a.total || byTitle(a, b));
+        }
 
         const maxRange = Math.max(1, ...rows.map(r => r.range));
         const tbody = $("rows");
@@ -537,28 +584,44 @@
         // 全体の行は並び替えに関係なく常に先頭に置く
         for (const row of [rowFor(ALL), ...rows]) {
           const tr = document.createElement("tr");
-          if (row.path === ALL) tr.classList.add("total");
-          if (row.path === state.subject) tr.classList.add("selected");
-
           const titleCell = tr.insertCell();
-          const button = document.createElement("button");
-          button.type = "button";
-          button.className = "page";
-          button.textContent = row.title;
-          button.setAttribute("aria-pressed", row.path === state.subject ? "true" : "false");
-          button.addEventListener("click", () => {
-            state.subject = row.path;
-            render();
-          });
-          titleCell.appendChild(button);
-          if (row.path !== ALL && row.path !== state.topPage) {
-            const path = document.createElement("span");
-            path.className = "path";
-            path.textContent = "/" + row.path.replace(/\.html$/, "");
-            titleCell.appendChild(path);
+
+          if (row.path === ALL) {
+            // 全体の行を押すと、ページの選択をすべて外す
+            tr.classList.add("total");
+            if (state.selected.size === 0) tr.classList.add("selected");
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "page";
+            button.textContent = row.title;
+            button.setAttribute("aria-pressed", state.selected.size === 0 ? "true" : "false");
+            button.addEventListener("click", () => {
+              state.selected.clear();
+              render();
+            });
+            titleCell.appendChild(button);
+          } else {
+            if (state.selected.has(row.path)) tr.classList.add("selected");
+            const label = document.createElement("label");
+            label.className = "page";
+            const box = document.createElement("input");
+            box.type = "checkbox";
+            box.value = row.path;
+            box.checked = state.selected.has(row.path);
+            box.addEventListener("change", () => toggleSelected(row.path));
+            const text = document.createElement("span");
+            text.textContent = row.title;
+            if (row.path !== state.topPage) {
+              const path = document.createElement("span");
+              path.className = "path";
+              path.textContent = "/" + row.path.replace(/\.html$/, "");
+              text.appendChild(path);
+            }
+            label.append(box, text);
+            titleCell.appendChild(label);
           }
 
-          for (const key of ["week", "month", "year", "range"]) {
+          for (const key of showRange ? ["week", "month", "year", "range"] : ["week", "month", "year"]) {
             const cell = tr.insertCell();
             cell.textContent = fmt(row[key]);
             if (key === "range" && row.path !== ALL) {
@@ -571,18 +634,14 @@
           tbody.appendChild(tr);
         }
 
-        document.querySelectorAll("th").forEach(th => {
-          const key = th.querySelector("button").dataset.sort;
-          if (key === state.sort) th.setAttribute("aria-sort", state.sortAsc ? "ascending" : "descending");
-          else th.removeAttribute("aria-sort");
-        });
+        $("rangeHeader").hidden = !showRange;
       }
 
       // ── 画面全体の描画 ──
 
       function setPreset(preset) {
         state.preset = preset;
-        state.gran = null;
+        state.picked = { from: false, to: false };
         state.to = state.latest;
         state.from = preset === "total" ? state.start : addDays(state.latest, -(PRESET_DAYS[preset] - 1));
       }
@@ -591,22 +650,32 @@
         const { from, to } = effectiveRange();
         const valid = from <= to;
         const days = valid ? dayCount(from, to) : 0;
-        const gran = state.gran || autoGran(days);
-        const subject = state.subject;
+        const map = selectedMap();
+        const title = selectedTitle();
+        const custom = state.preset === "custom";
 
         document.querySelectorAll("#presets button").forEach(b => b.setAttribute("aria-pressed", b.dataset.preset === state.preset));
-        document.querySelectorAll("#grans button").forEach(b => b.setAttribute("aria-pressed", b.dataset.gran === gran));
-        $("from").value = state.from;
-        $("to").value = state.to;
+        // プリセットを選んでいる間は日付欄を空にしておく
+        $("from").value = custom ? state.from : "";
+        $("to").value = custom ? state.to : "";
+        $("from").min = $("to").min = state.start;
         $("from").max = $("to").max = state.latest;
 
-        const select = $("subject");
-        const options = [ALL, state.topPage, ...[...new Set([...state.titles.keys(), ...state.counts.keys()])].filter(p => p !== state.topPage)];
-        select.replaceChildren(...options.map(path => new Option(pageTitle(path), path)));
-        select.value = subject;
+        $("selectionLabel").textContent = `表示中: ${title}`;
+        $("clearSelection").hidden = state.selected.size === 0;
+
+        // 「指定期間」での並び替えは、期間を指定している間だけ選べる
+        const sort = $("sort");
+        const rangeOption = sort.querySelector('[value="views-range"]');
+        if (custom && !rangeOption) sort.add(new Option("アクセス数順（指定期間）", "views-range"));
+        if (!custom && rangeOption) {
+          rangeOption.remove();
+          if (state.sort === "views-range") state.sort = "views-total";
+        }
+        sort.value = state.sort;
 
         // タイル
-        const total = valid ? sumRange(subject, from, to) : 0;
+        const total = valid ? sumRange(map, from, to) : 0;
         $("tileTotal").textContent = fmt(total);
         $("tileAvg").textContent = days ? (total / days).toLocaleString("ja-JP", { maximumFractionDigits: 1 }) : "0";
         $("tileDays").textContent = days ? `${days}日間` : "";
@@ -617,7 +686,7 @@
           // 比較対象の期間が読み込み済みの範囲に収まっているときだけ表示する（途中で切れた数値と比べない）
           const prevFrom = addDays(from, -days);
           const prevLoaded = prevFrom >= state.loadedFrom || state.loadedFrom <= state.firstDay;
-          const prevTotal = prevLoaded ? sumRange(subject, prevFrom, addDays(from, -1)) : 0;
+          const prevTotal = prevLoaded ? sumRange(map, prevFrom, addDays(from, -1)) : 0;
           if (prevTotal > 0) {
             const change = (total - prevTotal) / prevTotal * 100;
             const mark = document.createElement("span");
@@ -627,26 +696,29 @@
           }
         }
 
-        $("tileLatest").textContent = fmt(dayMap(subject).get(state.latest) || 0);
-        $("tilePrevious").textContent = `その前の日 ${fmt(dayMap(subject).get(addDays(state.latest, -1)) || 0)}`;
+        $("tileLatest").textContent = fmt(map.get(state.latest) || 0);
+        $("tilePrevious").textContent = `その前の日 ${fmt(map.get(addDays(state.latest, -1)) || 0)}`;
 
         let peakDay = "";
         let peak = 0;
-        for (const [day, count] of dayMap(subject)) {
+        for (const [day, count] of map) {
           if (day >= from && day <= to && count > peak) { peak = count; peakDay = day; }
         }
         $("tilePeak").textContent = fmt(peak);
         $("tilePeakDay").textContent = peakDay ? longDay(peakDay) : "";
 
         // グラフ
-        const unit = { day: "日別", week: "週別", month: "月別" }[gran];
-        $("chartTitle").textContent = `${pageTitle(subject)}のアクセス数の推移（${unit}）`;
-        $("chartRange").textContent = valid ? `${longDay(from)} 〜 ${longDay(to)}` : "";
-        $("chart").setAttribute("aria-label", `${pageTitle(subject)}のアクセス数の推移。左右キーで値を確認できます。`);
-        drawChart(valid ? buildSeries(subject, from, to, gran) : []);
+        // 合計は長さに関係なく全種類を出す。データがない期間は「データなし」を 1 枚だけ出す
+        const span = state.preset === "total" ? Infinity : dayCount(state.from, state.to);
+        const grans = total > 0 ? GRANS.filter(g => span > g.minSpan) : GRANS.slice(0, 1);
+        const rangeText = valid ? `${longDay(from)} 〜 ${longDay(to)}` : "";
+        $("charts").replaceChildren();
+        for (const { gran, unit } of grans) {
+          drawChart(`${title}のアクセス数の推移（${unit}）`, rangeText, valid ? buildSeries(map, from, to, gran) : []);
+        }
 
-        $("rangeHeader").textContent = state.preset === "custom" ? "指定期間" : document.querySelector(`[data-preset="${state.preset}"]`).textContent;
-        drawTable(from, to);
+        $("rangeHeader").textContent = custom ? "指定期間" : "合計";
+        drawTable(from, to, custom || state.preset === "total");
       }
 
       // ── データ取得 ──
@@ -680,6 +752,7 @@
         }
 
         state.titles = new Map(articles.map(a => [a.path, a.title]));
+        state.dates = new Map(articles.map(a => [a.path, a.datePublished || ""]));
         state.topPage = stats.topPage;
         state.start = stats.start;
         state.firstDay = stats.firstDay || stats.latest;
@@ -690,7 +763,6 @@
         state.latest = stats.latest;
         if (dayChanged && state.preset !== "custom") setPreset(state.preset);
 
-        $("presetTotal").textContent = `合計（${shortDay(state.start)}〜）`;
         $("meta").textContent = `集計開始 ${longDay(state.firstDay)} ／ ${longDay(state.latest)} までのデータ（当日分は翌日に反映）`;
       }
 
@@ -768,33 +840,36 @@
         update();
       });
 
-      $("grans").addEventListener("click", e => {
-        if (!e.target.dataset.gran) return;
-        state.gran = e.target.dataset.gran;
-        render();
-      });
-
       for (const id of ["from", "to"]) {
         $(id).addEventListener("change", e => {
           if (!e.target.value) return;
-          state[id] = e.target.value;
+          // 手入力でも範囲外の日付にならないようにする
+          let day = e.target.value;
+          if (day > state.latest) day = state.latest;
+          if (day < state.start) day = state.start;
+
+          // もう片方をまだ選んでいなければ、選ぶまで同じ日付にしておく
+          const other = id === "from" ? "to" : "from";
+          state[id] = day;
+          state.picked[id] = true;
+          if (!state.picked[other]) state[other] = day;
           state.preset = "custom";
-          state.gran = null;
           update();
         });
       }
 
-      $("subject").addEventListener("change", e => {
-        state.subject = e.target.value;
+      $("clearSelection").addEventListener("click", () => {
+        state.selected.clear();
         render();
       });
 
-      document.querySelector("thead").addEventListener("click", e => {
-        const key = e.target.dataset.sort;
-        if (!key) return;
-        // 同じ列をもう一度押したら昇順・降順を入れ替える。数値の列は多い順から始める
-        state.sortAsc = state.sort === key ? !state.sortAsc : key === "title";
-        state.sort = key;
+      $("sort").addEventListener("change", e => {
+        state.sort = e.target.value;
+        // 合計で並べるには全期間のデータが要るので、まだ読み込んでいなければ取り直す
+        if (state.sort === "views-total" && state.loadedFrom > state.firstDay) {
+          load(localStorage.getItem(TOKEN_KEY), state.start).catch(err => showLogin(err.message));
+          return;
+        }
         render();
       });
 
