@@ -19,6 +19,8 @@
         --border: rgba(11, 11, 11, 0.10);
         --wash: rgba(11, 11, 11, 0.05);
         --series: #2a78d6;
+        --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
+        --s5: #e87ba4; --s6: #008300; --s7: #6250d6; --s8: #e34948;
         --up: #006300;
         --critical: #d03b3b;
       }
@@ -36,6 +38,8 @@
           --border: rgba(255, 255, 255, 0.10);
           --wash: rgba(255, 255, 255, 0.07);
           --series: #3987e5;
+          --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+          --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
           --up: #0ca30c;
           --critical: #e66767;
         }
@@ -122,6 +126,9 @@
       }
 
       .group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+      #dayPicker button { min-width: 34px; padding: 6px 8px; }
+      #dayPicker button:disabled { opacity: 0.4; cursor: default; background: var(--surface); }
+      #dayPicker.active input { border-color: var(--text-primary); box-shadow: inset 0 0 0 1px var(--text-primary); font-weight: 600; }
       #sort { max-width: 100%; }
       .table-hint { margin: 0 16px 8px; }
 
@@ -162,6 +169,14 @@
 
       .tooltip .tip-value { font-size: 16px; font-weight: 600; }
       .tooltip .tip-label { color: var(--text-secondary); font-size: 12px; }
+      .tooltip .tip-row { display: flex; align-items: center; gap: 6px; font-size: 12px; max-width: 280px; }
+      .tooltip .tip-row .name { overflow: hidden; text-overflow: ellipsis; color: var(--text-secondary); }
+      .tooltip .tip-row .num { margin-left: auto; padding-left: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0 0 8px; font-size: 12px; color: var(--text-secondary); }
+      .legend span { display: inline-flex; align-items: center; gap: 6px; overflow-wrap: anywhere; }
+      .swatch { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 2px; }
+      td label.page .swatch { margin-top: 5px; }
 
       .empty { text-align: center; color: var(--text-muted); padding: 100px 0; margin: 0; }
 
@@ -185,7 +200,7 @@
       td label.page input { margin: 3px 0 0; flex: none; }
       td .path { display: block; color: var(--text-muted); font-size: 11px; overflow-wrap: anywhere; }
 
-      tr.total td { font-weight: 600; }
+      tr.total td, tr.select-all td { font-weight: 600; }
       tr.selected td { background: var(--wash); }
       tr.selected td:first-child { box-shadow: inset 3px 0 0 var(--series); }
 
@@ -227,23 +242,20 @@
             <button type="button" data-preset="year">直近1年</button>
             <button type="button" data-preset="total" id="presetTotal">合計</button>
           </div>
-          <div class="group">
-            <input type="date" id="from" aria-label="開始日">
-            <span class="muted">〜</span>
-            <input type="date" id="to" aria-label="終了日">
+          <div class="group" id="dayPicker" role="group" aria-label="1日だけ表示">
+            <button type="button" id="prevDay" aria-label="前の日">◀</button>
+            <input type="date" id="day" aria-label="日付">
+            <button type="button" id="nextDay" aria-label="次の日">▶</button>
           </div>
           <div class="group">
             <span class="muted" id="selectionLabel"></span>
-            <button type="button" id="clearSelection">選択を解除</button>
           </div>
         </div>
 
         <div id="content">
           <div class="tiles">
-            <div class="card tile"><div class="label">期間内のアクセス数</div><div class="value" id="tileTotal"></div><div class="note" id="tileDelta"></div></div>
-            <div class="card tile"><div class="label">1日あたりの平均</div><div class="value" id="tileAvg"></div><div class="note" id="tileDays"></div></div>
-            <div class="card tile"><div class="label">前日</div><div class="value" id="tileLatest"></div><div class="note" id="tilePrevious"></div></div>
-            <div class="card tile"><div class="label">最も多かった日</div><div class="value" id="tilePeak"></div><div class="note" id="tilePeakDay"></div></div>
+            <div class="card tile"><div class="label" id="tileTotalLabel">期間内のアクセス数</div><div class="value" id="tileTotal"></div><div class="note" id="tileDelta"></div></div>
+            <div class="card tile" id="tileAvgCard"><div class="label">1日あたりの平均</div><div class="value" id="tileAvg"></div><div class="note" id="tileDays"></div></div>
           </div>
 
           <div id="charts"></div>
@@ -260,12 +272,13 @@
                 <option value="views-total">アクセス数順（合計）</option>
               </select>
             </div>
-            <p class="muted table-hint">チェックを入れたページの合計が、上の数値とグラフに表示されます（複数選択できます）</p>
+            <p class="muted table-hint">チェックを入れたページがグラフに1本ずつ表示され、その合計が上の数値に表示されます（複数選択できます）</p>
             <div class="table-scroll">
               <table>
                 <thead>
                   <tr>
                     <th>ページ</th>
+                    <th id="dayHeader" hidden></th>
                     <th>直近1週間</th>
                     <th>直近1ヶ月</th>
                     <th>直近1年</th>
@@ -311,12 +324,20 @@
         start: "",
         firstDay: "",           // データが存在する最初の日
         loadedFrom: "",         // この日付以降の日別データを読み込み済み
-        preset: "month",
+        preset: "month",        // week / month / year / total / day（1日だけ表示）
+        day: "",                // preset が day のときの日付
         from: "",
         to: "",
-        picked: { from: false, to: false }, // 期間指定で、開始日・終了日をそれぞれ自分で選んだか
-        selected: new Set(),    // グラフと数値に出すページ。空なら全体
-        sort: "views-month"     // index.html の並び替えと同じ値。期間指定中だけ "views-range" も選べる
+        selected: new Set([ALL]), // グラフに 1 本ずつ出すページ（全体は ALL）
+        colors: new Map(),      // path -> 色の番号。選んだ時点で決め、他の選択が変わっても塗り替えない
+        sort: "views-month"     // index.html の並び替えと同じ値。1日表示中だけ "views-day" も選べる
+      };
+      state.colors.set(ALL, 0);
+
+      const SERIES_COLORS = 8;
+      const seriesColor = path => {
+        const slot = state.colors.get(path);
+        return slot < SERIES_COLORS ? `var(--s${slot + 1})` : "var(--text-muted)"; // 9 本目以降は灰色
       };
 
       // ── 日付（YYYY-MM-DD の文字列のまま扱う） ──
@@ -341,9 +362,10 @@
 
       const dayMap = subject => subject === ALL ? state.totalByDay : (state.counts.get(subject) || new Map());
 
-      // 選択中のページを足し合わせた日別の数
+      // 選択中のページを足し合わせた日別の数（全体を含むなら全体そのもの）
       function selectedMap() {
-        if (state.selected.size === 0) return state.totalByDay;
+        if (state.selected.has(ALL)) return state.totalByDay;
+        if (state.selected.size === 0) return new Map();
         if (state.selected.size === 1) return dayMap([...state.selected][0]);
         const merged = new Map();
         for (const path of state.selected) {
@@ -353,9 +375,10 @@
       }
 
       function selectedTitle() {
-        if (state.selected.size === 0) return pageTitle(ALL);
+        if (state.selected.has(ALL)) return pageTitle(ALL);
+        if (state.selected.size === 0) return "未選択";
         if (state.selected.size === 1) return pageTitle([...state.selected][0]);
-        return `選択した${state.selected.size}ページ`;
+        return `選択した${state.selected.size}ページの合計`;
       }
 
       function sumRange(map, from, to) {
@@ -381,7 +404,8 @@
         { gran: "year", unit: "年別", minSpan: 366 }
       ];
 
-      function buildSeries(map, from, to, gran) {
+      // 横軸の区切り（日・週・月・年）。各区切りに含まれる日付と、軸・ツールチップの文字を持つ
+      function buildBuckets(from, to, gran) {
         const buckets = [];
         let current = null;
 
@@ -392,21 +416,24 @@
           if (gran === "year") key = day.slice(0, 4);
 
           if (!current || current.key !== key) {
-            current = { key, first: day, last: day, value: 0 };
+            current = { key, days: [] };
             buckets.push(current);
           }
-          current.last = day;
-          current.value += map.get(day) || 0;
+          current.days.push(day);
         }
 
         return buckets.map(b => {
-          if (gran === "day") return { value: b.value, axis: shortDay(b.first), tip: longDay(b.first) };
-          if (gran === "week") return { value: b.value, axis: shortDay(b.first) + "〜", tip: `${longDay(b.first)} 〜 ${shortDay(b.last)}` };
-          if (gran === "year") return { value: b.value, axis: b.key, tip: `${b.key}年` };
+          const first = b.days[0];
+          const last = b.days[b.days.length - 1];
+          if (gran === "day") return { days: b.days, axis: shortDay(first), tip: longDay(first) };
+          if (gran === "week") return { days: b.days, axis: shortDay(first) + "〜", tip: `${longDay(first)} 〜 ${shortDay(last)}` };
+          if (gran === "year") return { days: b.days, axis: b.key, tip: `${b.key}年` };
           const [y, m] = b.key.split("-").map(Number);
-          return { value: b.value, axis: `${y}/${m}`, tip: `${y}年${m}月` };
+          return { days: b.days, axis: `${y}/${m}`, tip: `${y}年${m}月` };
         });
       }
+
+      const bucketValues = (map, buckets) => buckets.map(b => b.days.reduce((sum, day) => sum + (map.get(day) || 0), 0));
 
       function pageTitle(path) {
         if (path === ALL) return "全体";
@@ -432,28 +459,46 @@
       }
 
       // グラフ 1 枚分のカードを作って #charts に追加する
-      function drawChart(title, range, series) {
+      // lines: [{ name, color, values }]。values は buckets と同じ長さ
+      function drawChart(title, range, buckets, lines, emptyText) {
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
           <div class="chart-head"><h2></h2><span class="muted"></span></div>
+          <div class="legend" hidden></div>
           <div class="chart-wrap">
             <svg class="chart" tabindex="0" role="img"></svg>
-            <div class="tooltip" hidden><div class="tip-value"></div><div class="tip-label"></div></div>
-            <p class="empty" hidden>この期間のデータはまだありません。当日分は翌日に反映されます。</p>
+            <div class="tooltip" hidden><div class="tip-value"></div><div class="tip-label"></div><div class="tip-rows"></div></div>
+            <p class="empty" hidden></p>
           </div>`;
         card.querySelector("h2").textContent = title;
         card.querySelector(".muted").textContent = range;
+        card.querySelector(".empty").textContent = emptyText;
         $("charts").appendChild(card);
 
         const svg = card.querySelector("svg");
         const tooltip = card.querySelector(".tooltip");
         svg.setAttribute("aria-label", `${title}。左右キーで値を確認できます。`);
 
-        const hasData = series.length > 0 && series.some(p => p.value > 0);
+        const hasData = buckets.length > 0 && lines.some(l => l.values.some(v => v > 0));
         card.querySelector(".empty").hidden = hasData;
         svg.toggleAttribute("hidden", !hasData);
         if (!hasData) return;
+
+        // 2 本以上なら凡例を出す（1 本ならタイトルが名前を示している）
+        const multi = lines.length > 1;
+        if (multi) {
+          const legend = card.querySelector(".legend");
+          legend.hidden = false;
+          for (const line of lines) {
+            const item = document.createElement("span");
+            const swatch = document.createElement("i");
+            swatch.className = "swatch";
+            swatch.style.background = line.color;
+            item.append(swatch, line.name);
+            legend.appendChild(item);
+          }
+        }
 
         const width = card.querySelector(".chart-wrap").clientWidth;
         const height = 280;
@@ -462,9 +507,11 @@
         const plotH = height - margin.top - margin.bottom;
         svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
 
-        const step = niceStep(Math.max(...series.map(p => p.value)));
-        const yMax = Math.ceil(Math.max(...series.map(p => p.value)) / step) * step;
-        const x = i => margin.left + (series.length === 1 ? plotW / 2 : (i / (series.length - 1)) * plotW);
+        const max = Math.max(...lines.flatMap(l => l.values));
+        const step = niceStep(max);
+        const yMax = Math.ceil(max / step) * step;
+        const last = buckets.length - 1;
+        const x = i => margin.left + (buckets.length === 1 ? plotW / 2 : (i / last) * plotW);
         const y = v => margin.top + plotH - (v / yMax) * plotH;
 
         for (let v = 0; v <= yMax; v += step) {
@@ -472,25 +519,28 @@
           svgEl("text", { x: margin.left - 8, y: y(v) + 4, "text-anchor": "end" }, svg).textContent = fmt(v);
         }
 
-        const tickEvery = Math.max(1, Math.ceil(series.length / Math.max(2, Math.floor(plotW / 72))));
-        series.forEach((p, i) => {
+        const tickEvery = Math.max(1, Math.ceil(buckets.length / Math.max(2, Math.floor(plotW / 72))));
+        buckets.forEach((b, i) => {
           if (i % tickEvery !== 0) return;
-          const anchor = series.length === 1 ? "middle" : i === 0 ? "start" : "middle";
-          svgEl("text", { x: x(i), y: height - 8, "text-anchor": anchor }, svg).textContent = p.axis;
+          const anchor = buckets.length === 1 ? "middle" : i === 0 ? "start" : "middle";
+          svgEl("text", { x: x(i), y: height - 8, "text-anchor": anchor }, svg).textContent = b.axis;
         });
 
-        const points = series.map((p, i) => `${x(i)},${y(p.value)}`);
-        if (series.length > 1) {
-          svgEl("path", { d: `M${points.join("L")}L${x(series.length - 1)},${y(0)}L${x(0)},${y(0)}Z`, fill: "var(--series)", opacity: 0.1 }, svg);
-          svgEl("path", { d: `M${points.join("L")}`, fill: "none", stroke: "var(--series)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+        // 色の付いた線が灰色の線の上に来るよう、後ろの線から描く
+        for (const line of [...lines].reverse()) {
+          const points = line.values.map((v, i) => `${x(i)},${y(v)}`);
+          if (buckets.length > 1) {
+            if (!multi) svgEl("path", { d: `M${points.join("L")}L${x(last)},${y(0)}L${x(0)},${y(0)}Z`, fill: line.color, opacity: 0.1 }, svg);
+            svgEl("path", { d: `M${points.join("L")}`, fill: "none", stroke: line.color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+          }
+          svgEl("circle", { cx: x(last), cy: y(line.values[last]), r: 4, fill: line.color, stroke: "var(--surface)", "stroke-width": 2 }, svg);
+        }
+        if (!multi) {
+          svgEl("text", { x: x(last) + 9, y: y(lines[0].values[last]) + 4, class: "end-label" }, svg).textContent = fmt(lines[0].values[last]);
         }
 
-        const last = series.length - 1;
-        svgEl("circle", { cx: x(last), cy: y(series[last].value), r: 4, fill: "var(--series)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
-        svgEl("text", { x: x(last) + 9, y: y(series[last].value) + 4, class: "end-label" }, svg).textContent = fmt(series[last].value);
-
         const crosshair = svgEl("line", { y1: margin.top, y2: margin.top + plotH, stroke: "var(--axis)", "stroke-width": 1, visibility: "hidden" }, svg);
-        const dot = svgEl("circle", { r: 5, fill: "var(--series)", stroke: "var(--surface)", "stroke-width": 2, visibility: "hidden" }, svg);
+        const dots = lines.map(line => svgEl("circle", { r: 5, fill: line.color, stroke: "var(--surface)", "stroke-width": 2, visibility: "hidden" }, svg));
 
         let active = -1;
         const hover = {
@@ -500,12 +550,45 @@
             crosshair.setAttribute("x1", px);
             crosshair.setAttribute("x2", px);
             crosshair.setAttribute("visibility", "visible");
-            dot.setAttribute("cx", px);
-            dot.setAttribute("cy", y(series[active].value));
-            dot.setAttribute("visibility", "visible");
+            dots.forEach((dot, n) => {
+              dot.setAttribute("cx", px);
+              dot.setAttribute("cy", y(lines[n].values[active]));
+              dot.setAttribute("visibility", "visible");
+            });
 
-            tooltip.querySelector(".tip-value").textContent = fmt(series[active].value);
-            tooltip.querySelector(".tip-label").textContent = series[active].tip;
+            const tipValue = tooltip.querySelector(".tip-value");
+            const rows = tooltip.querySelector(".tip-rows");
+            tooltip.querySelector(".tip-label").textContent = buckets[active].tip;
+            tipValue.hidden = multi;
+            rows.replaceChildren();
+            if (multi) {
+              // 多い順に並べる。多すぎるときは上位だけ出す
+              const ranked = lines.map(line => ({ line, value: line.values[active] })).sort((a, b) => b.value - a.value);
+              const shown = ranked.slice(0, 10);
+              for (const { line, value } of shown) {
+                const row = document.createElement("div");
+                row.className = "tip-row";
+                const swatch = document.createElement("i");
+                swatch.className = "swatch";
+                swatch.style.background = line.color;
+                const name = document.createElement("span");
+                name.className = "name";
+                name.textContent = line.name;
+                const num = document.createElement("span");
+                num.className = "num";
+                num.textContent = fmt(value);
+                row.append(swatch, name, num);
+                rows.appendChild(row);
+              }
+              if (ranked.length > shown.length) {
+                const more = document.createElement("div");
+                more.className = "tip-label";
+                more.textContent = `ほか${ranked.length - shown.length}ページ`;
+                rows.appendChild(more);
+              }
+            } else {
+              tipValue.textContent = fmt(lines[0].values[active]);
+            }
             tooltip.hidden = false;
             const tipW = tooltip.offsetWidth;
             tooltip.style.left = (px > width / 2 ? px - tipW - 12 : px + 12) + "px";
@@ -513,12 +596,12 @@
           hide() {
             active = -1;
             crosshair.setAttribute("visibility", "hidden");
-            dot.setAttribute("visibility", "hidden");
+            dots.forEach(dot => dot.setAttribute("visibility", "hidden"));
             tooltip.hidden = true;
           },
           fromPointer(clientX) {
             const px = clientX - svg.getBoundingClientRect().left;
-            this.show(series.length === 1 ? 0 : Math.round(((px - margin.left) / plotW) * last));
+            this.show(buckets.length === 1 ? 0 : Math.round(((px - margin.left) / plotW) * last));
           },
           move(delta) {
             this.show(active === -1 ? last : active + delta);
@@ -538,19 +621,83 @@
 
       // ── 表 ──
 
+      function allPaths() {
+        return [...new Set([state.topPage, ...state.titles.keys(), ...state.counts.keys()])];
+      }
+
+      // 空いている一番若い色を割り当てる
+      function addSelected(path) {
+        const used = new Set([...state.selected].map(p => state.colors.get(p)));
+        let slot = 0;
+        while (used.has(slot)) slot++;
+        state.selected.add(path);
+        state.colors.set(path, slot);
+      }
+
+      function removeSelected(path) {
+        state.selected.delete(path);
+        state.colors.delete(path);
+      }
+
+      const allSelected = () => state.selected.has(ALL) && allPaths().every(p => state.selected.has(p));
+
       function toggleSelected(path) {
-        if (state.selected.has(path)) state.selected.delete(path);
-        else state.selected.add(path);
+        if (state.selected.has(path)) removeSelected(path);
+        else addSelected(path);
         render();
         // 描き直しで外れたフォーカスを、同じ行のチェックボックスに戻す
         const box = [...document.querySelectorAll("#rows input")].find(input => input.value === path);
         if (box) box.focus();
       }
 
-      // 右端の列（選択中の期間）は、合計か期間指定のときだけ出す
-      function drawTable(from, to, showRange) {
+      // 全選択の状態で外したら全解除、それ以外なら全体と全ページを選ぶ（表の並び順で色を割り当てる）
+      function toggleAll(order) {
+        if (allSelected()) {
+          state.selected.clear();
+          state.colors.clear();
+        } else {
+          for (const path of order) if (!state.selected.has(path)) addSelected(path);
+        }
+        render();
+        $("selectAll").focus();
+      }
+
+      function pageLabel(path, title) {
+        const label = document.createElement("label");
+        label.className = "page";
+        const box = document.createElement("input");
+        box.type = "checkbox";
+        box.value = path;
+        box.checked = state.selected.has(path);
+        box.addEventListener("change", () => toggleSelected(path));
+        label.appendChild(box);
+
+        // グラフの線の色を表でも示す
+        if (box.checked && state.preset !== "day") {
+          const swatch = document.createElement("i");
+          swatch.className = "swatch";
+          swatch.style.background = seriesColor(path);
+          label.appendChild(swatch);
+        }
+
+        const text = document.createElement("span");
+        text.textContent = title;
+        if (path !== ALL && path !== state.topPage) {
+          const sub = document.createElement("span");
+          sub.className = "path";
+          sub.textContent = "/" + path.replace(/\.html$/, "");
+          text.appendChild(sub);
+        }
+        label.appendChild(text);
+        return label;
+      }
+
+      // 1日表示中は左端にその日の列を、合計を選んでいるときは右端に合計の列を出す
+      function drawTable() {
+        const dayMode = state.preset === "day";
         const periodFrom = days => addDays(state.latest, -(days - 1));
-        const paths = new Set([state.topPage, ...state.titles.keys(), ...state.counts.keys()]);
+        const keys = [...(dayMode ? ["day"] : []), "week", "month", "year", ...(state.preset === "total" ? ["total"] : [])];
+        const barKey = dayMode ? "day" : state.preset === "total" ? "total" : null;
 
         const rowFor = path => {
           const map = dayMap(path);
@@ -558,15 +705,15 @@
             path,
             title: pageTitle(path),
             date: state.dates.get(path) || "",
+            day: dayMode ? map.get(state.day) || 0 : 0,
             week: sumRange(map, periodFrom(PRESET_DAYS.week), state.latest),
             month: sumRange(map, periodFrom(PRESET_DAYS.month), state.latest),
             year: sumRange(map, periodFrom(PRESET_DAYS.year), state.latest),
-            total: sumRange(map, state.start, state.latest),
-            range: from <= to ? sumRange(map, from, to) : 0
+            total: sumRange(map, state.start, state.latest)
           };
         };
 
-        const rows = [...paths].map(rowFor);
+        const rows = allPaths().map(rowFor);
         const byTitle = (a, b) => a.title.localeCompare(b.title, "ja");
         if (state.sort === "newest" || state.sort === "oldest") {
           // 公開日のないページ（トップページなど）は末尾に置く
@@ -577,73 +724,67 @@
           rows.sort((a, b) => b[key] - a[key] || b.total - a.total || byTitle(a, b));
         }
 
-        const maxRange = Math.max(1, ...rows.map(r => r.range));
+        const maxBar = barKey ? Math.max(1, ...rows.map(r => r[barKey])) : 1;
         const tbody = $("rows");
         tbody.replaceChildren();
+
+        // 全選択の行
+        const selectTr = document.createElement("tr");
+        selectTr.className = "select-all";
+        const selectCell = selectTr.insertCell();
+        selectCell.colSpan = keys.length + 1;
+        const selectLabel = document.createElement("label");
+        selectLabel.className = "page";
+        const selectBox = document.createElement("input");
+        selectBox.type = "checkbox";
+        selectBox.id = "selectAll";
+        selectBox.checked = allSelected();
+        selectBox.indeterminate = !selectBox.checked && state.selected.size > 0;
+        selectBox.addEventListener("change", () => toggleAll([ALL, ...rows.map(r => r.path)]));
+        const selectText = document.createElement("span");
+        selectText.textContent = "全選択";
+        selectLabel.append(selectBox, selectText);
+        selectCell.appendChild(selectLabel);
+        tbody.appendChild(selectTr);
 
         // 全体の行は並び替えに関係なく常に先頭に置く
         for (const row of [rowFor(ALL), ...rows]) {
           const tr = document.createElement("tr");
-          const titleCell = tr.insertCell();
+          if (row.path === ALL) tr.classList.add("total");
+          if (state.selected.has(row.path)) tr.classList.add("selected");
+          tr.insertCell().appendChild(pageLabel(row.path, row.title));
 
-          if (row.path === ALL) {
-            // 全体の行を押すと、ページの選択をすべて外す
-            tr.classList.add("total");
-            if (state.selected.size === 0) tr.classList.add("selected");
-            const button = document.createElement("button");
-            button.type = "button";
-            button.className = "page";
-            button.textContent = row.title;
-            button.setAttribute("aria-pressed", state.selected.size === 0 ? "true" : "false");
-            button.addEventListener("click", () => {
-              state.selected.clear();
-              render();
-            });
-            titleCell.appendChild(button);
-          } else {
-            if (state.selected.has(row.path)) tr.classList.add("selected");
-            const label = document.createElement("label");
-            label.className = "page";
-            const box = document.createElement("input");
-            box.type = "checkbox";
-            box.value = row.path;
-            box.checked = state.selected.has(row.path);
-            box.addEventListener("change", () => toggleSelected(row.path));
-            const text = document.createElement("span");
-            text.textContent = row.title;
-            if (row.path !== state.topPage) {
-              const path = document.createElement("span");
-              path.className = "path";
-              path.textContent = "/" + row.path.replace(/\.html$/, "");
-              text.appendChild(path);
-            }
-            label.append(box, text);
-            titleCell.appendChild(label);
-          }
-
-          for (const key of showRange ? ["week", "month", "year", "range"] : ["week", "month", "year"]) {
+          for (const key of keys) {
             const cell = tr.insertCell();
             cell.textContent = fmt(row[key]);
-            if (key === "range" && row.path !== ALL) {
+            if (key === barKey && row.path !== ALL) {
               const bar = document.createElement("span");
               bar.className = "bar";
-              bar.style.width = (row.range / maxRange) * 100 + "%";
+              bar.style.width = (row[key] / maxBar) * 100 + "%";
               cell.appendChild(bar);
             }
           }
           tbody.appendChild(tr);
         }
 
-        $("rangeHeader").hidden = !showRange;
+        $("dayHeader").hidden = !dayMode;
+        $("dayHeader").textContent = dayMode ? `${shortDay(state.day)}(${WEEKDAYS[toDate(state.day).getUTCDay()]})` : "";
+        $("rangeHeader").hidden = state.preset !== "total";
       }
 
       // ── 画面全体の描画 ──
 
       function setPreset(preset) {
         state.preset = preset;
-        state.picked = { from: false, to: false };
         state.to = state.latest;
         state.from = preset === "total" ? state.start : addDays(state.latest, -(PRESET_DAYS[preset] - 1));
+      }
+
+      function setDay(day) {
+        if (day > state.latest) day = state.latest;
+        if (day < state.start) day = state.start;
+        state.preset = "day";
+        state.day = state.from = state.to = day;
       }
 
       function render() {
@@ -652,31 +793,35 @@
         const days = valid ? dayCount(from, to) : 0;
         const map = selectedMap();
         const title = selectedTitle();
-        const custom = state.preset === "custom";
+        const dayMode = state.preset === "day";
 
         document.querySelectorAll("#presets button").forEach(b => b.setAttribute("aria-pressed", b.dataset.preset === state.preset));
-        // プリセットを選んでいる間は日付欄を空にしておく
-        $("from").value = custom ? state.from : "";
-        $("to").value = custom ? state.to : "";
-        $("from").min = $("to").min = state.start;
-        $("from").max = $("to").max = state.latest;
+        // 1日表示でない間は日付欄を空にしておく
+        $("dayPicker").classList.toggle("active", dayMode);
+        $("day").value = dayMode ? state.day : "";
+        $("day").min = state.start;
+        $("day").max = state.latest;
+        $("prevDay").disabled = dayMode && state.day <= state.start;
+        $("nextDay").disabled = !dayMode || state.day >= state.latest;
 
-        $("selectionLabel").textContent = `表示中: ${title}`;
-        $("clearSelection").hidden = state.selected.size === 0;
+        $("selectionLabel").textContent = `数値: ${title}`;
 
-        // 「指定期間」での並び替えは、期間を指定している間だけ選べる
+        // 「選択した日」での並び替えは、1日表示の間だけ選べる
         const sort = $("sort");
-        const rangeOption = sort.querySelector('[value="views-range"]');
-        if (custom && !rangeOption) sort.add(new Option("アクセス数順（指定期間）", "views-range"));
-        if (!custom && rangeOption) {
-          rangeOption.remove();
-          if (state.sort === "views-range") state.sort = "views-total";
+        let dayOption = sort.querySelector('[value="views-day"]');
+        if (dayMode && !dayOption) dayOption = sort.appendChild(new Option("", "views-day"));
+        if (dayMode) dayOption.textContent = `アクセス数順（${shortDay(state.day)}）`;
+        if (!dayMode && dayOption) {
+          dayOption.remove();
+          if (state.sort === "views-day") state.sort = "views-month";
         }
         sort.value = state.sort;
 
         // タイル
         const total = valid ? sumRange(map, from, to) : 0;
+        $("tileTotalLabel").textContent = dayMode ? `${longDay(state.day)}のアクセス数` : "期間内のアクセス数";
         $("tileTotal").textContent = fmt(total);
+        $("tileAvgCard").hidden = dayMode;
         $("tileAvg").textContent = days ? (total / days).toLocaleString("ja-JP", { maximumFractionDigits: 1 }) : "0";
         $("tileDays").textContent = days ? `${days}日間` : "";
 
@@ -692,33 +837,32 @@
             const mark = document.createElement("span");
             mark.className = change >= 0 ? "up" : "down";
             mark.textContent = `${change >= 0 ? "▲" : "▼"} ${Math.abs(change).toFixed(0)}%`;
-            delta.append(mark, ` 前の${days}日間（${fmt(prevTotal)}）比`);
+            delta.append(mark, days === 1 ? ` 前日（${fmt(prevTotal)}）比` : ` 前の${days}日間（${fmt(prevTotal)}）比`);
           }
         }
 
-        $("tileLatest").textContent = fmt(map.get(state.latest) || 0);
-        $("tilePrevious").textContent = `その前の日 ${fmt(map.get(addDays(state.latest, -1)) || 0)}`;
-
-        let peakDay = "";
-        let peak = 0;
-        for (const [day, count] of map) {
-          if (day >= from && day <= to && count > peak) { peak = count; peakDay = day; }
-        }
-        $("tilePeak").textContent = fmt(peak);
-        $("tilePeakDay").textContent = peakDay ? longDay(peakDay) : "";
-
-        // グラフ
-        // 合計は長さに関係なく全種類を出す。データがない期間は「データなし」を 1 枚だけ出す
-        const span = state.preset === "total" ? Infinity : dayCount(state.from, state.to);
-        const grans = total > 0 ? GRANS.filter(g => span > g.minSpan) : GRANS.slice(0, 1);
-        const rangeText = valid ? `${longDay(from)} 〜 ${longDay(to)}` : "";
+        // グラフ（1日表示のときは出さない）
+        $("charts").hidden = dayMode;
         $("charts").replaceChildren();
-        for (const { gran, unit } of grans) {
-          drawChart(`${title}のアクセス数の推移（${unit}）`, rangeText, valid ? buildSeries(map, from, to, gran) : []);
+        if (!dayMode) {
+          // 全体を先頭に、あとは色の順に並べる
+          const subjects = [...state.selected].sort((a, b) => state.colors.get(a) - state.colors.get(b));
+          // 合計は長さに関係なく全種類を出す。データがない期間は「データなし」を 1 枚だけ出す
+          const span = state.preset === "total" ? Infinity : dayCount(state.from, state.to);
+          const grans = total > 0 ? GRANS.filter(g => span > g.minSpan) : GRANS.slice(0, 1);
+          const rangeText = valid ? `${longDay(from)} 〜 ${longDay(to)}` : "";
+          const emptyText = subjects.length === 0
+            ? "下の表でページにチェックを入れると、ここに推移が表示されます。"
+            : "この期間のデータはまだありません。当日分は翌日に反映されます。";
+          const name = subjects.length === 1 ? `${pageTitle(subjects[0])}の` : "";
+          for (const { gran, unit } of grans) {
+            const buckets = valid ? buildBuckets(from, to, gran) : [];
+            const lines = subjects.map(path => ({ name: pageTitle(path), color: seriesColor(path), values: bucketValues(dayMap(path), buckets) }));
+            drawChart(`${name}アクセス数の推移（${unit}）`, rangeText, buckets, lines, emptyText);
+          }
         }
 
-        $("rangeHeader").textContent = custom ? "指定期間" : "合計";
-        drawTable(from, to, custom || state.preset === "total");
+        drawTable();
       }
 
       // ── データ取得 ──
@@ -761,7 +905,7 @@
         // 日付が変わっていたら、選択中のプリセットを新しい最終日に合わせ直す
         const dayChanged = state.latest !== stats.latest;
         state.latest = stats.latest;
-        if (dayChanged && state.preset !== "custom") setPreset(state.preset);
+        if (dayChanged && state.preset !== "day") setPreset(state.preset);
 
         $("meta").textContent = `集計開始 ${longDay(state.firstDay)} ／ ${longDay(state.latest)} までのデータ（当日分は翌日に反映）`;
       }
@@ -778,9 +922,11 @@
       }
 
       // 期間を変えたときの再描画。読み込み済みより前の日付が必要になったら、その分を取り直す
+      // 1日表示では前日比のために前日の分も読み込む
       function update() {
-        if (state.from < state.loadedFrom && state.loadedFrom > state.firstDay) {
-          load(localStorage.getItem(TOKEN_KEY), state.from).catch(err => showLogin(err.message));
+        const need = state.preset === "day" ? addDays(state.from, -1) : state.from;
+        if (need < state.loadedFrom && state.loadedFrom > state.firstDay) {
+          load(localStorage.getItem(TOKEN_KEY), need).catch(err => showLogin(err.message));
           return;
         }
         render();
@@ -840,27 +986,22 @@
         update();
       });
 
-      for (const id of ["from", "to"]) {
-        $(id).addEventListener("change", e => {
-          if (!e.target.value) return;
-          // 手入力でも範囲外の日付にならないようにする
-          let day = e.target.value;
-          if (day > state.latest) day = state.latest;
-          if (day < state.start) day = state.start;
+      $("day").addEventListener("change", e => {
+        if (!e.target.value) return;
+        setDay(e.target.value); // 手入力でも範囲外の日付にならないよう setDay で丸める
+        update();
+      });
 
-          // もう片方をまだ選んでいなければ、選ぶまで同じ日付にしておく
-          const other = id === "from" ? "to" : "from";
-          state[id] = day;
-          state.picked[id] = true;
-          if (!state.picked[other]) state[other] = day;
-          state.preset = "custom";
-          update();
-        });
-      }
+      // 1日表示でないときの ◀ は、最新の日（前日）を表示する
+      $("prevDay").addEventListener("click", () => {
+        setDay(state.preset === "day" ? addDays(state.day, -1) : state.latest);
+        update();
+      });
 
-      $("clearSelection").addEventListener("click", () => {
-        state.selected.clear();
-        render();
+      $("nextDay").addEventListener("click", () => {
+        if (state.preset !== "day") return;
+        setDay(addDays(state.day, 1));
+        update();
       });
 
       $("sort").addEventListener("change", e => {
